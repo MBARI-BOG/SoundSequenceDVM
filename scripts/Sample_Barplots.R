@@ -256,8 +256,6 @@ for (val in markers) {
     #Split by Diel group
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -282,8 +280,6 @@ for (val in markers) {
     
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -331,8 +327,6 @@ for (val in markers) {
     #get top 20 species in group
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -357,8 +351,6 @@ for (val in markers) {
     
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -402,8 +394,6 @@ for (val in markers) {
     #Split by Diel group
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -428,8 +418,6 @@ for (val in markers) {
     
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -477,8 +465,6 @@ for (val in markers) {
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -504,8 +490,6 @@ for (val in markers) {
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -549,8 +533,6 @@ for (val in markers) {
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -576,8 +558,6 @@ for (val in markers) {
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -621,8 +601,6 @@ for (val in markers) {
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -649,8 +627,6 @@ for (val in markers) {
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
@@ -694,8 +670,6 @@ for (val in markers) {
     top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       filter(Phylum == var) %>%  #limit to a certain group
@@ -722,8 +696,6 @@ for (val in markers) {
     bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
       filter(Sampling_method == 'ESP') %>%
       inner_join(species_label,  by = c("ASV")) %>%
-      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
-                               TRUE ~ as.character(Species))) %>%
       mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
                                 TRUE ~ as.character(Phylum))) %>%
       right_join(top_taxa) %>% #limit to most abundant taxa
