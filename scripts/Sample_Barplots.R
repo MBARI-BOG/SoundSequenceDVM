@@ -472,73 +472,393 @@ for (val in markers) {
     print(var)
     filename
     ggsave(filename,height = 8, width =10, units = 'in')
-    # #Genus
-    # top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
-    #   inner_join(gen_label,  by = c("ASV")) %>%
-    #   mutate(Genus = case_when(Genus=='g_'| Genus =='unassigned' | Genus =='unknown'~as.character('unknown'),
-    #                            TRUE ~ as.character(Genus))) %>%
-    #   mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
-    #                             TRUE ~ as.character(Phylum))) %>%
-    #   filter(Phylum == var) %>%  #limit to a certain group
-    #   group_by(Genus) %>%
-    #   mutate(sum_per_tot = sum(per_tot)) %>%
-    #   arrange(-sum_per_tot) %>%
-    #   distinct(Genus,.keep_all = TRUE ) %>%
-    #   select(Kingdom, Phylum, Class, Order, Family,Genus, sum_per_tot) %>%
-    #   ungroup() %>%
-    #   filter(Genus != var) %>% #remove general phylum level annot
-    #   filter(Genus != 'Dinophyceae') %>%
-    #   filter(Genus != 'Dinophyceae sp. CCMP1878') %>% #remove unclassified dino
-    #   filter(Genus != 'Dinophyceae sp. UDMS0803') %>% #remove unclassified dino
-    #   filter(Genus != 'unknown') %>% #remove unclassified genera
-    #   select(Genus, sum_per_tot) %>%
-    #   top_n(10)
-    # print(top_taxa)
-    # 
-    # 
-    # bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
-    #   inner_join(gen_label,  by = c("ASV")) %>%
-    #   mutate(Genus = case_when(Genus=='g_'| Genus =='unassigned' | Genus =='unknown'~as.character('unknown'),
-    #                            TRUE ~ as.character(Genus))) %>%
-    #   mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
-    #                             TRUE ~ as.character(Phylum))) %>%
-    #   right_join(top_taxa) %>% #limit to most abundant taxa
-    #   unite(Label, Class, Order, Family, Genus, sep="_", remove='False') %>%
-    #   #fct_reorder(name, desc(val))
-    #   ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = per_tot)) +
-    #   geom_bar(stat = "identity", aes(fill = Label))+
-    #   scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
-    #   labs(x="",y=paste("Percent ",var," Reads", sep=""))+
-    #   #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
-    #   theme_minimal() +
-    #   theme(
-    #     #legend
-    #     legend.position="bottom",legend.direction="vertical",
-    #     legend.text=element_text(colour=textcol,size=5,face="bold"),
-    #     legend.key.height=grid::unit(0.3,"cm"),
-    #     legend.key.width=grid::unit(0.3,"cm"),
-    #     legend.title=element_text(colour=textcol,size=5,face="bold"),
-    #     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
-    #     #axis.text.x=element_text(size=7,colour=textcol),
-    #     axis.text.y=element_text(size=6,colour=textcol),
-    #     axis.title.y = element_text(size=6),
-    #     plot.background=element_blank(),
-    #     panel.border=element_blank(),
-    #     panel.grid.minor = element_blank(),
-    #     panel.grid.major = element_line(size = .25),
-    #     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
-    #     plot.title=element_blank())
-    # bp_top 
-    # 
-    # 
-    # filename = paste(directory, marker,'_top10gen_bar_',var,'_comp.png', sep='')
-    # print(var)
-    # filename
-    # ggsave(filename,height = 8, width =10, units = 'in')
-    # filename = paste(directory, marker,'_top10gen_bar_',var,'_comp.svg', sep='')
-    # print(var)
-    # filename
-    # ggsave(filename,height = 8, width =10, units = 'in')
+
+    #Split by Diel group, just ESP samples
+    top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      filter(Phylum == var) %>%  #limit to a certain group
+      group_by(Species) %>%
+      mutate(sum_per_tot = sum(per_tot)) %>%
+      arrange(-sum_per_tot) %>%
+      distinct(Species,.keep_all = TRUE ) %>%
+      select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+      ungroup() %>%
+      filter(Species != var) %>% #remove general phylum level annot
+      filter(Species != 'Dinophyceae') %>%
+      filter(Species != 'Dinophyceae sp. CCMP1878') %>% #remove unclassified dino
+      filter(Species != 'Dinophyceae sp. UDMS0803') %>% #remove unclassified dino
+      #filter(Genus != 'unknown') %>% #remove unclassified genera
+      select(Species, sum_per_tot) %>%
+      top_n(20)
+    print(top_taxa)
+    
+    
+    # assign text colour
+    textcol <- "grey40"
+    
+    bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      right_join(top_taxa) %>% #limit to most abundant taxa
+      unite(Label, Class, Order, Family, Genus, Species, sep="_", remove='False') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      #fct_reorder(name, desc(val))
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = per_tot)) +
+      geom_bar(stat = "identity", aes(fill = Label))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+    bp_top 
+    
+    
+    filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
+    
+    #Split by Diel group, just ESP, raw read number
+    top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      filter(Phylum == var) %>%  #limit to a certain group
+      group_by(Species) %>%
+      mutate(sum_reads = sum(reads)) %>%
+      arrange(-sum_reads) %>%
+      distinct(Species,.keep_all = TRUE ) %>%
+      select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_reads) %>%
+      ungroup() %>%
+      filter(Species != var) %>% #remove general phylum level annot
+      filter(Species != 'Dinophyceae') %>%
+      filter(Species != 'Dinophyceae sp. CCMP1878') %>% #remove unclassified dino
+      filter(Species != 'Dinophyceae sp. UDMS0803') %>% #remove unclassified dino
+      #filter(Genus != 'unknown') %>% #remove unclassified genera
+      select(Species, sum_reads) %>%
+      top_n(20)
+    print(top_taxa)
+    
+    
+    # assign text colour
+    textcol <- "grey40"
+    
+    bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      right_join(top_taxa) %>% #limit to most abundant taxa
+      unite(Label, Class, Order, Family, Genus, Species, sep="_", remove='False') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      #fct_reorder(name, desc(val))
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = reads)) +
+      geom_bar(stat = "identity", aes(fill = Label))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+    bp_top 
+    
+    
+    filename = paste(directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
+    
+    #Split by Diel group, just ESP, raw read number, no Anchovy
+    top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      filter(Phylum == var) %>%  #limit to a certain group
+      group_by(Species) %>%
+      mutate(sum_reads = sum(reads)) %>%
+      arrange(-sum_reads) %>%
+      distinct(Species,.keep_all = TRUE ) %>%
+      select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_reads) %>%
+      ungroup() %>%
+      filter(Species != var) %>% #remove general phylum level annot
+      filter(Species != 'Dinophyceae') %>%
+      filter(Species != 'Dinophyceae sp. CCMP1878') %>% #remove unclassified dino
+      filter(Species != 'Dinophyceae sp. UDMS0803') %>% #remove unclassified dino
+      filter(Species != 'Engraulis mordax') %>% #remove anchovy here
+      #filter(Genus != 'unknown') %>% #remove unclassified genera
+      select(Species, sum_reads) %>%
+      top_n(20)
+    print(top_taxa)
+    
+    
+    # assign text colour
+    textcol <- "grey40"
+    
+    bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      right_join(top_taxa) %>% #limit to most abundant taxa
+      unite(Label, Class, Order, Family, Genus, Species, sep="_", remove='False') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      #fct_reorder(name, desc(val))
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = reads)) +
+      geom_bar(stat = "identity", aes(fill = Label))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+    bp_top 
+    
+    
+    filename = paste(directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP_noAnch.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
+    
+    #Split by Diel group, just ESP, raw read number, no Anchovy
+    top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      filter(Phylum == var) %>%  #limit to a certain group
+      group_by(Species) %>%
+      mutate(sum_per_tot = sum(per_tot)) %>%
+      arrange(-sum_per_tot) %>%
+      distinct(Species,.keep_all = TRUE ) %>%
+      select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+      ungroup() %>%
+      filter(Species != var) %>% #remove general phylum level annot
+      filter(Species != 'Dinophyceae') %>%
+      filter(Species != 'Dinophyceae sp. CCMP1878') %>% #remove unclassified dino
+      filter(Species != 'Dinophyceae sp. UDMS0803') %>% #remove unclassified dino
+      filter(Species != 'Engraulis mordax') %>% #remove anchovy here
+      #filter(Genus != 'unknown') %>% #remove unclassified genera
+      select(Species, sum_per_tot) %>%
+      top_n(20)
+    print(top_taxa)
+    
+    
+    # assign text colour
+    textcol <- "grey40"
+    
+    bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+      filter(Sampling_method == 'ESP') %>%
+      inner_join(species_label,  by = c("ASV")) %>%
+      mutate(Genus = case_when(Species=='s_'| Species =='unassigned' | Species =='unknown'~as.character('unknown'),
+                               TRUE ~ as.character(Species))) %>%
+      mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                                TRUE ~ as.character(Phylum))) %>%
+      right_join(top_taxa) %>% #limit to most abundant taxa
+      unite(Label, Class, Order, Family, Genus, Species, sep="_", remove='False') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      #fct_reorder(name, desc(val))
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = per_tot)) +
+      geom_bar(stat = "identity", aes(fill = Label))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+    bp_top 
+    
+    
+    filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP_noAnch.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
+    
+    ## Number of Unique taxa by sample by Diel group - color by Order
+    
+    bp_top <- inner_join(potu.c, species_label,  by = c("ASV")) %>%
+      group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species, SampleID) %>%
+      mutate(sum_reads = sum(reads)) %>%
+      mutate(sum_per_tot = sum(per_tot)) %>%
+      ungroup() %>%
+      distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, SampleID, .keep_all=TRUE) %>%
+      select(Kingdom, Phylum, Class, Order, Family, Genus, Species, SampleID, sum_reads,sum_per_tot ) %>%
+      filter(sum_reads >= 5) %>% #just in case
+      mutate(count = 1) %>%
+      group_by(SampleID, Order) %>%
+      mutate(count = sum(count)) %>%
+      ungroup() %>%
+      distinct(SampleID,Order, count, .keep_all=FALSE) %>%
+      left_join(samp.c) %>%
+      filter(Sampling_method=='ESP') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = count)) +
+      geom_bar(stat = "identity", aes(fill = Order))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      guides(fill=guide_legend(nrow=2,byrow=TRUE))+
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+      
+    bp_top
+    filename = paste(directory, marker,'_NumTaxa_',var,'_byOrder.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
+      
+    ## Number of Unique taxa by sample by Diel group - color by Order
+    
+    bp_top <- inner_join(potu.c, species_label,  by = c("ASV")) %>%
+      mutate(count=1) %>%
+      filter(reads>0) %>% #just in case
+      filter(Species!='Engraulis mordax') %>%  #remove anchovy if want
+      group_by(Order, SampleID) %>%
+      mutate(count = sum(count)) %>%
+      ungroup() %>%
+      distinct(Order, SampleID,count, .keep_all=FALSE) %>%
+      left_join(samp.c) %>%
+      filter(Sampling_method=='ESP') %>%
+      mutate(depth_char = as.character(depth)) %>%
+      filter(diel %in% c('7am-6pm', '8pm-5am', 'night', 'day')) %>%
+      ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = count)) +
+      geom_bar(stat = "identity", aes(fill = Order))+
+      scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+      labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+      facet_wrap(~diel, nrow =4) +
+      #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+      theme_minimal() +
+      guides(fill=guide_legend(nrow=2,byrow=TRUE))+
+      theme(
+        #legend
+        legend.position="bottom",legend.direction="vertical",
+        legend.text=element_text(colour=textcol,size=5,face="bold"),
+        legend.key.height=grid::unit(0.3,"cm"),
+        legend.key.width=grid::unit(0.3,"cm"),
+        legend.title=element_text(colour=textcol,size=5,face="bold"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+        #axis.text.x=element_text(size=7,colour=textcol),
+        axis.text.y=element_text(size=6,colour=textcol),
+        axis.title.y = element_text(size=6),
+        plot.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = .25),
+        plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+        plot.title=element_blank())
+    
+    bp_top
+    filename = paste(directory, marker,'_NumASVs_',var,'_byOrder_noanch.png', sep='')
+    print(var)
+    filename
+    ggsave(filename,height = 8, width =10, units = 'in')
     
   }
 }
