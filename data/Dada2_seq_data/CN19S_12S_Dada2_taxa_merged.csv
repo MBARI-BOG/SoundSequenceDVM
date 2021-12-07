@@ -215,7 +215,6 @@ ASV_1159,Eukaryota,Chordata,Mammalia,Primates,Hominidae,Homo,Homo sapiens
 ASV_1163,Eukaryota,Chordata,Actinopteri,Anabantiformes,Channidae,g_,s_
 ASV_1165,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_1169,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
-ASV_1177,Eukaryota,Chordata,Mammalia,Cetacea,Phocoenidae,Phocoena,Phocoena phocoena
 ASV_1188,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_1189,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_1200,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
@@ -535,7 +534,6 @@ ASV_5165,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engra
 ASV_5198,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_5221,Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,g_,s_
 ASV_5302,Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius productus
-ASV_5324,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_5336,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_5337,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_5353,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
@@ -835,7 +833,6 @@ ASV_10293,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10301,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10305,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10310,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_10311,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10312,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10313,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_10360,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -1247,7 +1244,6 @@ ASV_15956,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_15957,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_15971,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_15994,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
-ASV_15997,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_15998,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_16012,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_16015,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -1616,7 +1612,6 @@ ASV_20523,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20527,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20532,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20540,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_20545,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20547,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20552,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_20554,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -1770,7 +1765,6 @@ ASV_21916,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21924,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21932,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21938,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_21939,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21942,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21963,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_21964,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -1828,7 +1822,6 @@ ASV_22912,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_22921,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_22922,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_22926,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_22940,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_22946,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_22950,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_22953,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -1917,7 +1910,6 @@ ASV_23542,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23543,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23544,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23554,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_23556,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23562,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23567,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_23570,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2031,7 +2023,6 @@ ASV_25027,Bacteria,Proteobacteria,Alphaproteobacteria,Rhodobacterales,Rhodobacte
 ASV_25031,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25037,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_25039,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_25041,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25047,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25050,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25052,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2099,7 +2090,6 @@ ASV_25550,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25552,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25557,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25559,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys sordidus
-ASV_25566,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25568,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25571,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_25572,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2226,7 +2216,6 @@ ASV_27911,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_27913,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_27925,Bacteria,Bacteroidetes,Flavobacteriia,Flavobacteriales,Flavobacteriaceae,Polaribacter,s_
 ASV_27935,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,s_
-ASV_27944,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_27949,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_27955,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_27958,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2363,7 +2352,6 @@ ASV_29056,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29061,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29069,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29116,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_29130,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29134,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29137,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29143,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2390,7 +2378,6 @@ ASV_29251,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29262,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29284,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29292,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_29294,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29297,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29298,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_29305,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2575,7 +2562,6 @@ ASV_33282,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_33289,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_33290,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_33341,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
-ASV_33352,Bacteria,Proteobacteria,Alphaproteobacteria,Rhodobacterales,Rhodobacteraceae,g_,s_
 ASV_33369,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_33370,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_33371,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -2770,13 +2756,11 @@ ASV_35515,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35516,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_35535,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35536,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_35538,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35540,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35541,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35553,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35555,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35557,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_35559,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35561,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35571,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_35575,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
