@@ -839,4 +839,197 @@ for (val in markers) {
 
 
 
+### Species profiles with depth ------
+
+# Look at top 10 most abundant species and their reads by depth value
+# During Day and During Night
+# Engraulis mordax               10743.
+# 2 Stenobrachius leucopsarus       2340.
+# 3 Merluccius productus            1907.
+# 4 Leuroglossus schmidti           1415.
+# 5 Diaphus theta                   1387.
+# 6 Sebastes                        1165.
+# 7 Lipolagus ochotensis             400.
+# 8 Delphinidae                      207.
+# 9 Cyclothone acclinidens           181.
+# 10 Hydrolagus colliei               179.
+
+library(stringr)
+#how does # of ASVs correspond with # of reads? Per_tot? w/depth and time
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Engraulis') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=diel))
+p
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=depth))
+p
+library(viridis)
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=time, size=depth, shape=diel))+
+  scale_color_viridis()
+p
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_per_tot))+ 
+  geom_point(aes(color=time, size=depth, shape=ESP))+
+  scale_color_viridis()
+p
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=ESP, size=depth, shape=diel))
+p
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_per_tot))+ 
+  geom_point(aes(color=ESP, size=depth, shape=diel))
+p
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=PlateID, size=depth, shape=ESP))
+p
+
+#pull out top 10
+top_taxa <- potu.c %>%
+  full_join(species_label) %>%
+  filter(Species !='unassigned') %>%
+  filter(!!taxa_level !='s_') %>%
+  filter(!!taxa_level !='g_') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(10)
+top_taxa
+
+
+# plot read number by depth:
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Species == 'Engraulis mordax') %>%
+  ggplot(aes(y=depth, x=reads, color=diel))+
+  geom_point(alpha=0.8)
+test
+
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Species == 'Engraulis mordax') %>%
+  ggplot(aes(y=depth, x=local_time, color=diel))+
+  geom_point(alpha=0.8)
+test
+
+
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Species == 'Engraulis mordax') %>%
+  ggplot(aes(y=depth, x=time, fill=diel))+
+  geom_point(aes(color=diel),alpha=0.8)+
+  scale_y_reverse()
+  #geom_contour_filled(aes(z=reads))
+test
+
+#binned density plot?
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Engraulis') %>%
+  filter(reads>0)
+#number of ASVs within each sample that are Engraulis
+p <- ggplot(test, aes(x = time, y = depth, z=reads)) + stat_binhex()
+p
+
+#how does # of ASVs correspond with # of reads? Per_tot?
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Engraulis') %>%
+  filter(reads>0) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_count = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>% ggplot(aes(x = sum_count, y = sum_reads))+ 
+ geom_point(aes(color=diel))
+p
+
+p <- test %>% ggplot(aes(x = sum_count, y = sum_reads))+ 
+  geom_point(aes(color=depth))
+p
+
+
+#SCRAP
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Species == 'Engraulis mordax') %>%
+  ggplot(aes(y=depth, x=time, z=reads))+
+  stat_summary_hex(function(z){log(sum(z))})
+
+  geom_point(aes(fill=reads),alpha=0.6, shape=21, size=5)+
+  #scale_fill_gradient(name = "reads", trans = "log")+
+  scale_colour_gradient(name = "reads", trans = "log")
+  #geom_contour_filled(aes(z=reads),bins=5)
+test
+
+
+bp_top <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  mutate(Phylum = case_when(Class=='Dinophyceae' ~as.character('Dinophyceae'),
+                            TRUE ~ as.character(Phylum))) %>%
+  right_join(top_taxa) %>% #limit to most abundant taxa
+  unite(Label, Class, Order, Family, Genus, Species, sep="_", remove='False') %>%
+  mutate(depth_char = as.character(depth)) %>%
+  filter(diel %in% c('day', 'night', 'transition')) %>%
+  #fct_reorder(name, desc(val))
+  ggplot(aes(x = fct_reorder(depth_char, desc(depth)), y = per_tot)) +
+  geom_bar(stat = "identity", aes(fill = Label))+
+  scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+  labs(x="",y=paste("Percent ",var," Reads", sep=""))+
+  facet_wrap(~diel, nrow =4) +
+  #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+  theme_minimal() +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=5,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=5,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=7,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top 
+
 

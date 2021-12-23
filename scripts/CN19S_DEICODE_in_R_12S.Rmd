@@ -1,0 +1,546 @@
+---
+title: "QIIME2- deicode"
+author: "Pitz K"
+date: "11/29/2021"
+output: html_document
+---
+
+# Load libraries
+```{r}
+#load libraries
+library(tidyverse) #includes multiple libraries
+library(lubridate) #for date modifications
+
+```
+
+# Set Location to save results
+```{r}
+marker = '12S'
+prefix = 'CN19S'
+data_directory = "../data/filtered_seq_data/"
+# Set directory to save plots
+plot_dir <- '../figures/RPCA/'
+results_directory <- '../Qiime_Results/'
+```
+
+# load in data
+```{r}
+#ASV table
+print('ASV table')
+file = paste(prefix,"_",marker,"_otu_filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+otu.c <- read_csv(filepath) %>% rename_with(.cols = 1, ~"ASV")
+
+#taxa table
+print('taxa table')
+file = paste(prefix,"_",marker,"_taxa_filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+tax.c <- read_csv(filepath) %>% rename_with(.cols = 1, ~"ASV")
+
+#metadata table
+print('metadata table')
+file = paste(prefix,"_",marker,"_meta_filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+samp.c <- read_csv(filepath) %>% rename('SampleID' = 'sample_name')
+
+#OTU table long format with percent total reads
+potu.c <- otu.c %>%
+  tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
+  group_by(SampleID) %>%
+  mutate(per_tot = reads / sum(reads) *100) %>%
+  ungroup() %>%
+  arrange(-reads)
+head(potu.c)
+```
+
+
+
+
+# Export tables for DEICODE
+```{r}
+#ASV table
+#"#OTUID"
+filename = paste(results_directory, "Qiime2_asv.tsv", sep='')
+#check filename
+print(filename)
+
+otu.c %>%
+  rename('#OTUID' = ASV) %>%
+  write_delim(filename, delim="\t")
+
+#Taxa table
+#"#OTUID"
+filename = paste(results_directory, "Qiime2_taxa.tsv", sep='')
+#check filename
+print(filename)
+
+tax.c %>%
+  rename('#OTUID' = ASV) %>%
+  write_delim(filename, delim="\t")
+  
+#Metadata Table
+#SampleID
+filename = paste(results_directory, "Qiime2_meta.tsv", sep='')
+#check filename
+print(filename)
+
+samp.c %>%
+  select(SampleID,SAMPLING_cruise, depth ) %>%
+  rename('#SampleID' = SampleID) %>%
+  write_delim(filename, delim="\t")
+
+```
+
+
+## DEICODE PCA
+
+# CHANGE PATH BELOW TO CD TO CORRECT DIRECTORY!!
+
+```{bash engine.opts='-l'}
+# move into the directory where you are going to run the DEICODE script
+cd /Users/kpitz/github/MBARI-BOG/CN19S_12S/Qiime_Results
+pwd
+
+# Activate the conda qiime2 enviroment - check version
+conda activate qiime2-2021.11
+
+#Make biom file
+biom convert -i ./Qiime2_asv.tsv -o table.from_txt_json.biom --table-type="OTU table" --to-json
+#add metadata files to biom file - change the merged_tax_table_for_biomm.txt and _merged_for_biom.txt files
+biom add-metadata -i table.from_txt_json.biom -o table.w_md.biom --observation-metadata-fp Qiime2_taxa.tsv --sample-metadata-fp Qiime2_meta.tsv
+
+#import into Qiime2 - Change output file
+qiime tools import \
+--input-path table.w_md.biom \
+--output-path Project.biom.qza \
+--type FeatureTable[Frequency]
+
+#run DEICODE - change input table
+qiime deicode rpca \
+--i-table Project.biom.qza \
+--p-n-components 3 \
+--p-min-feature-count 20 \
+--p-min-sample-count 500 \
+--o-biplot ordination.qza \
+--o-distance-matrix distance.qza
+
+## Create biplot - change metadata files
+qiime emperor biplot \
+--i-biplot ordination.qza \
+--m-sample-metadata-file Qiime2_meta.tsv \
+--m-feature-metadata-file Qiime2_taxa.tsv \
+--o-visualization biplot.qzv \
+--p-number-of-features 8
+
+
+
+```
+
+
+
+# PLOT
+
+
+#make seasonal variables
+```{r}
+library(lubridate)
+meta <- samp.c %>% 
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  mutate(month =  month(time)) %>%
+  mutate(day =  day(time)) %>%
+  mutate(year =  year(time)) %>%
+  mutate(jday = yday(time)) %>%
+  mutate(month_char = as.character(month)) %>%
+  mutate(year_char = as.character(year)) %>%
+  mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
+                               depth >50 & depth <=100 ~ "50-100m",
+                               depth >100 & depth <=200 ~ "100-200m",
+                               depth >200 & depth <=300 ~ "200-300m",
+                               depth >300 & depth <=400 ~ "300-400m",
+                               depth >400 & depth <=500 ~ "400-500m",
+                               depth >400 & depth <=600 ~ "500-600m",
+                               depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
+                               )) 
+```
+
+```{r}
+library(magrittr)
+#project_meta %<>% rename(SampleID=sample_name)
+```
+
+#import data
+```{r}
+library(qiime2R)
+
+#Import Qiime2 Results
+file = paste(results_directory,"ordination.qza",sep="")
+print(file)
+pco<-read_qza(file)
+pco$uuid
+#look at data
+head(pco$data$ProportionExplained)
+pco$data$Vectors[1:5, 1:4]
+
+#create proportion explained labels
+label.PC1 <- paste("PC1: ", round(pco$data$ProportionExplained$PC1, 3)*100,"%")
+label.PC1
+label.PC2 <- paste("PC2: ", round(pco$data$ProportionExplained$PC2, 3)*100,"%")
+label.PC2
+label.PC3 <- paste("PC3: ", round(pco$data$ProportionExplained$PC3, 3)*100,"%")
+label.PC3
+
+#Join with sample data
+pcscores <- left_join(pco$data$Vectors, meta, by="SampleID")
+
+#format loading scores
+loadings <- as.data.frame(pco$data$Species)
+loadings$ASV <- loadings$FeatureID
+
+#join on OTU, adding taxa info
+loadings <- left_join(loadings, tax.c, by="ASV")
+
+#export pcscores
+file = paste(results_directory, "pcscores_",marker,"_Dada2_Qiime2.csv",sep="")
+print(file)
+write.csv(pcscores, file)
+file = paste(results_directory, "loadings_",marker,"_Dada2_Qiime2.csv",sep="")
+print(file)
+write.csv(loadings, file)
+pcscores[1:5, 1:9]  #long because of sample data
+head(loadings)
+```
+
+#Plot RPCA
+
+```{r}
+library(RColorBrewer)
+library(viridis)
+
+# by mean depth class
+p <- pcscores %>%
+  group_by(depth_bin) %>%
+  mutate(mPC1 = mean(PC1)) %>%
+  mutate(mPC2 = mean(PC2)) %>%
+  ungroup() %>%
+  ggplot(aes(PC1,PC2,color=fct_reorder(depth_bin ,depth))) +
+  geom_point(size=3, alpha=0.6, shape=16) +
+  geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "Depth Range" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_mean_DepthRange.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```
+
+# Diel
+
+```{r}
+p <- pcscores %>%
+  #group_by(depth_bin, diel) %>%
+  #mutate(mPC1 = mean(PC1)) %>%
+  #mutate(mPC2 = mean(PC2)) %>%
+  #ungroup() %>%
+  ggplot(aes(PC1,PC2,color=diel)) +
+  geom_point(size=3, alpha=0.6, shape=16) #+
+  #geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "Diel" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_diel.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```
+
+
+
+# Run for a limited series of samples:
+
+```{r}
+# Set directory to save plots
+plot_dir <- '../figures/RPCA_lim/'
+results_directory <- '../Qiime_Results/Qiime_Results_lim/'
+
+#filter and export tables
+#try just samples <300m
+
+#ASV table
+#"#OTUID"
+filename = paste(results_directory, "Qiime2_asv.tsv", sep='')
+#check filename
+print(filename)
+
+otu_new <- left_join(meta, potu.c) %>%
+  filter(depth<=300) %>%
+  select(ASV, SampleID, reads) %>%
+  pivot_wider(id_cols=ASV, names_from = SampleID, values_from = reads) %>%
+  rename('#OTUID' = ASV) %>%
+  mutate(sum = rowSums(across(where(is.numeric)))) %>%
+  filter(sum>0) %>%
+  select(-sum) %>%
+  write_delim(filename, delim="\t")
+  
+potu_new <- otu_new %>%
+  rename(ASV = '#OTUID') %>%
+  pivot_longer(-ASV,names_to="SampleID", values_to ="reads")
+
+#Taxa table
+#"#OTUID"
+filename = paste(results_directory, "Qiime2_taxa.tsv", sep='')
+#check filename
+print(filename)
+
+taxa_new <- potu_new %>%
+  left_join(tax.c) %>%
+  select(-SampleID, -reads) %>%
+  distinct(ASV, .keep_all=TRUE) %>%
+  rename('#OTUID' = ASV) %>%
+  write_delim(filename, delim="\t")
+
+  
+#Metadata Table
+#SampleID
+filename = paste(results_directory, "Qiime2_meta.tsv", sep='')
+#check filename
+print(filename)
+
+samp.c %>%
+  select(SampleID,SAMPLING_cruise, depth ) %>%
+  filter(depth<=300) %>%
+  rename('#SampleID' = SampleID) %>%
+  write_delim(filename, delim="\t")
+```
+
+### DEICODE PCA
+
+### CHANGE PATH BELOW TO CD TO CORRECT DIRECTORY!!
+
+```{bash engine.opts='-l'}
+# move into the directory where you are going to run the DEICODE script
+cd /Users/kpitz/github/MBARI-BOG/CN19S_12S/Qiime_Results/Qiime_Results_lim
+pwd
+
+# Activate the conda qiime2 enviroment - check version
+conda activate qiime2-2021.11
+
+#Make biom file
+biom convert -i ./Qiime2_asv.tsv -o table.from_txt_json.biom --table-type="OTU table" --to-json
+#add metadata files to biom file - change the merged_tax_table_for_biomm.txt and _merged_for_biom.txt files
+biom add-metadata -i table.from_txt_json.biom -o table.w_md.biom --observation-metadata-fp Qiime2_taxa.tsv --sample-metadata-fp Qiime2_meta.tsv
+
+#import into Qiime2 - Change output file
+qiime tools import \
+--input-path table.w_md.biom \
+--output-path Project.biom.qza \
+--type FeatureTable[Frequency]
+
+#run DEICODE - change input table
+qiime deicode rpca \
+--i-table Project.biom.qza \
+--p-n-components 3 \
+--p-min-feature-count 20 \
+--p-min-sample-count 500 \
+--o-biplot ordination.qza \
+--o-distance-matrix distance.qza
+
+## Create biplot - change metadata files
+qiime emperor biplot \
+--i-biplot ordination.qza \
+--m-sample-metadata-file Qiime2_meta.tsv \
+--m-feature-metadata-file Qiime2_taxa.tsv \
+--o-visualization biplot.qzv \
+--p-number-of-features 8
+
+
+
+```
+
+
+### PLOT
+
+
+### make seasonal variables
+```{r}
+library(lubridate)
+meta <- samp.c %>% 
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  mutate(month =  month(time)) %>%
+  mutate(day =  day(time)) %>%
+  mutate(year =  year(time)) %>%
+  mutate(jday = yday(time)) %>%
+  mutate(month_char = as.character(month)) %>%
+  mutate(year_char = as.character(year)) %>%
+  mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
+                               depth >50 & depth <=100 ~ "50-100m",
+                               depth >100 & depth <=200 ~ "100-200m",
+                               depth >200 & depth <=300 ~ "200-300m",
+                               depth >300 & depth <=400 ~ "300-400m",
+                               depth >400 & depth <=500 ~ "400-500m",
+                               depth >400 & depth <=600 ~ "500-600m",
+                               depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
+                               )) 
+```
+
+```{r}
+library(magrittr)
+#project_meta %<>% rename(SampleID=sample_name)
+```
+
+###import data
+```{r}
+library(qiime2R)
+
+#Import Qiime2 Results
+file = paste(results_directory,"ordination.qza",sep="")
+print(file)
+pco<-read_qza(file)
+pco$uuid
+#look at data
+head(pco$data$ProportionExplained)
+pco$data$Vectors[1:5, 1:4]
+
+#create proportion explained labels
+label.PC1 <- paste("PC1: ", round(pco$data$ProportionExplained$PC1, 3)*100,"%")
+label.PC1
+label.PC2 <- paste("PC2: ", round(pco$data$ProportionExplained$PC2, 3)*100,"%")
+label.PC2
+label.PC3 <- paste("PC3: ", round(pco$data$ProportionExplained$PC3, 3)*100,"%")
+label.PC3
+
+#Join with sample data
+pcscores <- left_join(pco$data$Vectors, meta, by="SampleID")
+
+#format loading scores
+loadings <- as.data.frame(pco$data$Species)
+loadings$ASV <- loadings$FeatureID
+
+#join on OTU, adding taxa info
+loadings <- left_join(loadings, tax.c, by="ASV")
+
+#export pcscores
+file = paste(results_directory, "pcscores_",marker,"_Dada2_Qiime2.csv",sep="")
+print(file)
+write.csv(pcscores, file)
+file = paste(results_directory, "loadings_",marker,"_Dada2_Qiime2.csv",sep="")
+print(file)
+write.csv(loadings, file)
+pcscores[1:5, 1:9]  #long because of sample data
+head(loadings)
+```
+
+###Plot RPCA
+
+```{r}
+library(RColorBrewer)
+library(viridis)
+
+# by mean depth class
+p <- pcscores %>%
+  group_by(depth_bin) %>%
+  mutate(mPC1 = mean(PC1)) %>%
+  mutate(mPC2 = mean(PC2)) %>%
+  ungroup() %>%
+  ggplot(aes(PC1,PC2,color=fct_reorder(depth_bin ,depth))) +
+  geom_point(size=3, alpha=0.6, shape=16) +
+  geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "Depth Range" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_mean_DepthRange.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```
+
+### Diel
+
+```{r}
+p <- pcscores %>%
+  #group_by(depth_bin, diel) %>%
+  #mutate(mPC1 = mean(PC1)) %>%
+  #mutate(mPC2 = mean(PC2)) %>%
+  #ungroup() %>%
+  ggplot(aes(PC1,PC2,color=diel)) +
+  geom_point(size=3, alpha=0.6, shape=16) #+
+  #geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "Diel" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_diel.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```
+
+### PlateID
+
+```{r}
+p <- pcscores %>%
+  #group_by(depth_bin, diel) %>%
+  #mutate(mPC1 = mean(PC1)) %>%
+  #mutate(mPC2 = mean(PC2)) %>%
+  #ungroup() %>%
+  ggplot(aes(PC1,PC2,color=PlateID)) +
+  geom_point(size=3, alpha=0.6, shape=16) #+
+  #geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "PlateID" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_PlateID.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```

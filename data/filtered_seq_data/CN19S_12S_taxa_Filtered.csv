@@ -313,7 +313,6 @@ ASV_4123,Eukaryota,Chordata,Actinopteri,Perciformes,Liparidae,Liparis <bony fish
 ASV_4142,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_4204,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_4258,Eukaryota,Chordata,Actinopteri,Scombriformes,Scombridae,Scomber,unassigned
-ASV_4315,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_4330,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_4396,Eukaryota,Chordata,Mammalia,Cetacea,Delphinidae,g_,s_
 ASV_4441,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
@@ -353,10 +352,8 @@ ASV_5704,Eukaryota,Chordata,Actinopteri,Beryciformes,Melamphaidae,Scopelogadus,s
 ASV_5754,Eukaryota,Chordata,Actinopteri,Gobiiformes,Gobiidae,Lepidogobius,Lepidogobius lepidus
 ASV_5860,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
 ASV_5882,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
-ASV_5929,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_5932,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_5978,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti
-ASV_5994,Eukaryota,Chordata,Aves,Psittaciformes,Cacatuidae,Cacatua,Cacatua moluccensis
 ASV_6152,Eukaryota,Chordata,Actinopteri,Alepocephaliformes,Platytroctidae,Sagamichthys,Sagamichthys abei
 ASV_6167,Eukaryota,Chordata,Actinopteri,Scombriformes,Scombridae,Scomber,unassigned
 ASV_6200,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
@@ -407,7 +404,6 @@ ASV_9619,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Triphoturus,s
 ASV_9663,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,s_
 ASV_9765,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_10048,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
-ASV_10128,Eukaryota,Chordata,Chondrichthyes,Carcharhiniformes,Carcharhinidae,Prionace,Prionace glauca
 ASV_10220,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_10684,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys sordidus
 ASV_10973,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
@@ -440,7 +436,6 @@ ASV_28583,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engr
 ASV_28748,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_32856,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_35490,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
-ASV_35508,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_39376,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_41315,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,s_
 ASV_41333,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,s_
