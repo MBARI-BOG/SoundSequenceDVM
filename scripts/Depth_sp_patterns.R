@@ -73,6 +73,362 @@ species_label <- tax.c %>%
   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
                              TRUE ~ as.character(Species)))
 
+
+
+# Stenobrachius
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(hour=hour(time)) %>%
+  mutate(hour_char=as.character(hour)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_reads, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=diel, size=depth, shape=ESP))
+p
+filename = paste(directory, marker,'_NumASVs_NumReads_byDiel_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=PlateID, size=depth, shape=ESP))
+p
+filename = paste(directory, marker,'_NumASVs_NumReads_byPlateID_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=diel, size=sum_reads, shape=ESP))+
+  scale_y_reverse()
+  #geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_NumReads_throughtime_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=diel, size=sum_per_tot, shape=ESP))+
+  scale_y_reverse()
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_pertot_throughtime_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=sum_ASVs, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_sumASVs_throughtime_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=sum_reads, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_sumreads_throughtime_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=sum_per_tot, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_pertot_throughtime_Stenobrachius.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+# take max of each plate and then proportion of that max?
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(hour=hour(time)) %>%
+  mutate(hour_char=as.character(hour)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  group_by(PlateID) %>%
+  mutate(max_read_plate = max(sum_reads)) %>%
+  mutate(prop_read_plate = sum_reads/max_read_plate*100) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=prop_read_plate, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+filename = paste(directory, marker,'_pertot_throughtime_Stenobrachius_byplate.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+#look at distribution of proportion of reads by cast?
+#histogram at different time periods?
+p <-test %>% 
+  filter(depth<50) %>%
+  ggplot(aes(x = prop_read_plate, fill = diel))+ 
+  geom_histogram(position='dodge')
+p
+
+p <-test %>% 
+  filter((depth>50)&(depth<=100)) %>%
+  ggplot(aes(x = prop_read_plate, fill = diel))+ 
+  geom_histogram(position='dodge')
+p
+
+
+p <-test %>% 
+  filter((depth>200)&(depth<=500)) %>%
+  ggplot(aes(x = prop_read_plate, fill = diel))+ 
+  geom_histogram(position='dodge')
+p
+
+
+# Lipolagus
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(hour=hour(time)) %>%
+  mutate(hour_char=as.character(hour)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Lipolagus') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_reads, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=sum_reads, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+
+# Merluccius
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(hour=hour(time)) %>%
+  mutate(hour_char=as.character(hour)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Merluccius') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=per_tot, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+
+p <- test %>% ggplot(aes(x = depth, y = sum_per_tot))+ 
+  geom_point() %>%
+  facet_wrap(~ diel)
+  #geom_point(aes(color=fct_reorder(hour_char, hour), size=per_tot, shape=ESP))+
+  facet_wrap(~diel) %>%
+  #scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+  
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+    geom_point() +
+    facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+
+# p <- test %>% ggplot(aes(x = depth, y = prop_read_plate))+ 
+#   #geom_point(aes(color=fct_reorder(hour_char, hour), size=prop_read_plate, shape=ESP))+
+#   geom_point(aes(color=diel, size=prop_read_plate, shape=ESP))+
+#   stat_summary(aes(y = prop_read_plate,group=1), fun.y=mean, colour="red", geom="line",group=1)+
+#   #geom_line(aes(color=diel)) +
+#   scale_y_reverse()+
+#   scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+# p
+
+
+
+
+
+# Myctophid Reads and ASV Diversity
+
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Family == 'Myctophidae') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=4)
+p
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_reads, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=4)
+p
+
+#number of samples at each depth
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, fill=diel))+ 
+  geom_histogram() +
+  facet_wrap(~diel, ncol=1, nrow=4)
+p
+
+p <- test %>%
+  mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
+                               (depth >50 & depth <=100) ~ "50-100m",
+                               (depth >100 & depth <=300) ~ "50-100m",
+                               (depth >300 & depth <=400) ~ "50-100m",
+                               (depth >400 & depth <=500) ~ "50-100m",
+                               (depth >500 & depth <=750) ~ "50-100m", TRUE ~ "unknown"
+                               )) %>%
+  filter(depth>=0) %>%
+  ggplot(aes(x = depth_bin, y = sum_reads)) +
+  geom_boxplot(aes(fill=diel)) +
+  geom_point()
+p
+
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=diel))
+p
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=diel, size=depth, shape=ESP))
+p
+filename = paste(directory, marker,'_NumASVs_NumReads_byDiel_Myctophidae.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
+  geom_point(aes(color=PlateID, size=depth, shape=ESP))
+p
+filename = paste(directory, marker,'_NumASVs_NumReads_byPlateID_Myctophidae.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_per_tot))+ 
+  geom_point(aes(color=PlateID, size=depth, shape=ESP))
+p
+filename = paste(directory, marker,'_NumASVs_PerReads_byPlateID_Myctophidae.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+# Anchovy Reads and ASV Diversity -------
 #how does # of ASVs correspond with # of reads? Per_tot? w/depth and time
 test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
   mutate(time = mdy_hm(local_time)) %>%
@@ -90,6 +446,21 @@ test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_l
   mutate(sum_per_tot = sum(per_tot)) %>%
   ungroup() %>%
   distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=4)
+p
+
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_reads, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=4)
+p
+
 
 p <- test %>% ggplot(aes(x = sum_ASVs, y = sum_reads))+ 
   geom_point(aes(color=diel))
