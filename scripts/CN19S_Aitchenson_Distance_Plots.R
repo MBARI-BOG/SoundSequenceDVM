@@ -77,6 +77,30 @@ species_label <- tax.c %>%
 # Modify Metadata ---------------------------------------------------------
 library(magrittr)
 library(lubridate)
+# meta <- samp.c %>% 
+#   mutate(time = mdy_hm(local_time)) %>%
+#   mutate(time_since = as.numeric(time)) %>%
+#   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+#                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+#                          TRUE~'CTD')) %>%
+#   mutate(month =  month(time)) %>%
+#   mutate(day =  day(time)) %>%
+#   mutate(year =  year(time)) %>%
+#   mutate(jday = yday(time)) %>%
+#   mutate(month_char = as.character(month)) %>%
+#   mutate(year_char = as.character(year)) %>%
+#   mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
+#                                depth >50 & depth <=100 ~ "50-100m",
+#                                depth >100 & depth <=200 ~ "100-200m",
+#                                depth >200 & depth <=300 ~ "200-300m",
+#                                depth >300 & depth <=400 ~ "300-400m",
+#                                depth >400 & depth <=500 ~ "400-500m",
+#                                depth >400 & depth <=600 ~ "500-600m",
+#                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
+#   )) 
+
+#different depth bins
+#most migratory organisms from 250-400m
 meta <- samp.c %>% 
   mutate(time = mdy_hm(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
@@ -91,9 +115,8 @@ meta <- samp.c %>%
   mutate(year_char = as.character(year)) %>%
   mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
                                depth >50 & depth <=100 ~ "50-100m",
-                               depth >100 & depth <=200 ~ "100-200m",
-                               depth >200 & depth <=300 ~ "200-300m",
-                               depth >300 & depth <=400 ~ "300-400m",
+                               depth >100 & depth <=250 ~ "100-250m",
+                               depth >250 & depth <=400 ~ "250-400m",
                                depth >400 & depth <=500 ~ "400-500m",
                                depth >400 & depth <=600 ~ "500-600m",
                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
