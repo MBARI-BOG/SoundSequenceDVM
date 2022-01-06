@@ -831,6 +831,57 @@ for (val in phyla) {
 }
 
 
+library(stringr)
+#how does # of ASVs correspond with # of reads? Per_tot? w/depth and time
+#merge ASVS with same taxonomy
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') 
+  
+  
+test %>% 
+  #filter(reads>10) %>%
+  ggplot(aes(y=depth, x=per_tot, color=diel))+
+  geom_point()+
+  stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20, aes(color=diel))+
+  #geom_smooth(aes(color=diel),method = 'loess') +
+  #geom_smooth(aes(color=diel)) +
+  scale_y_reverse()+
+  #scale_x_discrete(position = "top") 
+  scale_x_continuous(position="top")+
+  labs(x='Percent Total Reads', y="Depth(m)")#+
+  #coord_flip()
+
+  
+test %>% ggplot(aes(y=depth, x=per_tot))+
+  geom_point()
+  
+  
+  
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+
+
+
+
 
 
 ### Species profiles with depth ------
