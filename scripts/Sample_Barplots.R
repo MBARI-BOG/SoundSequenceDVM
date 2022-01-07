@@ -830,6 +830,8 @@ for (val in phyla) {
   
 }
 
+#stat summary and geom smooth showing distribution of organisms:
+#percent of total reads
 
 library(stringr)
 #how does # of ASVs correspond with # of reads? Per_tot? w/depth and time
@@ -841,7 +843,8 @@ test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_l
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
                          TRUE~'CTD')) %>%
   inner_join(species_label,  by = c("ASV")) %>%
-  filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Stenobrachius') %>%
+  filter(Genus == 'Diaphus') %>%
   group_by(Genus, SampleID) %>%
   mutate(per_tot = sum(per_tot)) %>%
   mutate(reads = sum(reads)) %>%
@@ -851,17 +854,274 @@ test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_l
   
   
 test %>% 
+  filter(diel !='transition') %>%
   #filter(reads>10) %>%
-  ggplot(aes(y=depth, x=per_tot, color=diel))+
+  ggplot(aes(x=depth, y=per_tot, color=diel, fill=diel))+
   geom_point()+
-  stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20, aes(color=diel))+
+  stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20,  geom='bar', alpha=0.4)+
+  stat_summary(geom = "errorbar")+
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 40, aes(color=diel), geom='line')
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20, aes(color=diel))#+
   #geom_smooth(aes(color=diel),method = 'loess') +
-  #geom_smooth(aes(color=diel)) +
-  scale_y_reverse()+
+  geom_smooth()
+  #scale_y_reverse()+
   #scale_x_discrete(position = "top") 
-  scale_x_continuous(position="top")+
-  labs(x='Percent Total Reads', y="Depth(m)")#+
+  #scale_x_continuous(position="top")+
+  #labs(x='Percent Total Reads', y="Depth(m)")#+
   #coord_flip()
+
+# look at number of reads:
+test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') 
+
+
+test %>% 
+  filter(diel !='transition') %>%
+  #filter(reads>10) %>%
+  ggplot(aes(x=depth, y=reads, color=diel, fill=diel))+
+  geom_point()+
+  stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20,  geom='bar', alpha=0.4)+
+  stat_summary(geom = "errorbar")+
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 40, aes(color=diel), geom='line')
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20, aes(color=diel))#+
+  #geom_smooth(aes(color=diel),method = 'loess') +
+  geom_smooth()
+#scale_y_reverse()+
+#scale_x_discrete(position = "top") 
+#scale_x_continuous(position="top")+
+#labs(x='Percent Total Reads', y="Depth(m)")#+
+#coord_flip()
+
+# go cast by cast and look at distribution through time.
+
+test <- inner_join(potu.c, samp.c %>% select(SampleID, SAMPLING_station,SAMPLING_station_number,depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  #filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
+  filter(Genus == 'Engraulis') %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') 
+
+
+test %>% 
+  filter(SAMPLING_station_number >=1) %>%
+  arrange(SAMPLING_station_number) %>%
+  mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+  unite(label, SAMPLING_station_number,local_time, SAMPLING_station,sep='_') %>%
+  ggplot(aes(x=depth, y=per_tot, fill=diel, color=diel))+
+  geom_bar(stat='identity')+
+  geom_point()+
+  coord_flip()+
+  scale_x_reverse()+
+  facet_wrap(.~label, nrow=2)
+
+filename = paste(directory, marker,'_Engraulis_casts_pertot.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =20, units = 'in')
+
+
+# By reads?
+# go cast by cast and look at distribution through time.
+
+test <- inner_join(potu.c, samp.c %>% select(SampleID, SAMPLING_station,SAMPLING_station_number,depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
+  #filter(Genus == 'Engraulis') %>%
+  filter(reads>1) %>%
+  mutate(ASVs=1) %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  mutate(ASVs= sum(ASVs)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') 
+
+
+test %>% 
+  filter(SAMPLING_station_number >=1) %>%
+  arrange(SAMPLING_station_number) %>%
+  mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+  unite(label, SAMPLING_station_number,local_time, SAMPLING_station,sep='_') %>%
+  ggplot(aes(x=depth, y=ASVs, fill=diel, color=diel))+
+  geom_bar(stat='identity')+
+  geom_point()+
+  coord_flip()+
+  scale_x_reverse()+
+  facet_wrap(.~label, nrow=2)
+
+filename = paste(directory, marker,'_Stenobrachius_casts_ASVs_2reads.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 8, width =20, units = 'in')
+
+# Just MARS Casts, through time, showing depth 'center' of abundance?
+test <- inner_join(potu.c, samp.c %>% select(SampleID, SAMPLING_station,SAMPLING_station_number,depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
+  #filter(Genus == 'Engraulis') %>%
+  #filter(reads>1) %>%
+  #mutate(ASVs=1) %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  #mutate(ASVs= sum(ASVs)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') %>%
+  filter(SAMPLING_station_number >=1) %>%
+  filter(SAMPLING_station=='MARS') %>%
+  arrange(SAMPLING_station_number) %>%
+  mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+  mutate(local_time = mdy_hm(local_time))
+
+center <- test %>%
+  #group_by(SampleID) %>%
+  mutate(value = depth*per_tot) %>%
+  mutate(count=1) %>%
+  #ungroup() %>%
+  group_by(SAMPLING_station_number) %>%
+  mutate(sum_value = sum(value)) %>%
+  #mutate(count_value = sum(count)) %>%
+  mutate(count_value = sum(per_tot)) %>%
+  mutate(mean_depth2 = sum_value/count_value) %>%
+  #mutate(mean_depth = mean(value)) %>%
+  distinct(SAMPLING_station_number, .keep_all=TRUE) %>%
+  select(mean_depth2, local_time)
+  
+
+test %>%
+  left_join(center) %>%
+  filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+  #unite(label, SAMPLING_station_number,local_time, SAMPLING_station,sep='_') %>%
+  ggplot(aes(y=depth, x=local_time))+
+  #geom_bar(stat='identity')+
+  geom_point(aes(size=per_tot, color=diel))+
+  geom_point(aes(y=mean_depth2,size=1),color='black')+
+  geom_line(aes(y=mean_depth2), color='black', size=1, linetype = "dashed") +
+  #geom_line(data = center, aes(x=local_time, y=mean_depth2)) %>%
+  #coord_flip()+
+  scale_y_reverse()
+
+filename = paste(directory, marker,'_Stenobrachius_casts_throughtime.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 5, width =10, units = 'in')
+
+## Try Other species:
+test <- inner_join(potu.c, samp.c %>% select(SampleID, SAMPLING_station,SAMPLING_station_number,depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  #filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
+  filter(Genus == 'Engraulis') %>%
+  #filter(reads>1) %>%
+  #mutate(ASVs=1) %>%
+  group_by(Genus, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  #mutate(ASVs= sum(ASVs)) %>%
+  ungroup() %>%
+  distinct(Genus, SampleID, .keep_all=TRUE) %>%
+  filter(ESP!='Bongo') %>%
+  filter(SAMPLING_station_number >=1) %>%
+  filter(SAMPLING_station=='MARS') %>%
+  arrange(SAMPLING_station_number) %>%
+  mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+  mutate(local_time = mdy_hm(local_time))
+
+center <- test %>%
+  #group_by(SampleID) %>%
+  mutate(value = depth*per_tot) %>%
+  mutate(count=1) %>%
+  #ungroup() %>%
+  group_by(SAMPLING_station_number) %>%
+  mutate(sum_value = sum(value)) %>%
+  #mutate(count_value = sum(count)) %>%
+  mutate(count_value = sum(per_tot)) %>%
+  mutate(mean_depth2 = sum_value/count_value) %>%
+  #mutate(mean_depth = mean(value)) %>%
+  distinct(SAMPLING_station_number, .keep_all=TRUE) %>%
+  select(mean_depth2, local_time)
+
+
+test %>%
+  left_join(center) %>%
+  filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+  #unite(label, SAMPLING_station_number,local_time, SAMPLING_station,sep='_') %>%
+  ggplot(aes(y=depth, x=local_time))+
+  #geom_bar(stat='identity')+
+  geom_point(aes(size=per_tot, color=diel))+
+  geom_point(aes(y=mean_depth2,size=1),color='black')+
+  geom_line(aes(y=mean_depth2), color='black', size=1, linetype = "dashed") +
+  #geom_line(data = center, aes(x=local_time, y=mean_depth2)) %>%
+  #coord_flip()+
+  scale_y_reverse()
+
+filename = paste(directory, marker,'_Engraulis_casts_throughtime.png', sep='')
+print(var)
+filename
+ggsave(filename,height = 5, width =10, units = 'in')
+
+
+### Working on BELOW ####
+
+  facet_grid(.~SAMPLING_station_number)
+  #facet_grid(local_time ~.)
+
+
+
+  #facet_grid(. ~SAMPLING_station_number)
+  #facet_grid(SAMPLING_station_number ~ .)
+  
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20,  geom='bar', alpha=0.4)+
+  #stat_summary(geom = "errorbar")+
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 40, aes(color=diel), geom='line')
+  #stat_summary_bin(fun.data = "mean_cl_boot", binwidth = 20, aes(color=diel))#+
+  #geom_smooth(aes(color=diel),method = 'loess') +
+  #geom_smooth()
+
+
+
 
   
 test %>% ggplot(aes(y=depth, x=per_tot))+
