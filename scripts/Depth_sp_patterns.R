@@ -75,6 +75,102 @@ species_label <- tax.c %>%
 
 
 
+# Limit by Taxa and Depth -------------------------------------------------
+
+
+limit_by_taxonomy <- function(taxa, potu) {
+  new_potu <- left_join(taxa, potu) %>%
+    select(ASV, SampleID, reads) %>%
+    filter(reads>0)
+  return(new_potu)
+}
+
+#can't return multiple objects, have to do it as a list
+limit_by_meta <- function(meta, taxa, potu) {
+  new_potu <- left_join(meta %>% select(SampleID), potu) %>%
+    filter(reads>0)
+  new_taxa <- left_join(new_potu %>% select(ASV), taxa)
+  out <- list(new_potu, new_taxa)
+  return(out)
+}
+
+#limit by taxonomy
+taxa_filt <- tax.c %>%
+  filter(Family!='Engraulidae') %>%
+  filter(Family!='Merlucciidae')
+
+potu_filt <- limit_by_taxonomy(taxa_filt, potu.c)
+
+meta_filt <- samp.c %>%
+  filter(depth <600)
+
+out <- limit_by_meta(meta_filt, taxa_new, potu_filt) 
+potu_filt <- out[[1]]
+taxa_filt <- out[[2]]
+
+
+
+
+
+
+
+
+#ASV table
+test <- left_join(taxa_new, potu.c) %>%
+  select(ASV, SampleID, reads) %>%
+  
+
+
+
+otu_new <- left_join(taxa_new, potu.c) %>%
+  select(ASV, SampleID, reads) %>%
+  pivot_wider(id_cols=ASV, names_from = SampleID, values_from = reads) %>%
+  mutate(sum = rowSums(across(where(is.numeric)))) %>%
+  filter(sum>0) %>%
+  select(-sum)
+
+#OTU table long format with percent total reads
+potu_new <- otu_new %>%
+  tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
+  group_by(SampleID) %>%
+  mutate(per_tot = reads / sum(reads) *100) %>%
+  ungroup() %>%
+  arrange(-reads)
+head(potu_new)
+
+#by depth
+otu_new <- left_join(meta, potu_new) %>%
+  filter(depth<600) %>%
+  filter(depth>=0) %>%
+  select(ASV, SampleID, reads) %>%
+  pivot_wider(id_cols=ASV, names_from = SampleID, values_from = reads) %>%
+  rename('#OTUID' = ASV) %>%
+  mutate(sum = rowSums(across(where(is.numeric)))) %>%
+  filter(sum>0) %>%
+  select(-sum)
+
+#Taxa table
+taxa_new <- potu_new %>%
+  left_join(taxa_new) %>%
+  select(-SampleID, -reads) %>%
+  distinct(ASV, .keep_all=TRUE)
+
+#Metadata Table
+samp.c %>%
+  select(SampleID,SAMPLING_cruise, depth ) %>%
+  filter(depth<600) %>%
+  filter(depth>=0) %>%
+  rename('#SampleID' = SampleID) %>%
+  write_delim(filename, delim="\t")
+
+
+
+
+# Plot --------------------------------------------------------------------
+
+
+
+
 # Stenobrachius
 test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
   mutate(time = mdy_hm(local_time)) %>%
