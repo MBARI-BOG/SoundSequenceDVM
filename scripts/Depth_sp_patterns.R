@@ -54,6 +54,7 @@ potu.c <- otu.c %>%
   tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
   group_by(SampleID) %>%
   mutate(per_tot = reads / sum(reads) *100) %>%
+  ungroup() %>%
   arrange(-reads)
 head(potu.c)
 
@@ -77,10 +78,12 @@ species_label <- tax.c %>%
 
 # Limit by Taxa and Depth -------------------------------------------------
 
-
 limit_by_taxonomy <- function(taxa, potu) {
   new_potu <- left_join(taxa, potu) %>%
     select(ASV, SampleID, reads) %>%
+    group_by(SampleID) %>%
+    mutate(per_tot = reads / sum(reads) *100) %>%
+    ungroup() %>%
     filter(reads>0)
   return(new_potu)
 }
@@ -109,67 +112,64 @@ potu_filt <- out[[1]]
 taxa_filt <- out[[2]]
 
 
-
-
-
-
-
-
-#ASV table
-test <- left_join(taxa_new, potu.c) %>%
-  select(ASV, SampleID, reads) %>%
-  
-
-
-
-otu_new <- left_join(taxa_new, potu.c) %>%
-  select(ASV, SampleID, reads) %>%
-  pivot_wider(id_cols=ASV, names_from = SampleID, values_from = reads) %>%
-  mutate(sum = rowSums(across(where(is.numeric)))) %>%
-  filter(sum>0) %>%
-  select(-sum)
-
-#OTU table long format with percent total reads
-potu_new <- otu_new %>%
-  tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
-  group_by(SampleID) %>%
-  mutate(per_tot = reads / sum(reads) *100) %>%
-  ungroup() %>%
-  arrange(-reads)
-head(potu_new)
-
-#by depth
-otu_new <- left_join(meta, potu_new) %>%
-  filter(depth<600) %>%
-  filter(depth>=0) %>%
-  select(ASV, SampleID, reads) %>%
-  pivot_wider(id_cols=ASV, names_from = SampleID, values_from = reads) %>%
-  rename('#OTUID' = ASV) %>%
-  mutate(sum = rowSums(across(where(is.numeric)))) %>%
-  filter(sum>0) %>%
-  select(-sum)
-
-#Taxa table
-taxa_new <- potu_new %>%
-  left_join(taxa_new) %>%
-  select(-SampleID, -reads) %>%
-  distinct(ASV, .keep_all=TRUE)
-
-#Metadata Table
-samp.c %>%
-  select(SampleID,SAMPLING_cruise, depth ) %>%
-  filter(depth<600) %>%
-  filter(depth>=0) %>%
-  rename('#SampleID' = SampleID) %>%
-  write_delim(filename, delim="\t")
-
-
-
-
 # Plot --------------------------------------------------------------------
 
+# Stenobrachius
+test <- inner_join(potu_filt, 
+                   meta_filt %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  
+                   by = c("SampleID")) %>%
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(hour=hour(time)) %>%
+  mutate(hour_char=as.character(hour)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         TRUE~'CTD')) %>%
+  inner_join(species_label,  by = c("ASV")) %>%
+  filter(Genus == 'Stenobrachius') %>%
+  filter(reads>1) %>%
+  mutate(count=1) %>%
+  group_by(SampleID) %>%
+  mutate(sum_ASVs = sum(count)) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID,.keep_all=TRUE)
+
+p <- test %>% ggplot(aes(x = time, y = depth))+ 
+  geom_point(aes(color=fct_reorder(hour_char, hour), size=per_tot, shape=ESP))+
+  scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
+
+p <- test %>% ggplot(aes(x = depth, y = sum_per_tot))+ 
+  geom_point() %>%
+  facet_wrap(~ diel)
+#geom_point(aes(color=fct_reorder(hour_char, hour), size=per_tot, shape=ESP))+
+facet_wrap(~diel) %>%
+  #scale_y_reverse()+
+  scale_color_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)
+#geom_point(aes(color=diel, size=sum_reads, shape=diel))
+p
 
 
+p <- test %>%
+  filter(depth >=0 ) %>%
+  ggplot(aes(x = depth, y = sum_per_tot, shape=ESP, color=PlateID))+ 
+  geom_point() +
+  facet_wrap(~diel, ncol=1, nrow=3)
+p
+
+
+
+
+
+
+
+
+
+# Plot Unfiltered ---------------------------------------------------------
 
 # Stenobrachius
 test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
