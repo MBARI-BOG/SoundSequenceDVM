@@ -217,12 +217,19 @@ ggsave(filename,height = 8, width =10, units = 'in')
 
 # Stacked Bar by Cast -----------------------------------------------------
 
+
 taxas <- c('Class','Order', 'Family', 'Genus', 'Species')
 #### Percent Reads
 for (val in taxas) {
   taxa_level = sym(val)
-  top_taxa <- potu_filt %>%
-    full_join(species_label) %>%
+  
+  
+  
+  top_taxa <- inner_join(potu_filt, meta_filt,  by = c("SampleID")) %>% #join with metadata
+    left_join(species_label,  by = c("ASV")) %>%
+    filter(SAMPLING_station_number >=1) %>%
+    filter(SAMPLING_station=='MARS') %>%
+    filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
     # filter(!!taxa_level != 'Unknown') %>%
     # filter(!!taxa_level !='no_hit') %>%
     filter(!!taxa_level !='unassigned') %>%
@@ -237,13 +244,13 @@ for (val in taxas) {
     #print(n = Inf) %>%
     ungroup() %>%
     select(!!taxa_level, sum_per_tot) %>%
-    top_n(10)
+    top_n(15)
   
   # assign text colour
   textcol <- "grey40"
   print("Begin plotting...")
   bp_top <- inner_join(potu_filt, meta_filt,  by = c("SampleID")) %>% #join with metadata
-    inner_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+    left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
     right_join(top_taxa) %>% #limit to top taxa
     filter(SAMPLING_station_number >=1) %>%
     filter(SAMPLING_station=='MARS') %>%
@@ -251,8 +258,8 @@ for (val in taxas) {
     mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
     filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
     ggplot(aes(x=depth, y=per_tot))+
-    geom_bar(aes( y=1),stat='identity', fill = "grey",alpha=0.4, width=10)+
-    geom_bar(stat='identity', aes(fill = !!taxa_level), width=10)+
+    geom_bar(aes( y=1),stat='identity', fill = "grey",alpha=0.8, width=20)+
+    geom_bar(stat='identity', aes(fill = !!taxa_level), width=20)+
     coord_flip()+
     scale_x_reverse()+
     facet_wrap(~ SAMPLING_station_number)+
