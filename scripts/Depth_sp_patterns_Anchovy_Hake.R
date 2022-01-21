@@ -103,9 +103,9 @@ limit_by_meta <- function(meta, taxa, potu) {
 }
 
 #limit by taxonomy
-taxa_filt <- tax.c %>%
-  filter(Family!='Engraulidae') %>%
-  filter(Family!='Merlucciidae')
+taxa_filt <- tax.c #%>%
+  #filter(Family!='Engraulidae') %>%
+  #filter(Family!='Merlucciidae')
 
 potu_filt <- limit_by_taxonomy(taxa_filt, potu.c)
 
@@ -145,8 +145,9 @@ potu_filt %>%
 # Need to show all samples taken - zero is meaningful
 # Plus column for amount of specific taxa
 
-taxas = c('Stenobrachius','Lipolagus', 'Diaphus',
-          'Sebastes', 'Leuroglossus', 'Nannobrachium', 'Sardinops', 'Scomber')
+# taxas = c('Stenobrachius','Lipolagus', 'Diaphus',
+#           'Sebastes', 'Leuroglossus', 'Nannobrachium', 'Sardinops', 'Scomber')
+taxas = c('Engraulis', 'Merluccius')
 for (val in taxas) {
   taxa_level = sym(val)
   test <- left_join(potu_filt, meta_filt %>% 
@@ -207,7 +208,7 @@ for (val in taxas) {
     scale_color_manual(values = c("darkgoldenrod1", "deepskyblue", "chartreuse2"))+
     scale_y_reverse()
   
-  filename = paste(directory, marker,'_',taxa_level, '_casts_throughtime_nohake_noanch.png', sep='')
+  filename = paste(directory, marker,'_',taxa_level, '_casts_throughtime_hake_anch.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 5, width =10, units = 'in')
@@ -229,7 +230,7 @@ for (val in taxas) {
     #day night transition
     scale_fill_manual(values = c("darkgoldenrod1", "deepskyblue", "chartreuse2"))
   
-  filename = paste(directory, marker,'_',taxa_level,'_bycast_nohake_noanch.png', sep='')
+  filename = paste(directory, marker,'_',taxa_level,'_bycast_hake_anch.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -303,7 +304,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_bar_bycast.png', sep='')
+  filename = paste(directory, marker,'_top10',taxa_level,'_bar_bycast_Anch_Hake.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -349,7 +350,7 @@ bp_top <- left_join(potu_filt, meta_filt,  by = c("SampleID")) %>% #join with me
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 bp_top
-filename = paste(directory, marker,'_reads_bycast.png', sep='')
+filename = paste(directory, marker,'_reads_bycast_Anch_Hake.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 8, width =10, units = 'in')
@@ -359,10 +360,10 @@ ggsave(filename,height = 8, width =10, units = 'in')
 # Center of Relative Abundance ---------------------------------------------------
 
 #above 200m and >= 200m?
-taxas = c('Stenobrachius','Lipolagus', 'Diaphus',
-          'Sebastes', 'Leuroglossus', 'Nannobrachium', 'Sardinops', 'Scomber')
+# taxas = c('Stenobrachius','Lipolagus', 'Diaphus',
+#           'Sebastes', 'Leuroglossus', 'Nannobrachium', 'Sardinops', 'Scomber')
 #taxas = c('Stenobrachius')
-
+taxas = c('Engraulis', 'Merluccius')
 for (val in taxas) {
   taxa_level = sym(val)
   test <- left_join(potu_filt, meta_filt %>% 
@@ -411,7 +412,7 @@ for (val in taxas) {
     scale_color_manual(values = c("darkgoldenrod1", "deepskyblue", "chartreuse2"))+
     ylim(0,100)
   
-  filename = paste(directory, marker,'_',taxa_level,'_bycast_nohake_noanch_boxplot.png', sep='')
+  filename = paste(directory, marker,'_',taxa_level,'_bycast_hake_anch_boxplot.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
