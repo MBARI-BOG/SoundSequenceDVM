@@ -112,7 +112,7 @@ potu_filt <- limit_by_taxonomy(taxa_filt, potu.c)
 meta_filt <- samp.c %>%
   filter(depth <600)
 
-out <- limit_by_meta(meta_filt, taxa_new, potu_filt) 
+out <- limit_by_meta(meta_filt, taxa_filt, potu_filt) 
 potu_filt <- out[[1]]
 taxa_filt <- out[[2]]
 

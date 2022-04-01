@@ -152,6 +152,7 @@ meta <- samp.c %>%
   mutate(time_since = as.numeric(time)) %>%
   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         str_detect(SampleID, '_V')==TRUE ~'ROV',
                          TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
   mutate(day =  day(time)) %>%
@@ -276,7 +277,33 @@ filename
 ggsave(filename,height = 5, width =7, units = 'in')
 
 ```
+# Sample Type
 
+```{r}
+p <- pcscores %>%
+  #group_by(depth_bin, diel) %>%
+  #mutate(mPC1 = mean(PC1)) %>%
+  #mutate(mPC2 = mean(PC2)) %>%
+  #ungroup() %>%
+  ggplot(aes(PC1,PC2,color=ESP)) +
+  geom_point(size=3, alpha=0.6, shape=16) #+
+  #geom_point(size=7, shape=16, aes(x=mPC1, y=mPC2))
+
+p+labs(x=label.PC1 , y=label.PC2, colour = "Sample Type" )+ ggtitle(marker)+
+  #theme_minimal()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 10, colour = "black"),
+        legend.title = element_text(face = "bold", size=12),
+        legend.key = element_rect(fill = FALSE, colour = FALSE),
+        legend.key.size = unit(0.1,"line")
+  )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+
+filename = paste(plot_dir, 'RPCA_',marker,'_PC1PC2_samptype.png', sep='')
+filename
+ggsave(filename,height = 5, width =7, units = 'in')
+
+```
 
 
 # Run for a limited series of samples:
@@ -542,6 +569,7 @@ meta <- samp.c %>%
   mutate(time_since = as.numeric(time)) %>%
   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         str_detect(SampleID, '_V')==TRUE ~'ROV',
                          TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
   mutate(day =  day(time)) %>%
@@ -929,11 +957,9 @@ cluster_plot <- ggplot() +
 ```
 
 # For Taxonomy:
-
 ```{r}
-#bar plots
-
 potu_new2 <- otu_new %>%
+  rename(ASV = `#OTUID`) %>%
   tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
   group_by(SampleID) %>%
   mutate(per_tot = reads / sum(reads) *100) %>%
@@ -941,7 +967,13 @@ potu_new2 <- otu_new %>%
   arrange(-reads)
 head(potu_new2)
 
+taxa_new %<>% rename(ASV = `#OTUID`)
+taxa_new
+```
 
+
+```{r}
+#bar plots
 taxa_level = sym('Genus')
 top_taxa <- potu_new2 %>%
   full_join(taxa_new ) %>%
@@ -1180,9 +1212,9 @@ ggsave(filename,height = 6, width =10, units = 'in')
 ```
 # Taxonomy and depth
 ```{r}
-taxa_new <- taxa_new %>% rename(ASV=`#OTUID`) %>% select(-per_tot)
-taxa_new <- taxa_new %>% select(-per_tot)
-
+#taxa_new <- taxa_new %>% rename(ASV=`#OTUID`) %>% select(-per_tot)
+#taxa_new <- taxa_new %>% select(-per_tot)
+potu_new2
 ```
 
 
@@ -1190,7 +1222,7 @@ taxa_new <- taxa_new %>% select(-per_tot)
 #bar plots
 
 taxa_level = sym('Genus')
-top_taxa <- potu_new %>%
+top_taxa <- potu_new2 %>%
   full_join(taxa_new ) %>%
   # filter(!!taxa_level != 'Unknown') %>%
   # filter(!!taxa_level !='no_hit') %>%
@@ -1213,7 +1245,7 @@ top_taxa <- potu_new %>%
 library(ggthemes)
 textcol <- "grey40"
 print("Begin plotting...")
-bp_top <- inner_join(potu_new, tree_data,  by = c("SampleID")) %>% #join with metadata
+bp_top <- inner_join(potu_new2, tree_data,  by = c("SampleID")) %>% #join with metadata
   inner_join(taxa_new ,  by = c("ASV")) %>%  #join with taxonomy
   #make taxa label
   unite(taxa_label, Class, Order, Family, Genus, sep='_') %>%

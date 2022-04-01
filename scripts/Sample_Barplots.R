@@ -15,7 +15,7 @@ library(magrittr)
 library(tidyr)
 library(RColorBrewer) #colors for plotting
 library(forcats) 
-
+library(stringr)
 marker = sym("12S")
 
 # Import Data -------------------------------------------------------------
@@ -77,6 +77,7 @@ meta <- samp.c %>%
   mutate(time_since = as.numeric(time)) %>%
   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         str_detect(SampleID, '_V')==TRUE ~'ROV',
                          TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
   mutate(day =  day(time)) %>%
@@ -210,7 +211,7 @@ for (val in taxas) {
   filename = paste(directory, marker,'_top10',taxa_level,'_bar_rawreads.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
-  ggsave(filename,height = 6, width =10, units = 'in')
+  ggsave(filename,height = 6, width =20, units = 'in')
 }
 # Plot Top Taxa Compositionally --------------------------------------
 
@@ -379,11 +380,11 @@ for (val in phyla) {
   filename = paste(directory, marker,'_top10sp_bar_',var,'_comp.png', sep='')
   print(var)
   filename
-  ggsave(filename,height = 8, width =10, units = 'in')
+  ggsave(filename,height = 8, width =20, units = 'in')
   filename = paste(directory, marker,'_top20sp_bar_',var,'_comp.svg', sep='')
   print(var)
   filename
-  ggsave(filename,height = 8, width =10, units = 'in')
+  ggsave(filename,height = 8, width =20, units = 'in')
   
   #Split by Diel group
   top_taxa <- inner_join(potu.c, samp.c,  by = c("SampleID")) %>%
@@ -830,21 +831,20 @@ for (val in phyla) {
   
 }
 
+
+# SCRAP BELOW ###########
+
 #stat summary and geom smooth showing distribution of organisms:
 #percent of total reads
 
-library(stringr)
 #how does # of ASVs correspond with # of reads? Per_tot? w/depth and time
 #merge ASVS with same taxonomy
-test <- inner_join(potu.c, samp.c %>% select(SampleID, depth, local_time, time_label,diel, PlateID),  by = c("SampleID")) %>%
+test <- inner_join(potu.c, meta %>% select(SampleID, depth, local_time, time_label,diel, PlateID, ESP),  by = c("SampleID")) %>%
   mutate(time = mdy_hm(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
-  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
-                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
-                         TRUE~'CTD')) %>%
   inner_join(species_label,  by = c("ASV")) %>%
-  #filter(Genus == 'Stenobrachius') %>%
-  filter(Genus == 'Diaphus') %>%
+  filter(Genus == 'Stenobrachius') %>%
+  #filter(Genus == 'Diaphus') %>%
   group_by(Genus, SampleID) %>%
   mutate(per_tot = sum(per_tot)) %>%
   mutate(reads = sum(reads)) %>%

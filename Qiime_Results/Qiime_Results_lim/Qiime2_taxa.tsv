@@ -1,348 +1,530 @@
-#OTUID	per_tot	Kingdom	Phylum	Class	Order	Family	Genus	Species
-ASV_123	87.04346560791569	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
-ASV_17	99.31192102895767	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_42	93.4273276976333	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
-ASV_12	75.32529167490607	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_178	90.49380780686627	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone acclinidens
-ASV_262	95.849201635163	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_14	97.76420507125671	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_160	99.5016077170418	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_428	79.23556519381947	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_40	44.393497290537724	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_19	69.89421281891724	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_24	55.33256312922925	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_141	90.61797087723453	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_46	23.258849120031638	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
-ASV_72	42.46420222092343	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
-ASV_38	99.5580808080808	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_116	99.6039056742815	Eukaryota	Chordata	Actinopteri	Beryciformes	Melamphaidae	Scopelogadus	s_
-ASV_624	67.98426618519474	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
-ASV_662	45.8477675134719	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_51	48.499866773248065	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_172	53.46504924333414	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Lyopsetta	Lyopsetta exilis
-ASV_89	36.15708146658133	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
-ASV_61	45.71669375714888	Eukaryota	Chordata	Actinopteri	Lampriformes	Trachipteridae	Trachipterus	unassigned
-ASV_790	99.70137097868876	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Holtbyrnia	s_
-ASV_69	60.20859407592825	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_795	95.93846984212658	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_329	32.18432842644235	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_814	18.84918492928857	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
-ASV_774	43.1978912176932	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_831	21.086885779368693	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_39	27.45272997663055	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_767	26.857412491420728	Eukaryota	Chordata	Actinopteri	Myctophiformes	Neoscopelidae	Scopelengys	Scopelengys tristis
-ASV_798	57.63446812436571	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_53	23.499691453255167	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
-ASV_611	45.910209102091024	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_697	44.557195571955724	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
-ASV_937	38.696438508625484	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_989	21.476453118370813	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_964	32.79751101892663	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
-ASV_1040	82.82864267901674	Eukaryota	Chordata	Actinopteri	Lampriformes	Trachipteridae	Trachipterus	unassigned
-ASV_16	12.952888390353337	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_1045	18.74009347693558	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1052	29.49445447510962	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
-ASV_306	38.28557063851182	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
-ASV_532	17.770999719067305	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_1085	16.363772343130655	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Pachystomias	Pachystomias microdon
-ASV_1097	6.3973614226923585	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
-ASV_350	97.09000676742612	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
-ASV_76	16.516968095915463	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
-ASV_1156	17.619951206288967	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_1113	14.844955260721997	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_898	15.755833905284833	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_254	16.86799592490176	Eukaryota	Chordata	Actinopteri	Beloniformes	Belonidae	Cololabis	Cololabis saira
-ASV_1137	24.696004632310363	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_1254	45.51058697400161	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
-ASV_307	12.236995908825248	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
-ASV_18	78.06637806637806	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_272	9.080201906898486	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_668	77.09497206703911	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1290	20.22579410639112	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_896	18.891096261513454	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1364	70.5756422454805	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	unassigned
-ASV_1124	22.135007849293565	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Nectoliparis	Nectoliparis pelagicus
-ASV_1370	7.536994581075448	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1388	17.56124584513111	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
-ASV_1390	17.982927600379387	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1391	39.697056301800515	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_721	42.1891767591599	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1421	45.125760315633734	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
-ASV_1213	44.9284892322867	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1106	34.993564993564995	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Protomyctophum	unassigned
-ASV_157	28.315686060473748	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	Sebastes paucispinis
-ASV_1460	93.62329524511611	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_507	8.15539642938146	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
-ASV_1400	8.04093084667437	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_28	20.242608036391204	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
-ASV_23	24.08599916909015	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	unassigned	unassigned
-ASV_216	24.16199640477953	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_1620	6.762815488321053	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1634	10.26270207852194	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_1641	10.224210931485759	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_1638	12.443004559635229	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_1296	5.041892557910301	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_1615	7.833230484418389	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_667	97.49877390877882	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Nannobrachium	unassigned
-ASV_1058	6.384640416531077	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_561	15.392570201256861	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_1735	25.448941302599838	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
-ASV_1779	32.001414427157	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_863	23.318742538798247	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_1395	5.645948584445168	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_91	4.47279865395401	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
-ASV_1936	13.525783793044372	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomberomorus	unassigned
-ASV_1306	16.643755947975045	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_372	6.653919694072657	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1921	4.948011222974088	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2031	10.45888824551245	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
-ASV_1349	4.703746492820597	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_4	10.990146217418944	Eukaryota	Chordata	Actinopteri	Gadiformes	Macrouridae	Coryphaenoides	unassigned
-ASV_2074	21.990777548099857	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_2053	5.621414913957936	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_67	3.042624789680314	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
-ASV_551	9.187887130075707	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1397	6.7215452424163855	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	Grampus	Grampus griseus
-ASV_2365	3.3833966000990263	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_2221	10.011978438810141	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_2041	5.952234396159055	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_2229	2.574759797041995	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_2443	8.475631447883316	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_2551	78.32225913621262	Eukaryota	Chordata	Actinopteri	unknown	Moronidae	Morone	Morone saxatilis
-ASV_2568	6.707448722562074	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_2565	4.966227438821836	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_2538	4.049717514124294	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1647	5.646863209055446	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	Berardius	Berardius bairdii
-ASV_2667	4.972596483215346	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	Ziphius	Ziphius cavirostris
-ASV_2701	92.50814332247556	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_781	5.344470263141368	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Nannobrachium	unassigned
-ASV_1813	12.05318844724049	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_671	12.252042007001167	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_1617	13.628872775214237	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2754	4.830117201373269	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_2087	8.765418622421132	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_2772	6.165436654366544	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_2869	6.2715072264280805	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2435	2.8497929981108565	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_3038	2.3025051535585757	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_3219	3.876816253053877	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2813	3.4509293240203625	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone signata
-ASV_3267	1.8889932929397661	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_3283	63.93063583815029	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_1457	2.1471284665088093	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_3441	3.8650839606253617	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_740	1.6921575008135372	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Balaenoptera	Balaenoptera musculus
-ASV_3489	3.243755927916535	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_3305	1.6768443637563955	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_3539	3.648794530406621	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_3251	4.198210598761184	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_3168	2.921766258699304	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_2949	68.61626248216834	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
-ASV_3630	7.59493670886076	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_3724	2.0384180790960453	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_3631	4.559617781470711	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_3774	0.4562745546386181	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
-ASV_3890	7.338795867474173	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
-ASV_2077	96.19047619047619	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	Orcinus	Orcinus orca
-ASV_3705	1.2576332728172965	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_3837	4.851994851994852	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_2876	1.1258278145695364	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_3952	2.780892576810944	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_4121	4.9718574108818014	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Triphoturus	Triphoturus mexicanus
-ASV_4092	3.0584883526059996	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
-ASV_1675	5.357142857142857	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
-ASV_3341	1.1584770582492678	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_3927	2.9938059187887127	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1487	1.4713452299245025	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2054	84.91048593350384	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_4396	7.0646338844749845	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	g_	s_
-ASV_1938	3.054929991187702	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_4481	1.0298729163228255	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_4522	0.37564735344890465	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_1858	2.0798553144129106	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_4621	1.8281423119537117	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
-ASV_4635	2.2601476014760147	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_4654	1.3237553085750429	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_1519	92.38095238095238	Eukaryota	Chordata	Mammalia	Carnivora	Phocidae	Mirounga	Mirounga angustirostris
-ASV_4713	6.098346575048314	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
-ASV_4258	2.798101641289302	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
-ASV_4792	1.3135103926096998	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_4892	1.18821722237282	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_582	3.4432908397949795	Eukaryota	Chordata	Mammalia	Carnivora	Otariidae	Zalophus	Zalophus californianus
-ASV_4823	0.8183100799498353	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_4923	6.1607992388201716	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	unassigned
-ASV_4958	1.6201620162016201	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_5086	1.427885769138469	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_1718	1.5780245470485097	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_5424	0.6931836936788249	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	Sebastes paucispinis
-ASV_1518	1.3476915140572607	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
-ASV_3739	0.7356958152747933	Eukaryota	Chordata	Chondrichthyes	Carcharhiniformes	Scyliorhinidae	Apristurus	Apristurus brunneus
-ASV_5704	0.854896223827375	Eukaryota	Chordata	Actinopteri	Beryciformes	Melamphaidae	Scopelogadus	s_
-ASV_2105	0.5809539527974914	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_5860	1.3925360070024668	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1282	1.3447919153338106	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Chauliodus	Chauliodus macouni
-ASV_5978	0.6752682985650549	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_6152	1.0252772762445188	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
-ASV_1438	0.23098474010491177	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_6235	1.3248451479697176	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_6200	2.345546527671317	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_6346	2.1148899685624465	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
-ASV_6342	1.6338298894762133	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_6611	1.7374517374517375	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Protomyctophum	unassigned
-ASV_6167	0.9800987580427951	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
-ASV_2485	0.8973288814691153	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
-ASV_5703	4.181639986932375	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	g_	s_
-ASV_6666	1.0698340493639962	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
-ASV_6901	0.40270671728007923	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_6936	0.5466702810156321	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
-ASV_371	0.32117024722012305	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_6902	0.2932479053721045	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_6937	0.97773395776846606	Eukaryota	Chordata	Actinopteri	Perciformes	Zoarcidae	Lycodes	Lycodes cortezianus
-ASV_7200	0.4631400042489908	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_7296	0.44614404079031234	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_7563	0.593952483801296	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_7585	0.7093225246091488	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
-ASV_7652	1.5707671957671958	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_7724	0.3625424251774144	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
-ASV_7876	10.289017341040463	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
-ASV_7977	0.2786508116514921	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_8273	0.6710254645560908	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_8355	1.0318949343339587	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
-ASV_5129	0.636835930953578	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	g_	s_
-ASV_7039	0.9682981827828625	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone signata
-ASV_1163	0.5382372729311505	Eukaryota	Chordata	Actinopteri	Anabantiformes	Channidae	g_	s_
-ASV_8234	0.19910263600673023	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	g_	s_
-ASV_8762	0.32988890505991364	Eukaryota	Chordata	Actinopteri	Beloniformes	Belonidae	Cololabis	Cololabis saira
-ASV_8775	0.2211586070308632	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_9006	0.30792917628945343	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_9064	0.2294496849619405	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_9417	0.15383784950879845	Eukaryota	Chordata	Mammalia	Carnivora	Otariidae	Zalophus	Zalophus californianus
-ASV_1593	0.416852761649546	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_144	0.1869718046518585	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Seriola	Seriola lalandi
-ASV_10048	0.46998922941349264	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_106	0.2599826678221452	Eukaryota	Chordata	Actinopteri	Syngnathiformes	Syngnathidae	Syngnathus	Syngnathus leptorhynchus
-ASV_568	0.3290643898968339	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_10684	0.23650528658875902	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_215	0.12439945092656143	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_10973	0.16556291390728478	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_12300	63.63636363636363	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Arctozenus	Arctozenus risso
-ASV_8	0.02702309435217328	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Bathylagus	Bathylagus pacificus
-ASV_5579	0.20705582543601178	Eukaryota	Chordata	Aves	Procellariiformes	Procellariidae	Puffinus	unassigned
-ASV_8099	0.06773655689870779	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
-ASV_2102	0.1278976818545164	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_9348	2.2058823529411766	Eukaryota	Chordata	Mammalia	Cetacea	unassigned	g_	s_
-ASV_134	13.218390804597702	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_9619	0.12071589775888311	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Triphoturus	s_
-ASV_445	0.18075753841097691	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_7318	0.1720578114246387	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_14052	0.14318669954657545	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_669	0.06434454358270418	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_1200	0.06857456340861295	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_2129	0.2299555419285605	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_98	0.05939753924480271	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_15971	0.046212246245254995	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_152	0.033868278449353896	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
-ASV_222	0.04861266920948321	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Brachyistius	Brachyistius frenatus
-ASV_16383	0.17665443674412284	Eukaryota	Chordata	Mammalia	Cetacea	unassigned	g_	s_
-ASV_3375	0.1011804384485666	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_6747	0.44231478068558794	Eukaryota	Chordata	Chondrichthyes	Lamniformes	Alopiidae	Alopias	Alopias vulpinus
-ASV_9765	0.09859502095144194	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
-ASV_16394	0.03961049678164714	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_16857	0.077780658542909	Eukaryota	Chordata	Mammalia	Cetacea	Physeteridae	Physeter	Physeter catodon
-ASV_2593	0.040718119563205625	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_13309	0.06770897451680413	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_17374	0.07561696569739465	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	g_	s_
-ASV_183	0.04242681374628765	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Ophiodon	Ophiodon elongatus
-ASV_244	0.04242681374628765	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Scorpaenichthys	Scorpaenichthys marmoratus
-ASV_6380	0.042865103519225	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_18026	0.05329070077271516	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2774	0.03365492483733453	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_171	0.008314798262207164	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Sarda	Sarda chiliensis
-ASV_192	0.029039618336444722	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_4554	0.053813038130381304	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
-ASV_11559	0.029039618336444722	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_16851	0.013842198932173226	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	s_
-ASV_19697	0.052328623757195186	Eukaryota	Chordata	Myxini	Myxiniformes	Myxinidae	Eptatretus	unassigned
-ASV_92	6.896551724137931	Eukaryota	Chordata	Actinopteri	Atheriniformes	Atherinopsidae	g_	s_
-ASV_199	6.896551724137931	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca jacksoni
-ASV_370	0.035919540229885055	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca lateralis
-ASV_1157	0.1185302252074279	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_21425	0.07885398869759495	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
-ASV_21783	0.050276520864756154	Eukaryota	Chordata	Mammalia	unassigned	unassigned	g_	s_
-ASV_201	10.204081632653061	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	unassigned
-ASV_242	0.08203445447087777	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
-ASV_270	0.01495774437214868	Eukaryota	Chordata	Actinopteri	Labriformes	Labridae	Oxyjulis	Oxyjulis californica
-ASV_273	0.12077294685990338	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
-ASV_357	0.04550108065066545	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Lestidiops	s_
-ASV_384	0.04550108065066545	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
-ASV_424	0.015173355587588195	Eukaryota	Chordata	Actinopteri	Perciformes	Zoarcidae	Bothrocara	unassigned
-ASV_11279	0.02749707843541624	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_16392	0.02749707843541624	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
-ASV_25559	0.02782415136338342	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_115	0.016457293323824677	Eukaryota	Chordata	Actinopteri	Scombriformes	Stromateidae	Peprilus	Peprilus medius
-ASV_414	0.03412581048799909	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Oxylebius	Oxylebius pictus
-ASV_427	0.8	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
-ASV_618	0.011380016690691146	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Rhacochilus	Rhacochilus vacca
-ASV_735	0.03526922172584058	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Clinocottus	Clinocottus analis
-ASV_756	0.06152584085315833	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
-ASV_1061	0.007392804337111878	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_1216	0.004457056262906892	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	g_	s_
-ASV_2455	0.012868908716540839	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_10220	0.018466083959128403	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
-ASV_28748	0.04943968358602505	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_641	0.00747887218607434	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Lestidiops	s_
-ASV_745	2.1505376344086025	Eukaryota	Chordata	Actinopteri	Perciformes	unassigned	unassigned	unassigned
-ASV_754	0.008401949252226516	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Hexagrammos	Hexagrammos decagrammus
-ASV_872	0.00903954802259887	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
-ASV_1029	0.022750540325332726	Eukaryota	Chordata	Actinopteri	Perciformes	Anarhichadidae	Anarrhichthys	Anarrhichthys ocellatus
-ASV_1060	1.1494252873563218	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	Apodichthys	Apodichthys flavidus
-ASV_1344	0.012040214315814821	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	unassigned	unassigned
-ASV_1359	0.01391207568169171	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
-ASV_1368	0.009730466089325679	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	unassigned	unassigned
-ASV_1546	0.01391207568169171	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Idiacanthus	Idiacanthus antrostomus
-ASV_1606	5.714285714285714	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Synchirus	Synchirus gilli
-ASV_2111	0.018037518037518036	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Xiphister	unassigned
-ASV_3118	0.006270575325286095	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Pleuronichthys	Pleuronichthys decurrens
-ASV_13089	0.017205781142463867	Eukaryota	Chordata	Actinopteri	unassigned	unassigned	g_	s_
-ASV_169	0.0048652330446628395	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_584	0.021473051320592657	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Paralichthys	s_
-ASV_792	1.8867924528301887	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_804	0.26666666666666666	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	unassigned	unassigned
-ASV_1135	1.0752688172043012	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	unassigned	unassigned
-ASV_1140	0.009791442279447763	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1332	0.011375270162666363	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Clinocottus	Clinocottus globiceps
-ASV_1406	0.011375270162666363	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
-ASV_1531	0.004242681374628765	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Xiphister	unassigned
-ASV_1830	0.26666666666666666	Eukaryota	Chordata	Actinopteri	Perciformes	Aulorhynchidae	Aulorhynchus	Aulorhynchus flavidus
-ASV_1946	1.0752688172043012	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Liparis <bony fishes>	Liparis mucosus
-ASV_1957	0.009018759018759018	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
-ASV_1986	0.007443799315170463	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	unassigned
-ASV_2125	0.009018759018759018	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	g_	s_
-ASV_2133	0.009887284951552304	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	unassigned
-ASV_2135	0.26666666666666666	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
-ASV_2263	0.004955892556249381	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
-ASV_2336	4.545454545454546	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_2478	0.011375270162666363	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Oxylebius	Oxylebius pictus
-ASV_2512	0.009018759018759018	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Orthonopias	Orthonopias triacis
-ASV_2643	0.004519774011299435	Eukaryota	Chordata	Actinopteri	Blenniiformes	Gobiesocidae	Gobiesox	Gobiesox maeandricus
-ASV_2739	2.7027027027027026	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
-ASV_2822	0.26666666666666666	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Scorpaenichthys	Scorpaenichthys marmoratus
-ASV_2998	0.0048652330446628395	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Anoplarchus	unassigned
-ASV_3353	0.004519774011299435	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
-ASV_3563	1.0752688172043012	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	Apodichthys	Apodichthys flavidus
-ASV_3587	0.020508613617719443	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	g_	s_
-ASV_3633	0.04194630872483222	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Anoplarchus	unassigned
-ASV_3715	0.7518796992481203	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	g_	s_
-ASV_3903	0.004242681374628765	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca jacksoni
-ASV_4108	2.0408163265306123	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	unassigned
-ASV_4123	0.00373943609303717	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Liparis <bony fishes>	Liparis florae
-ASV_4447	0.0048652330446628395	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	unassigned	s_
-ASV_4474	0.5747126436781609	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Brachyistius	Brachyistius frenatus
-ASV_4599	0.0014856854209689642	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	g_	s_
-ASV_5754	0.002464268112370626	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	Lepidogobius	Lepidogobius lepidus
-ASV_8146	0.004242681374628765	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_9166	1.8867924528301887	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
-ASV_41315	0.010574177857671566	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	s_
-ASV_41333	2.0408163265306123	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	s_
-ASV_41335	0.014297969688304261	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_41341	0.010574177857671566	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	s_
+#OTUID	Kingdom	Phylum	Class	Order	Family	Genus	Species
+ASV_1	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_39	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2479	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
+ASV_300	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
+ASV_285	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_75	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_128	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_345	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_181	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_140	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1087	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1007	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_8	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_76	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3292	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2023	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_200	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_599	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
+ASV_1092	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1773	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_10	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_20	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_87	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	Sebastes paucispinis
+ASV_289	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
+ASV_997	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
+ASV_1801	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_2628	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_7335	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_7795	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_2	Eukaryota	Chordata	Actinopteri	Gadiformes	Macrouridae	Coryphaenoides	unassigned
+ASV_6	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_7	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Bathylagus	Bathylagus pacificus
+ASV_11	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_13	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_15	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	unassigned	unassigned
+ASV_16	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_17	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Seriola	Seriola lalandi
+ASV_19	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_21	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_23	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_26	Eukaryota	Chordata	Actinopteri	Atheriniformes	Atherinopsidae	g_	s_
+ASV_27	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_28	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_29	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Scorpaenichthys	Scorpaenichthys marmoratus
+ASV_30	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
+ASV_33	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
+ASV_41	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_43	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_44	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Thunnus	Thunnus alalunga
+ASV_45	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
+ASV_47	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Ophiodon	Ophiodon elongatus
+ASV_50	Eukaryota	Chordata	Actinopteri	Beryciformes	Melamphaidae	Scopelogadus	s_
+ASV_54	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
+ASV_58	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca jacksoni
+ASV_60	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	unassigned
+ASV_61	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
+ASV_62	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
+ASV_63	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_68	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
+ASV_70	Eukaryota	Chordata	Actinopteri	Lampriformes	Trachipteridae	Trachipterus	unassigned
+ASV_72	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca lateralis
+ASV_74	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
+ASV_78	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
+ASV_79	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
+ASV_80	Eukaryota	Chordata	Actinopteri	Syngnathiformes	Syngnathidae	Syngnathus	Syngnathus leptorhynchus
+ASV_81	Eukaryota	Chordata	Actinopteri	Labriformes	Labridae	Oxyjulis	Oxyjulis californica
+ASV_83	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_85	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_86	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_88	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Clinocottus	Clinocottus globiceps
+ASV_90	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Brachyistius	Brachyistius frenatus
+ASV_93	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Oxylebius	Oxylebius pictus
+ASV_97	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_99	Eukaryota	Chordata	Actinopteri	Scombriformes	Stromateidae	Peprilus	Peprilus medius
+ASV_104	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Sarda	Sarda chiliensis
+ASV_105	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
+ASV_107	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Lestidiops	s_
+ASV_108	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
+ASV_114	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_117	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_119	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Rhacochilus	Rhacochilus vacca
+ASV_123	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	Oncorhynchus kisutch
+ASV_125	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone acclinidens
+ASV_132	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
+ASV_135	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_136	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_137	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
+ASV_149	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Seriola	Seriola lalandi
+ASV_158	Eukaryota	Chordata	Actinopteri	Perciformes	unassigned	unassigned	unassigned
+ASV_162	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Lyopsetta	Lyopsetta exilis
+ASV_163	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_165	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	unassigned	unassigned
+ASV_169	Eukaryota	Chordata	Actinopteri	Perciformes	Zoarcidae	Melanostigma	Melanostigma atlanticum
+ASV_177	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	unassigned	unassigned
+ASV_180	Eukaryota	Chordata	Actinopteri	Perciformes	Zoarcidae	Bothrocara	unassigned
+ASV_184	Eukaryota	Chordata	Actinopteri	Lutjaniformes	Haemulidae	g_	s_
+ASV_191	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_195	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	Oncorhynchus tshawytscha
+ASV_202	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_207	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Paralichthys	s_
+ASV_210	Eukaryota	Chordata	Actinopteri	Gadiformes	Macrouridae	Malacocephalus	unassigned
+ASV_212	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_214	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_223	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
+ASV_227	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_232	Eukaryota	Chordata	Actinopteri	Beloniformes	Belonidae	Cololabis	Cololabis saira
+ASV_233	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_239	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_240	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_245	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_246	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_253	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_254	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_270	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_278	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_283	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_314	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_316	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_325	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
+ASV_328	Eukaryota	Chordata	Actinopteri	Perciformes	Anarhichadidae	Anarrhichthys	Anarrhichthys ocellatus
+ASV_336	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Hexagrammos	Hexagrammos decagrammus
+ASV_349	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
+ASV_352	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	Apodichthys	Apodichthys flavidus
+ASV_356	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_359	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_366	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
+ASV_370	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_393	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
+ASV_396	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_401	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_407	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
+ASV_411	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_414	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Clinocottus	Clinocottus analis
+ASV_422	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Liparis <bony fishes>	Liparis mucosus
+ASV_426	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Idiacanthus	Idiacanthus antrostomus
+ASV_436	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_447	Eukaryota	Chordata	Mammalia	Carnivora	Otariidae	Zalophus	Zalophus californianus
+ASV_465	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Xiphister	unassigned
+ASV_466	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Balaenoptera	Balaenoptera musculus
+ASV_484	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
+ASV_489	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_495	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_500	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_502	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	Ziphius	Ziphius cavirostris
+ASV_504	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_508	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	g_	s_
+ASV_515	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_522	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_532	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_535	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_540	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_549	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_553	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	g_	s_
+ASV_554	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Nannobrachium	unassigned
+ASV_555	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_565	Eukaryota	Chordata	Actinopteri	Perciformes	Aulorhynchidae	Aulorhynchus	Aulorhynchus flavidus
+ASV_571	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
+ASV_573	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_577	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_579	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_593	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_608	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
+ASV_610	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	unassigned	unassigned
+ASV_616	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_618	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_619	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Lestidiops	s_
+ASV_624	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_625	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_633	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_636	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_639	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Nannobrachium	unassigned
+ASV_644	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_645	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_648	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_664	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_666	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_670	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
+ASV_678	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_685	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_689	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_691	Eukaryota	Chordata	Actinopteri	Myctophiformes	Neoscopelidae	Scopelengys	Scopelengys tristis
+ASV_714	Eukaryota	Chordata	Actinopteri	Anabantiformes	Channidae	g_	s_
+ASV_717	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_741	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_755	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_761	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Holtbyrnia	s_
+ASV_764	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_770	Eukaryota	Chordata	Actinopteri	Lampriformes	Lampridae	Lampris	Lampris guttatus
+ASV_775	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_782	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_785	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
+ASV_802	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_825	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_828	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	unassigned	unassigned
+ASV_850	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_852	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_864	Eukaryota	Chordata	Actinopteri	unknown	Moronidae	Morone	Morone saxatilis
+ASV_866	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_870	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone acclinidens
+ASV_871	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_874	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_894	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_912	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_920	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Anoplarchus	unassigned
+ASV_925	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
+ASV_931	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
+ASV_935	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_943	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_945	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_985	Eukaryota	Chordata	Actinopteri	Lampriformes	Trachipteridae	Trachipterus	unassigned
+ASV_990	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_992	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_996	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1002	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1003	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1008	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1009	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	Lepidogobius	Lepidogobius lepidus
+ASV_1023	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Pachystomias	Pachystomias microdon
+ASV_1025	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1031	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
+ASV_1036	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Protomyctophum	unassigned
+ASV_1045	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1054	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Nectoliparis	Nectoliparis pelagicus
+ASV_1066	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_1073	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Pleuronichthys	Pleuronichthys decurrens
+ASV_1075	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1083	Eukaryota	Chordata	Actinopteri	Blenniiformes	Gobiesocidae	Gobiesox	Gobiesox maeandricus
+ASV_1085	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
+ASV_1086	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1101	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1111	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1121	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1148	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1149	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	unassigned	unassigned
+ASV_1162	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
+ASV_1182	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1188	Eukaryota	Chordata	Actinopteri	Stomiiformes	Stomiidae	Chauliodus	Chauliodus macouni
+ASV_1202	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1206	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_1212	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1228	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Xiphister	unassigned
+ASV_1232	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1235	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	g_	s_
+ASV_1245	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1254	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_1261	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	unassigned
+ASV_1264	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1271	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
+ASV_1272	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1273	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1277	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1280	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	Grampus	Grampus griseus
+ASV_1288	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_1298	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
+ASV_1312	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1336	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1340	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1362	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1369	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1378	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1382	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1392	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
+ASV_1393	Eukaryota	Chordata	Mammalia	Carnivora	Phocidae	Mirounga	Mirounga angustirostris
+ASV_1447	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Synchirus	Synchirus gilli
+ASV_1463	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1469	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1475	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_1477	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1478	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	Berardius	Berardius bairdii
+ASV_1481	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1483	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_1500	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	unassigned
+ASV_1517	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
+ASV_1524	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1530	Eukaryota	Chordata	Actinopteri	Gobiiformes	Gobiidae	g_	s_
+ASV_1555	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1558	Eukaryota	Chordata	Actinopteri	Blenniiformes	Clinidae	Gibbonsia	Gibbonsia metzi
+ASV_1563	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Scorpaenichthys	Scorpaenichthys marmoratus
+ASV_1569	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
+ASV_1589	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	Orthonopias	Orthonopias triacis
+ASV_1606	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_1628	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1658	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_1704	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1716	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomberomorus	unassigned
+ASV_1718	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1725	Eukaryota	Chordata	Actinopteri	Perciformes	Serranidae	g_	s_
+ASV_1726	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	Apodichthys	Apodichthys flavidus
+ASV_1729	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1755	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	unassigned
+ASV_1779	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
+ASV_1784	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_1789	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1791	Eukaryota	Chordata	Actinopteri	Argentiniformes	Argentinidae	g_	s_
+ASV_1803	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	Orcinus	Orcinus orca
+ASV_1810	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_1816	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_1841	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1843	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_1856	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_1860	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Amphistichus	Amphistichus argenteus
+ASV_1871	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_1878	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1891	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_1944	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_1952	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_1979	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
+ASV_2029	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2045	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_2052	Eukaryota	Chordata	Mammalia	Cetacea	Cervidae	Cervus	Cervus elaphus
+ASV_2066	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_2071	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_2134	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2137	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2141	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2146	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_2159	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2166	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Oxylebius	Oxylebius pictus
+ASV_2170	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
+ASV_2214	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2237	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_2243	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_2259	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2304	Eukaryota	Chordata	Actinopteri	Perciformes	Liparidae	Liparis <bony fishes>	Liparis florae
+ASV_2315	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	unassigned	unassigned
+ASV_2320	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	Ziphius	Ziphius cavirostris
+ASV_2339	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_2346	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_2368	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Tarletonbeania	Tarletonbeania crenularis
+ASV_2383	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2403	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_2405	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_2408	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_2432	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone signata
+ASV_2490	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_2492	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2508	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_2596	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_2608	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_2745	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_2758	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_2794	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_2802	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_2822	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_2846	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_2872	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_2913	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2946	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_2969	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_3052	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_3053	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_3054	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3055	Eukaryota	Chordata	Actinopteri	Perciformes	Stichaeidae	Anoplarchus	unassigned
+ASV_3073	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_3086	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_3106	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3112	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_3119	Eukaryota	Chordata	Actinopteri	Perciformes	Cottidae	g_	s_
+ASV_3125	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_3148	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3171	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
+ASV_3175	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3228	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_3230	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_3268	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
+ASV_3271	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Embiotoca	Embiotoca jacksoni
+ASV_3300	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_3310	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_3349	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3407	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
+ASV_3418	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	unassigned
+ASV_3428	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Triphoturus	Triphoturus mexicanus
+ASV_3448	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3524	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
+ASV_3576	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3590	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	unassigned	unassigned
+ASV_3603	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3628	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	g_	s_
+ASV_3661	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_3666	Eukaryota	Chordata	Actinopteri	Perciformes	Pholidae	unassigned	s_
+ASV_3688	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_3692	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_3698	Eukaryota	Chordata	Actinopteri	unknown	Embiotocidae	Brachyistius	Brachyistius frenatus
+ASV_3709	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_3723	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_3726	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_3747	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_3803	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
+ASV_3815	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_3859	Eukaryota	Chordata	Mammalia	Cetacea	Balaenopteridae	Megaptera	Megaptera novaeangliae
+ASV_3927	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_3956	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_4007	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4013	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4045	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_4084	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4088	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4133	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4142	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_4151	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4165	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	g_	s_
+ASV_4197	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4317	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_4381	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4394	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	Sebastes paucispinis
+ASV_4403	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4440	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4461	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4462	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_4507	Eukaryota	Chordata	Aves	Procellariiformes	Procellariidae	Puffinus	unassigned
+ASV_4544	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4607	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	g_	s_
+ASV_4614	Eukaryota	Chordata	Actinopteri	Beryciformes	Melamphaidae	Scopelogadus	s_
+ASV_4631	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	unassigned	s_
+ASV_4723	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_4743	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4777	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_4808	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_4862	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_4880	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_4882	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_4899	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_4952	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
+ASV_4964	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomber	unassigned
+ASV_4995	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_5094	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
+ASV_5097	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
+ASV_5122	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_5158	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5181	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5213	Eukaryota	Chordata	Mammalia	Cetacea	Delphinidae	unassigned	unassigned
+ASV_5310	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Protomyctophum	unassigned
+ASV_5334	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5354	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachurus symmetricus
+ASV_5413	Eukaryota	Chordata	Chondrichthyes	Lamniformes	Alopiidae	Alopias	Alopias vulpinus
+ASV_5426	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5521	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_5527	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_5528	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5553	Eukaryota	Chordata	Actinopteri	Perciformes	Zoarcidae	Lycodes	Lycodes cortezianus
+ASV_5628	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone signata
+ASV_5640	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5735	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5752	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_5783	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5784	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5808	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_5828	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_5832	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_5855	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_5857	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	s_
+ASV_6028	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_6056	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_6075	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
+ASV_6102	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_6133	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_6191	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
+ASV_6239	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_6286	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_6314	Eukaryota	Chordata	Chondrichthyes	Squaliformes	Squalidae	Squalus	unassigned
+ASV_6402	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_6434	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Seriola	s_
+ASV_6502	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_6533	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_6637	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_6714	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Triphoturus	s_
+ASV_6719	Eukaryota	Chordata	Actinopteri	unknown	Sciaenidae	Genyonemus	Genyonemus lineatus
+ASV_6838	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	g_	s_
+ASV_6921	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_7035	Eukaryota	Chordata	Actinopteri	Beloniformes	Belonidae	Cololabis	Cololabis saira
+ASV_7045	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_7046	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_7081	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Bathylagus	Bathylagus pacificus
+ASV_7136	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	s_
+ASV_7150	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_7241	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_7322	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_7323	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_7336	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	unassigned	s_
+ASV_7384	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
+ASV_7532	Eukaryota	Chordata	Mammalia	Cetacea	unassigned	g_	s_
+ASV_7692	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_7737	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_7799	Eukaryota	Chordata	Actinopteri	Gadiformes	Merlucciidae	Merluccius	Merluccius productus
+ASV_7813	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	s_
+ASV_7872	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_8059	Eukaryota	Chordata	Actinopteri	Clupeiformes	Clupeidae	Sardinops	Sardinops melanostictus
+ASV_8107	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_8238	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_8285	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
+ASV_8591	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_8854	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
+ASV_9043	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	g_	s_
+ASV_9109	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_9335	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_9807	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_9948	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Arctozenus	Arctozenus risso
+ASV_10280	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_10592	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	s_
+ASV_10595	Eukaryota	Chordata	Actinopteri	unassigned	unassigned	g_	s_
+ASV_10950	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
+ASV_11381	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_11823	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_12571	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_12632	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_12953	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_13284	Eukaryota	Chordata	Mammalia	Cetacea	unassigned	g_	s_
+ASV_13318	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Lampanyctus	Lampanyctus tenuiformis
+ASV_13321	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_13643	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	s_
+ASV_13651	Eukaryota	Chordata	Mammalia	Cetacea	Physeteridae	Physeter	Physeter catodon
+ASV_14056	Eukaryota	Chordata	Mammalia	Cetacea	Ziphiidae	g_	s_
+ASV_15800	Eukaryota	Chordata	Myxini	Myxiniformes	Myxinidae	Eptatretus	unassigned
+ASV_17071	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	Lipolagus ochotensis
+ASV_17388	Eukaryota	Chordata	Mammalia	unassigned	unassigned	g_	s_
+ASV_19950	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
+ASV_21963	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	s_
+ASV_22312	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_22313	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_22703	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
+ASV_28316	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_31761	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_31771	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
+ASV_33581	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	s_
+ASV_33583	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
+ASV_33593	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	s_
+ASV_33606	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	g_	s_
+ASV_33612	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Lipolagus	s_
+ASV_33620	Eukaryota	Chordata	Actinopteri	Clupeiformes	Engraulidae	Engraulis	Engraulis mordax
