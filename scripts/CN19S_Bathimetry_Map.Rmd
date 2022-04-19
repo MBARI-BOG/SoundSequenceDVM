@@ -1,0 +1,990 @@
+---
+title: "MB_Map_Bathimetry"
+author: "Katie Pitz"
+date: "3/6/2020"
+output: html_document
+---
+
+```{r}
+library(marmap) #if want to download data from NOAA quickly - lower res
+library(ggplot2)
+library(mapdata)
+library(mapproj)
+library(ggsn) #just for scale bar
+#library(ggspatial)
+library(dplyr)
+
+
+library(qiime2R)
+library(tidyverse)
+#library(readr) #read csv files
+library(lubridate) #for date modifications
+#library(vegan)
+#library(dplyr)
+#library(ggplot2)
+library(ggthemes)
+library(magrittr)
+#library(tidyr)
+#for heatmap section
+library(gridExtra)
+library(RColorBrewer) #colors for plotting
+library(forcats) #working with factor data (reordering)
+library(patchwork) #putting graphs together on same plot
+```
+
+# Import Data
+
+```{r}
+marker='12S'
+
+# Set directory to save plots
+directory <- '/Users/kpitz/github/MBARI-BOG/CN19S_12S/figures/Map/'
+
+data_directory = "/Users/kpitz/github/MBARI-BOG/CN19S_12S/Data/filtered_seq_data/"
+
+#ASV table
+print('ASV table')
+file = paste("CN19S_",marker,"_otu_Filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+otu.c <- read_csv(filepath) %>% rename('ASV' = 1)
+
+#taxa table
+print('taxa table')
+file = paste("CN19S_",marker,"_taxa_Filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+tax.c <- read_csv(filepath) %>% rename('ASV' = 1)
+
+#metadata table
+print('metadata table')
+#file = "A2W_12S_meta_Filtered.csv"
+file = paste("CN19S_",marker,"_meta_Filtered.csv", sep='')
+filepath = paste(data_directory, file, sep='')
+print(filepath)
+samp.c <- read_csv(filepath) %>% rename('SampleID' = 1)
+
+
+#OTU table long format with percent total reads
+potu.c <- otu.c %>%
+  tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
+  group_by(SampleID) %>%
+  mutate(per_tot = reads / sum(reads) *100) %>%
+  arrange(-reads)
+head(potu.c)
+
+#get lowest taxonomic annotation level for ASVs
+species_label <- tax.c %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
+                             TRUE ~ as.character(Species))) %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
+                             TRUE ~ as.character(Species))) %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
+                             TRUE ~ as.character(Species))) %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Class),
+                             TRUE ~ as.character(Species))) %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Phylum),
+                             TRUE ~ as.character(Species))) %>%
+  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
+                             TRUE ~ as.character(Species)))
+
+
+# Import species designations
+
+filepath = "/Users/kpitz/Projects/CN19all/Canon2019Spring_Taxa_Categories_KBB_KP.csv"
+
+sp_desig <- read_csv(filepath)
+
+
+# Create Seasonal Variables -----------------------------------------------
+
+meta <- samp.c %>% 
+  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time_since = as.numeric(time)) %>%
+  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+                         str_detect(SampleID, '_V')==TRUE ~'ROV',
+                         TRUE~'CTD')) %>%
+  mutate(month =  month(time)) %>%
+  mutate(day =  day(time)) %>%
+  mutate(year =  year(time)) %>%
+  mutate(jday = yday(time)) %>%
+  mutate(month_char = as.character(month)) %>%
+  mutate(year_char = as.character(year)) %>%
+  mutate(depth_bin = case_when(depth <=25 ~ "00_0-25m",
+                               depth >25 & depth <=50 ~ "01_25-50m",
+                               depth >50 & depth <=75 ~ "02_50-75m",
+                               depth >75 & depth <=100 ~ "03_75-100m",
+                               depth >100 & depth <=150 ~ "04_100-150m",
+                               depth >150 & depth <=200 ~ "05_150-200m",
+                               depth >200 & depth <=250 ~ "06_200-250m",
+                               depth >250 & depth <=300 ~ "07_250-300m",
+                               depth >300 & depth <=400 ~ "08_300-400m",
+                               depth >400 & depth <=500 ~ "09_400-500m",
+                               depth >400 & depth <=600 ~ "10_500-600m",
+                               depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
+  )) 
+
+
+
+
+# # Set Time Variables -----------------------------------------------
+# 
+# #edit sample metadata to get date columns
+# samp.c %<>% mutate(DATE_TIME = as_datetime(SAMPLING_date_time, tz = "GMT")) %>%
+#   #change to local time
+#   mutate(LOCAL_TIME = with_tz(DATE_TIME, "America/Los_Angeles")) %>% #change to local time zone
+#   # extract date components
+#   mutate(month =  month(LOCAL_TIME)) %>%
+#   mutate(day =  day(LOCAL_TIME)) %>%
+#   mutate(year =  year(LOCAL_TIME)) %>%
+#   mutate(jday = yday(LOCAL_TIME)) %>%
+#   mutate(hour = hour(LOCAL_TIME)) %>%
+#   mutate(hour_char = as.character(hour)) %>%
+#   mutate(month_2 = format.Date(LOCAL_TIME, "%m")) %>%  #two digit month
+#   #mutate(ym = ym(DATE_TIME)) %>%   #lubridate will be adding this function soon; have to work around it for now.
+#   #change column data types
+#   mutate(month_char = as.character(month)) %>%
+#   mutate(year_char = as.character(year)) %>%
+#   mutate(month_2 = as.character(month_2)) %>%
+#   #year/month for labeling
+#   unite(ym, year_char, month_2, sep='/', remove=FALSE) %>%
+#   #create seasonal categories
+#   # 12,1,2; 3,4,5; 6,7,8; 9,10,11
+#   mutate(season = "Dec-Feb") %>% #create new column
+#   mutate(season = case_when(month<=11 & month >=9  ~"Sep-Nov",
+#                             TRUE ~ season)) %>%
+#   mutate(season = case_when(month<=8 & month >=6  ~"June-Aug",
+#                             TRUE ~ season)) %>%
+#   mutate(season = case_when(month<=5 & month >=3  ~"March-May",
+#                             TRUE ~ season)) %>%
+#   #make Diel markers
+#   mutate(Diel = "na") %>% #create new column
+#   mutate(Diel = case_when(hour<=24 & hour >=20  ~"8pm-5am",
+#                           TRUE ~ Diel)) %>%
+#   mutate(Diel = case_when(hour>=0 & hour <5  ~"8pm-5am",
+#                           TRUE ~ Diel)) %>%
+#   mutate(Diel = case_when(hour>=7 & hour <18  ~"7am-6pm",
+#                           TRUE ~ Diel)) %>%
+#   mutate(Diel = case_when(hour>=18 & hour <20  ~"6pm-8pm",
+#                           TRUE ~ Diel)) %>% 
+#   mutate(Diel = case_when(hour>=5 & hour <7  ~"5am-7am",
+#                           TRUE ~ Diel))
+
+```
+
+
+#Points to plot, for example
+#Stations
+Station	Latitude	Longitude
+		
+ML	36.8	-121.75
+C1	36.79666667	-121.8466667
+M1	36.735	-122.02
+DEIMOS/MARS	36.71211	-122.187028
+M2	36.71246833	-122.1868983 (check)
+1F	36.626	-122.419
+2F	36.73333333	-122.5875
+3F	36.80833333	-122.525
+4F	36.89166667	-122.4625
+5F	36.96666667	-122.4
+DEIMOS/MARS	36.71211	-122.187028
+```{r}
+#label = "C1"
+#lat = 36.79666667
+#lon= -121.8466667
+
+# make a few points
+pts = data.frame(
+  lon = c(-121.8466667, -122.02, -122.187028),
+  lat = c(36.79666667, 36.735, 36.71211),
+  label = c('C1', 'M1',  'MARS')
+)
+
+```
+
+
+```{r}
+# # get bathymetry data
+# b = getNOAA.bathy(lon1 = -120, lon2 = -124, lat1 = 35, lat2 = 38, 
+#                   resolution = 1)
+# 
+# # convert bathymetry to data frame
+# bf = fortify.bathy(b)
+
+###  OR import better bathymetry data
+#go to this link:
+#https://sccoos.org/data/bathy/?region=monterey
+#download lat/lon/depth zipped data file
+#file location
+file = '/Users/kpitz/Projects/Maps/monterey.xyz'
+# csv has lat, lon, depth columns
+library(readr)
+bf = read_csv(file, col_names=c("x", "y", "z"))
+#Divins, D.L., and D. Metzger, NGDC Coastal Relief Model, Retrieved date goes here, http://www.ngdc.noaa.gov/mgg/coastal/coastal.html. Download provided by the Southern California Coastal Ocean Observing System http://sccoos.org/data/bathy
+
+
+# get regional polygons
+reg = map_data("world2Hires")
+reg = subset(reg, region %in% c('USA'))
+
+# convert lat longs
+reg$long = (360 - reg$long)*-1
+
+
+# set map limits
+lons = c(-122.7, -121.85)
+lats = c(36.55, 37.1)
+
+
+#create for scale bar
+df <- filter(reg,long < -121.85 )
+df <- filter(df,long > -122.7 )
+df <- filter(df,lat < 37.1 )
+df <- filter(df,lat > 36.55 )
+
+# make plot
+p <- ggplot()+
+  
+  # add 50m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-50),
+               size=c(0.3),
+               colour="grey")+
+  
+  
+  # add 100m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-100),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 150m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-150),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 200m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-200),
+               size=c(0.3),
+               colour="grey")+
+  # add 300m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-300),
+               size=c(0.3),
+               colour="grey")+
+  # add 400m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-400),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 500m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-500),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 1000m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-1000),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 2000m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-2000),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 0m contour
+  geom_contour(data = bf,
+               aes(x=x, y=y, z=z),
+               breaks=c(0.5),
+               size=c(0.5),
+               colour="black")+
+  # add points
+  geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black",
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21)+
+  
+  
+  geom_point(data = meta, aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+            colour = "black",
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21)+
+  geom_text(data = pts, aes(x = lon, y = lat, label=label),
+            size=1, vjust=2.5, fontface = "bold") +
+  
+  
+  # #add labels
+  # geom_text(data = pts, aes(x = lon, y = lat),
+  #           label=c('C1', 'M1','M2'), size=3, vjust=2.5, fontface = "bold")+
+  
+  # # add coastline
+  # geom_polygon(data = reg, aes(x = long, y = lat, group = group),
+  #              fill = "darkgrey", color = NA)  +
+
+  # configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)+
+  
+  #scale bar
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  theme_bw()
+  
+filename <- paste(directory, 'CN19S_sample_map.png', sep='')
+ggsave(filename)
+p
+filename
+
+```
+#with contours
+
+```{r}
+# DEPTH CONTOURS
+# set map limits
+lons = c(-122.5, -121.80)
+lats = c(36.55, 37.0)
+
+#lons = c(-122.25, -122.10)
+#lats = c(36.7, 36.74)
+
+test <- ggplot()+
+  # geom_contour_filled(data = bf,
+  #              aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-500,-750,-1000,-1500, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m", "0-500m",
+                               "500-750m",
+                               "750-1000m",
+                               "1000-1500m",
+                               "1500-2000m",
+                               "2000-3500m")) +
+  geom_point(data = meta %>% filter(SAMPLING_platform %in% c('daphne')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+            colour = "yellow",fill='yellow',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(SAMPLING_platform %in% c('makai')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+            colour = "orange",fill='orange',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(SAMPLING_platform %in% c('WESTERN FLYER')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+            colour = "green",fill='green',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+  geom_text(data = pts, aes(x = lon, y = lat, label=label),
+            size=3, vjust=2.5, fontface = "bold", color='black') +
+  geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black",fill='black',
+            stroke = .5, size = 1.5,
+            alpha = 1, shape = 21)+
+  # geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+  #           colour = "black",fill='grey',
+  #           stroke = 0.5, size = 2,
+  #           alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+filename <- paste(directory, 'CN19S_contour_map_daphne.png', sep='')
+ggsave(filename)
+filename <- paste(directory, 'CN19S_contour_map_daphne.svg', sep='')
+ggsave(filename)
+
+```
+
+## FINAL PLOTS with CONTOURS
+```{r}
+# DEPTH CONTOURS
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth.svg')
+#GREYSCALE CONTOURS
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Greys",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth_grey.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth_grey.svg')
+
+```
+
+
+
+
+
+
+```{r}
+# make plot
+p <- ggplot()+
+  # add light contours
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-100, -200),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add dark contours
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-500, -1000, -2000),
+               size=c(0.5),
+               colour="grey")+
+  # add 0m contour
+  geom_contour(data = bf,
+               aes(x=x, y=y, z=z),
+               breaks=c(0.5),
+               size=c(0.5),
+               colour="black")+
+  # add points
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=LOCAL_TIME),
+            colour = "black",
+            stroke = .1, size = 4,
+            alpha = 0.8, shape = 21)  +
+  # configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)  +
+  #scale bar
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  theme_bw()
+
+ggsave('/Users/kpitz/Projects/Maps/CN18F_time.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_time.svg')
+p
+
+```
+
+
+```{r}
+p <- ggplot()+
+  # add light contours
+  # add points
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=LOCAL_TIME),
+            colour = "black",
+            stroke = .1, size = 2,
+            alpha = 0.8, shape = 21)  +
+  # configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)  +
+  #scale bar
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+          legend.text = element_text(size = 10, colour = "black"),
+          legend.title = element_text(face = "bold", size=10),
+          legend.key = element_rect(fill = FALSE, colour = FALSE),
+          legend.key.size = unit(0.5, "cm")
+    )+ guides(color = guide_legend(override.aes = list(size=5, shape=15)))
+  
+p
+  
+
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test_time.png')
+p
+```
+
+```{r}
+# make plot
+p <- ggplot()+
+  # add 50m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-50),
+               size=c(0.3),
+               colour="grey")+
+  
+  
+  # add 100m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-100),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 150m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-150),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 200m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-200),
+               size=c(0.3),
+               colour="grey")+
+  # add 300m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-300),
+               size=c(0.3),
+               colour="grey")+
+  # add 400m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-400),
+               size=c(0.3),
+               colour="grey")+
+  
+  # add 500m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-500),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 1000m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-1000),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 2000m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-2000),
+               size=c(0.5),
+               colour="grey")+
+  
+  # add 0m contour
+  geom_contour(data = bf,
+               aes(x=x, y=y, z=z),
+               breaks=c(0.5),
+               size=c(0.5),
+               colour="black")+
+  
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),
+               breaks=c(100)) +
+  # add points
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=LOCAL_TIME),
+            colour = "black",
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21)+
+  # geom_text(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=depth, label=SC),
+  #           size=1, vjust=2.5, fontface = "bold") +
+
+  # configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)+
+  
+  #scale bar
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  guides(title = "Time", color = guide_legend(override.aes = list(size=5, shape=15))) +
+  theme_bw()
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test_time.png')
+p
+
+
+
+```
+
+
+
+
+## FINAL PLOTS with CONTOURS
+```{r}
+# DEPTH CONTOURS
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth.svg')
+#GREYSCALE CONTOURS
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Greys",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth_grey.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_contour_depth_grey.svg')
+
+```
+
+#line contours
+
+```{r}
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.6, breaks= c(5000,0,-5000)) +
+  scale_fill_manual(values = c('darkgrey','white')) +
+  geom_contour(data = bf,
+               size=c(0.1),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-100,-200,-300,-400)) +
+  geom_contour(data = bf,
+               size=c(0.3),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-500,-1000, -2000, -3500)) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  labs(x="", y="") +
+  theme_bw()
+
+
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth.svg')
+test
+```
+
+#color by diel cycle
+
+```{r}
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.6, breaks= c(5000,0,-5000)) +
+  scale_fill_manual(values = c('darkgrey','white')) +
+  geom_contour(data = bf,
+               size=c(0.1),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-100,-200,-300,-400)) +
+  geom_contour(data = bf,
+               size=c(0.3),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-500,-1000, -2000, -3500)) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=fct_reorder(Diel, hour)),
+            #colour = "black",fill='grey',
+            stroke = 0.5, 
+            size = 2,
+            alpha = 1,
+            shape=21) +
+  scale_fill_brewer(palette = "Blues",name="Hour")+
+  coord_map(xlim = lons, ylim = lats) +
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  labs(x="", y="") +
+  theme_bw()
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.svg')
+
+
+
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.6, breaks= c(5000,0,-5000)) +
+  scale_fill_manual(values = c('darkgrey','white')) +
+  geom_contour(data = bf,
+               size=c(0.1),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-100,-200,-300,-400)) +
+  geom_contour(data = bf,
+               size=c(0.3),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-500,-1000, -2000, -3500)) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, size=Diel),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  labs(x="", y="") +
+  theme_bw()
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.svg')
+
+
+
+```
+
+
+```{r}
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.6, breaks= c(5000,0,-5000)) +
+  scale_fill_manual(values = c('darkgrey','white')) +
+  geom_contour(data = bf,
+               size=c(0.1),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-100,-200,-300,-400)) +
+  geom_contour(data = bf,
+               size=c(0.3),
+               aes(x=x, y=y, z=z),
+               alpha=0.8, color='grey',
+               breaks= c(-500,-1000, -2000, -3500)) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, size=Diel),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  labs(x="", y="") +
+  theme_bw()
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth_diel.svg')
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  geom_contour(data = bf,
+               size=c(0.2),
+               aes(x=x, y=y, z=z,color = stat(level)),
+               alpha=0.8, 
+               breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500))
+test
+
+test <- ggplot()+
+  geom_contour(data = bf,
+               size=c(0.2),
+               colour="grey",
+               aes(x=x, y=y, z=z,color = stat(z)),
+               alpha=0.8, 
+               breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+               #breaks= c(5000,0,-50,-75,-100,-150,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  # scale_colour_brewer(palette = "Greys",name="Depth", 
+  #                     labels=c("0m","0-100m","100-200m","200-300m",
+  #                              "300-400m","400-500m","500-1000m",
+  #                              "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+            colour = "black",fill='grey',
+            stroke = 0.5, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  labs(x="", y="") +
+  theme_bw()
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth.png')
+ggsave('/Users/kpitz/Projects/Maps/CN18F_lines_depth.svg')
+```
+
+
+
+
+
+
+
+
+
+```{r}
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, label=SC),
+            colour = "black",fill='grey',
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test.png')
+
+
+
+
+
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500))+
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m","300-400m","400-500m","500-1000m","1000-2000m","2000-3500m")) +
+  ylab("") +
+  xlab("") +
+  coord_map(xlim = lons, ylim = lats)
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test.png')
+test + geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, label=SC),
+            #colour = "black",fill='grey',
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21)+
+  geom_text(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=depth, label=SC),
+            size=1, vjust=2.5, fontface = "bold")
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test_labeled.png')
+
+
+
+
+
+
+
+
+
+
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500))+
+  # scale_fill_brewer(palette = "Blues",name="Depth", 
+  #                     labels=c("0m","0-100m","100-200m","200-300m","300-400m","400-500m","500-1000m","1000-2000m","2000-3500m")) +
+  ylab("") +
+  xlab("") +
+  coord_map(xlim = lons, ylim = lats) +
+  # add points
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, label=SC),
+            colour = "black",fill='grey',
+            stroke = .2, size = 2,
+            alpha = 1, shape = 21)+
+  geom_text(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, fill=depth, label=SC),
+            size=1, vjust=2.5, fontface = "bold")
+
+test
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test.png')
+
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m","0-100m","100-200m","200-300m",
+                               "300-400m","400-500m","500-1000m",
+                               "1000-2000m","2000-3500m")) +
+  geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat, label=SC),
+            colour = "black",fill='grey',
+            stroke = .2, size = 1,
+            alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats)
+
+test
+
+
+#SCRAP
+
+test <- ggplot()+
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z))+
+  scale_fill_brewer(palette = "Blues")
+test
++
+  #labs(x="Longitude", y="Latitude")+
+# configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)+
+  
+  #scale bar
+  scalebar(data = df, dist = 10, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  theme_bw()
+ggsave('/Users/kpitz/Projects/Maps/CN18F_test.png')
+test
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
