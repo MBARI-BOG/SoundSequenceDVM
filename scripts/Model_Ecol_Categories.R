@@ -117,7 +117,9 @@ Ecol_data <- tax.c %>% left_join(sp_desig) %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
 
-# Create Loess Model ------------------------------------------------------
+# Loess Model in base R with diff span values ------------------------------------------------------
+
+# Individual
 
 test <- Ecol_data %>% 
   filter(Ecological_Category == 'epipelagic') %>%
@@ -129,10 +131,187 @@ test <- Ecol_data %>%
 # In base R:
 
 loessMod10 <- loess(sum_per_tot ~ depth, data=test, span=0.30)
+smoothed10 <- predict(loessMod10, se=TRUE) 
+
+loessMod20 <- loess(sum_per_tot ~ depth, data=test, span=0.50)
+smoothed20 <- predict(loessMod20, se=TRUE) 
+
+loessMod25 <- loess(sum_per_tot ~ depth, data=test, span=0.60)
+smoothed25 <- predict(loessMod25, se=TRUE) 
+
+loessMod30 <- loess(sum_per_tot ~ depth, data=test, span=0.75)
+smoothed30 <- predict(loessMod30, se=TRUE) 
+
+# Plot it
+plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+lines(smoothed10$fit, x=test$depth, col="red")
+lines(x=test$depth,smoothed10$fit - qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+lines(x=test$depth,smoothed10$fit + qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+
+lines(smoothed20$fit, x=test$depth, col="purple")
+lines(x=test$depth,smoothed20$fit - qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+lines(x=test$depth,smoothed20$fit + qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+
+lines(smoothed25$fit, x=test$depth, col="orange")
+lines(x=test$depth,smoothed25$fit - qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+lines(x=test$depth,smoothed25$fit + qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+
+lines(smoothed30$fit, x=test$depth, col="green")
+lines(x=test$depth,smoothed30$fit - qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+lines(x=test$depth,smoothed30$fit + qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+
+#lines(smoothed20, x=test$depth, col="purple")
+#lines(smoothed25, x=test$depth, col="orange")
+#lines(smoothed30, x=test$depth, col="green")
+
+#add legend to plot
+legend('topright',
+       col = c('red', 'purple', 'orange','green'),
+       lwd = 2,
+       c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+
+# Open a pdf file
+filename = paste(directory, marker,'_LOESS_spans_epipelagic_night_withse.pdf', sep='')
+pdf(filename) 
+# 2. Create a plot
+plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+lines(smoothed10$fit, x=test$depth, col="red")
+lines(x=test$depth,smoothed10$fit - qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+lines(x=test$depth,smoothed10$fit + qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+
+lines(smoothed20$fit, x=test$depth, col="purple")
+lines(x=test$depth,smoothed20$fit - qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+lines(x=test$depth,smoothed20$fit + qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+
+lines(smoothed25$fit, x=test$depth, col="orange")
+lines(x=test$depth,smoothed25$fit - qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+lines(x=test$depth,smoothed25$fit + qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+
+lines(smoothed30$fit, x=test$depth, col="green")
+lines(x=test$depth,smoothed30$fit - qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+lines(x=test$depth,smoothed30$fit + qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+#add legend to plot
+legend('topright',
+       col = c('red', 'purple', 'orange','green'),
+       lwd = 2,
+       c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+# Close the pdf file
+dev.off()
+
+
+# Loop over span values across Ecol Cat and Diel --------------------------
+
+# with standard error
+
+ecols = c('epipelagic', 'mesopelagic', 'cosmopolitan', 'benthopelagic')
+diels = c('day', 'night')
+
+for (val in ecols) {
+  ecol_level = sym(val)
+  for (val2 in diels) {
+    diel_level = sym(val2)
+    test <- Ecol_data %>% 
+      filter(Ecological_Category == ecol_level) %>%
+      left_join(meta %>% select(SampleID, diel, depth)) %>%
+      filter(diel == diel_level) %>%
+      select(Ecological_Category, depth, sum_per_tot) %>%
+      arrange(depth)
+    #LOESS MODEL
+    loessMod10 <- loess(sum_per_tot ~ depth, data=test, span=0.30)
+    smoothed10 <- predict(loessMod10, se=TRUE) 
+    loessMod20 <- loess(sum_per_tot ~ depth, data=test, span=0.50)
+    smoothed20 <- predict(loessMod20, se=TRUE) 
+    loessMod25 <- loess(sum_per_tot ~ depth, data=test, span=0.60)
+    smoothed25 <- predict(loessMod25, se=TRUE) 
+    loessMod30 <- loess(sum_per_tot ~ depth, data=test, span=0.75)
+    smoothed30 <- predict(loessMod30, se=TRUE) 
+    # Plot and Save
+    # Open a pdf file
+    filename = paste(directory, marker,'_LOESS_spans_',ecol_level, '_', diel_level, '_withse.pdf', sep='')
+    pdf(filename) 
+    title = paste('Loess Smoothing and Prediction : ',ecol_level, ' ', diel_level, sep='')
+    # 2. Create a plot
+    #plot(test$sum_per_tot, x=test$depth, type="l", main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+    plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+    lines(smoothed10$fit, x=test$depth, col="red")
+    lines(x=test$depth,smoothed10$fit - qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+    lines(x=test$depth,smoothed10$fit + qt(0.975,smoothed10$df)*smoothed10$se, lty=2, col="red")
+    
+    lines(smoothed20$fit, x=test$depth, col="purple")
+    lines(x=test$depth,smoothed20$fit - qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+    lines(x=test$depth,smoothed20$fit + qt(0.975,smoothed20$df)*smoothed20$se, lty=2, col="purple")
+    
+    lines(smoothed25$fit, x=test$depth, col="orange")
+    lines(x=test$depth,smoothed25$fit - qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+    lines(x=test$depth,smoothed25$fit + qt(0.975,smoothed25$df)*smoothed25$se, lty=2, col="orange")
+    
+    lines(smoothed30$fit, x=test$depth, col="green")
+    lines(x=test$depth,smoothed30$fit - qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+    lines(x=test$depth,smoothed30$fit + qt(0.975,smoothed30$df)*smoothed30$se, lty=2, col="green")
+    #add legend to plot
+    legend('topright',
+           col = c('red', 'purple', 'orange','green'),
+           lwd = 2,
+           c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+    # Close the pdf file
+    dev.off()
+  }
+}
+
+# Without SE:
+
+for (val in ecols) {
+  ecol_level = sym(val)
+  for (val2 in diels) {
+    diel_level = sym(val2)
+    test <- Ecol_data %>% 
+      filter(Ecological_Category == ecol_level) %>%
+      left_join(meta %>% select(SampleID, diel, depth)) %>%
+      filter(diel == diel_level) %>%
+      select(Ecological_Category, depth, sum_per_tot) %>%
+      arrange(depth)
+    #LOESS MODEL
+    loessMod10 <- loess(sum_per_tot ~ depth, data=test, span=0.30)
+    smoothed10 <- predict(loessMod10, se=FALSE) 
+    loessMod20 <- loess(sum_per_tot ~ depth, data=test, span=0.50)
+    smoothed20 <- predict(loessMod20, se=FALSE) 
+    loessMod25 <- loess(sum_per_tot ~ depth, data=test, span=0.60)
+    smoothed25 <- predict(loessMod25, se=FALSE) 
+    loessMod30 <- loess(sum_per_tot ~ depth, data=test, span=0.75)
+    smoothed30 <- predict(loessMod30, se=FALSE) 
+    # Plot and Save
+    # Open a pdf file
+    filename = paste(directory, marker,'_LOESS_spans_',ecol_level, '_', diel_level, '.pdf', sep='')
+    pdf(filename) 
+    title = paste('Loess Smoothing and Prediction : ',ecol_level, ' ', diel_level, sep='')
+    # 2. Create a plot
+    #plot(test$sum_per_tot, x=test$depth, type="l", main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+    plot(test$sum_per_tot, x=test$depth,main=title, xlab="depth", ylab="sum_per_tot")
+    lines(smoothed10, x=test$depth, col="red")
+    lines(smoothed20, x=test$depth, col="purple")
+    lines(smoothed25, x=test$depth, col="orange")
+    lines(smoothed30, x=test$depth, col="green")
+    #add legend to plot
+    legend('topright',
+           col = c('red', 'purple', 'orange','green'),
+           lwd = 2,
+           c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+    # Close the pdf file
+    dev.off()
+  }
+}
+
+
+# In base R without loop:
+
+loessMod10 <- loess(sum_per_tot ~ depth, data=test, span=0.30)
 smoothed10 <- predict(loessMod10) 
 
 loessMod20 <- loess(sum_per_tot ~ depth, data=test, span=0.50)
 smoothed20 <- predict(loessMod20) 
+
+loessMod25 <- loess(sum_per_tot ~ depth, data=test, span=0.60)
+smoothed25 <- predict(loessMod25) 
 
 loessMod30 <- loess(sum_per_tot ~ depth, data=test, span=0.75)
 smoothed30 <- predict(loessMod30) 
@@ -142,15 +321,336 @@ plot(test$sum_per_tot, x=test$depth, type="l", main="Loess Smoothing and Predict
 plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
 lines(smoothed10, x=test$depth, col="red")
 lines(smoothed20, x=test$depth, col="purple")
+lines(smoothed25, x=test$depth, col="orange")
 lines(smoothed30, x=test$depth, col="green")
 
-# In tidyverse:
+#add legend to plot
+legend('topright',
+       col = c('red', 'purple', 'orange','green'),
+       lwd = 2,
+       c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+
+# Open a pdf file
+filename = paste(directory, marker,'_LOESS_spans_epipelagic_night.pdf', sep='')
+pdf(filename) 
+# 2. Create a plot
+#plot(test$sum_per_tot, x=test$depth, type="l", main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction : Epipelagic Night", xlab="depth", ylab="sum_per_tot")
+lines(smoothed10, x=test$depth, col="red")
+lines(smoothed20, x=test$depth, col="purple")
+lines(smoothed25, x=test$depth, col="orange")
+lines(smoothed30, x=test$depth, col="green")
+#add legend to plot
+legend('topright',
+       col = c('red', 'purple', 'orange','green'),
+       lwd = 2,
+       c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
+# Close the pdf file
+dev.off()
+
+
+# Find optimum span based on minimizing sum of squares errors (http://r-statistics.co/Loess-Regression-With-R.html)
+
+# define function that returns the SSE
+calcSSE <- function(x){
+  loessMod <- try(loess(sum_per_tot ~ depth, data=test, span=x), silent=T)
+  res <- try(loessMod$residuals, silent=T)
+  if(class(res)!="try-error"){
+    if((sum(res, na.rm=T) > 0)){
+      sse <- sum(res^2)  
+    }
+  }else{
+    sse <- 99999
+  }
+  return(sse)
+}
+
+# Run optim to find span that gives min SSE, starting at 0.5
+optim(par=c(0.5), calcSSE, method="SANN")
+
+#$par
+#[1] 0.08663962
+
+# try this span value:
+loessMod30 <- loess(sum_per_tot ~ depth, data=test, span=0.08663962)
+smoothed30 <- predict(loessMod30) 
+
+# Plot it
+plot(test$sum_per_tot, x=test$depth, type="l", main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
+lines(smoothed30, x=test$depth, col="red")
+
+# Too messy I think!!
+
+### Model in Tidyverse and combine ---------------
+#DAY
+test <- Ecol_data %>% 
+  #filter(Ecological_Category == 'epipelagic') %>%
+  filter(Ecological_Category %in% c('epipelagic', 'mesopelagic', 'benthopelagic', 'cosmopolitan')) %>%
+  left_join(meta %>% select(SampleID, diel, depth, ESP)) %>%
+  filter(diel == 'day') %>%
+  #filter(diel %in% c('night', 'day')) %>%
+  select(Ecological_Category, depth, sum_per_tot, ESP) %>%
+  arrange(depth)
+
+#split by Ecol_cat
+sdata <-split(test, test$Ecological_Category)
+#calculate the predicted values for each country
+data.1.with.pred <- lapply(sdata, function(df){
+  df$pred.response  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$fit
+  df$se  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$se
+  df$df  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$df
+  df
+})
+
+#merge back into 1 dataframe
+day.with.pred <-dplyr::bind_rows(data.1.with.pred ) %>%
+  mutate(diel = 'day')
+
+#NIGHT
+test <- Ecol_data %>% 
+  #filter(Ecological_Category == 'epipelagic') %>%
+  filter(Ecological_Category %in% c('epipelagic', 'mesopelagic', 'benthopelagic', 'cosmopolitan')) %>%
+  left_join(meta %>% select(SampleID, diel, depth, ESP)) %>%
+  filter(diel == 'night') %>%
+  #filter(diel %in% c('night', 'day')) %>%
+  select(Ecological_Category, depth, sum_per_tot, ESP) %>%
+  arrange(depth)
+
+#split by Ecol_cat
+sdata <-split(test, test$Ecological_Category)
+#calculate the predicted values for each country
+data.1.with.pred <- lapply(sdata, function(df){
+  df$pred.response  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$fit
+  df$se  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$se
+  df$df  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df), se=TRUE)$df
+  df
+})
+
+#merge back into 1 dataframe
+night.with.pred <-dplyr::bind_rows(data.1.with.pred ) %>%
+  mutate(diel = 'night')
+
+merged_predictions <- day.with.pred %>% add_row(night.with.pred)
+
+# TEST
+plotA <- merged_predictions %>%
+  filter(diel == 'night') %>%
+  ggplot(aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category)) +
+  geom_point(aes( y=sum_per_tot, shape=ESP), size = 2, alpha=0.6) + 
+  #scale_shape_manual(values=c(21, 24))+
+  scale_shape_manual(values=c(21, 8))+
+  geom_line(  alpha= 1, size=1) +
+  #geom_line(aes(y=pred.response -qt(0.975,df)*se))+
+  #geom_line(aes(y=pred.response +qt(0.975,df)*se))+
+  #geom_ribbon(data=subset(data.1.with.pred, 200 <= depth & depth <= 300), 
+  #            aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.3,linetype='dashed') +
+  geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.5,linetype = 0) +
+  coord_flip()+
+  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  #xlim(-890,0)+
+  #scale_x_continuous(minor_breaks= c(0, -50, -100, -200, -300, -400, -500, -600, -700, -800, -890))+
+  #scale_x_continuous(minor_breaks= c(0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 890))+
+  scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,0))+
+  labs(x="Depth (m)",y="Percent Total Reads")+
+  theme_minimal() 
+plotA
+
+
+
+
+
+plotA <- merged_predictions %>%
+  filter(diel == 'night') %>%
+  ggplot(aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category)) +
+  geom_point(aes( y=sum_per_tot, shape=ESP), size = 2, alpha=0.6) + 
+  #scale_shape_manual(values=c(21, 24))+
+  scale_shape_manual(values=c(21, 8))+
+  geom_line(  alpha= 1, size=1) +
+  #geom_line(aes(y=pred.response -qt(0.975,df)*se))+
+  #geom_line(aes(y=pred.response +qt(0.975,df)*se))+
+  #geom_ribbon(data=subset(data.1.with.pred, 200 <= depth & depth <= 300), 
+  #            aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.3,linetype='dashed') +
+  geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.5,linetype = 0) +
+  coord_flip()+
+  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,10))+
+  scale_y_continuous(breaks=c(0,20,40,60,80,100))+
+  labs(x="Depth (m)",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  #scale_x_continuous(breaks=c(-890, -700, -500, -300, -100, 0)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=10,face="bold"),
+    legend.key.height=grid::unit(0.5,"cm"),
+    legend.key.width=grid::unit(0.5,"cm"),
+    legend.title=element_text(colour=textcol,size=10,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=12,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=12,colour=textcol),
+    axis.title.y = element_text(size=12),
+    #plot.background=element_blank(),
+    #panel.border=element_blank(),
+    #panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+plotA
+filename = paste(directory, marker,'_EcolCat_LOESS_scatter_Nights5.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(directory, marker,'_EcolCat_LOESS_scatter_Nights5.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+#DAY
+plotA <- merged_predictions %>%
+  filter(diel == 'day') %>%
+  ggplot(aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category)) +
+  geom_point(aes( y=sum_per_tot, shape=ESP), size = 2, alpha=0.6) + 
+  scale_shape_manual(values=c(21, 8))+
+  geom_line(  alpha= 1, size=1) +
+  geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.5,linetype = 0) +
+  coord_flip()+
+  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,10))+
+  scale_y_continuous(breaks=c(0,20,40,60,80,100))+
+  labs(x="Depth (m)",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=10,face="bold"),
+    legend.key.height=grid::unit(0.5,"cm"),
+    legend.key.width=grid::unit(0.5,"cm"),
+    legend.title=element_text(colour=textcol,size=10,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=12,colour=textcol),
+    axis.text.y=element_text(size=12,colour=textcol),
+    axis.title.y = element_text(size=12),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+plotA
+filename = paste(directory, marker,'_EcolCat_LOESS_scatter_Days5.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(directory, marker,'_EcolCat_LOESS_scatter_Days5.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+
+
+### Plot by Ecological category, night and day together:
+#basic:
+plotA <- merged_predictions %>%
+  #filter(diel == 'night') %>%
+  ggplot(aes(x=depth, y=pred.response, color=diel, fill=diel, linestyle=diel)) +
+  geom_point(aes( y=sum_per_tot), size = 2, alpha=0.3) + 
+  geom_line(  alpha= 1, size=1) +
+  facet_grid(Ecological_Category ~ ., margins=FALSE)
+
+filename = paste(directory, marker,'_EcolCat_bydiel_lines5.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+#highlighted between lines:
+plotA <- merged_predictions %>%
+  #filter(diel == 'night') %>%
+  ggplot(aes(x=-depth, y=pred.response, color=diel, fill=diel, linestyle=diel)) +
+  geom_point(aes( y=sum_per_tot), size = 2, alpha=0.3) + 
+  geom_line(  alpha= 1, size=1) +
+  #geom_polygon(aes(group = diel), alpha = 0.3)+
+  geom_ribbon(aes(ymin=0,ymax=pred.response), alpha=0.3, linetype=0) +
+  scale_fill_manual(values = c('chocolate1', 'royalblue3', 'darkgreen')) +
+  scale_color_manual(values = c('chocolate1', 'royalblue3', 'darkgreen')) +
+  facet_grid(Ecological_Category ~ ., margins=FALSE)+
+  #facet_grid(. ~ Ecological_Category, margins=FALSE)+
+  coord_flip()
+
+plotA
+filename = paste(directory, marker,'_EcolCat_bydiel_lines5_highlighted.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 8, width =5, units = 'in')
+
+
+
+
+
+
++
+  #geom_line(aes(y=pred.response -qt(0.975,df)*se))+
+  #geom_line(aes(y=pred.response +qt(0.975,df)*se))+
+  #geom_ribbon(data=subset(data.1.with.pred, 200 <= depth & depth <= 300), 
+  #            aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.3,linetype='dashed') +
+  geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.5,linetype = 0) +
+  #coord_flip()+
+  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  xlim(-890,0)+
+  labs(x="Depth (m)",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+plotA
+filename = paste(directory, marker,'_EcolCat_LOESS_scatter_Nights6.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+
+
+
+# ggplot(merged_predictions, aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category, linetype=diel)) +
+#   geom_point(aes( y=sum_per_tot), size = 3, alpha=0.3) + 
+#   geom_line(  alpha= 1, size=2) +
+#   geom_line(aes(y=pred.response -qt(0.975,df)*se),linetype='dashed')+
+#   geom_line(aes(y=pred.response +qt(0.975,df)*se),linetype='dashed')+
+#   #geom_ribbon(data=subset(data.1.with.pred, 200 <= depth & depth <= 300), 
+#   #            aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.3,linetype='dashed') +
+#   geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.3,linetype='dashed') +
+#   coord_flip()
+# 
+# 
+# filename = paste(directory, marker,'Ecolcats_LOESS_day_05.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 8, width =10, units = 'in')
+
+### Model in Tidyverse Ecol Cats together ---------------
 
 test <- Ecol_data %>% 
   #filter(Ecological_Category == 'epipelagic') %>%
   filter(Ecological_Category %in% c('epipelagic', 'mesopelagic')) %>%
   left_join(meta %>% select(SampleID, diel, depth)) %>%
-  filter(diel == 'night') %>%
+  filter(diel == 'day') %>%
+  #filter(diel %in% c('night', 'day')) %>%
   select(Ecological_Category, depth, sum_per_tot) %>%
   arrange(depth)
 
@@ -166,11 +666,18 @@ data.1.with.pred <- lapply(sdata, function(df){
 #merge back into 1 dataframe
 data.1.with.pred <-dplyr::bind_rows(data.1.with.pred )
 
-ggplot(data.1.with.pred, aes(x=depth, y=pred.response, color=Ecological_Category)) +
-  geom_point(aes(x=depth, y=sum_per_tot), size = 3, alpha=0.3) + 
-  geom_line( size=0.5, alpha= 1) 
+ggplot(data.1.with.pred, aes(x=-depth, y=pred.response, color=Ecological_Category)) +
+  geom_point(aes( y=sum_per_tot), size = 3, alpha=0.3) + 
+  geom_line( size=0.5, alpha= 1) +
+  coord_flip()
 
-# split by time period
+filename = paste(directory, marker,'Ecolcats_LOESS_day_06.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 8, width =10, units = 'in')
+
+
+### Model in Tidyverse: One EcolCat over day/night ---------------
 
 test <- Ecol_data %>% 
   filter(Ecological_Category == 'epipelagic') %>%
@@ -186,7 +693,7 @@ test <- Ecol_data %>%
 sdata <-split(test, test$diel)
 #calculate the predicted values for each country
 data.1.with.pred <- lapply(sdata, function(df){
-  df$pred.response  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .60, data=df))
+  df$pred.response  <-stats::predict(stats::loess(sum_per_tot ~ depth, span = .50, data=df))
   df
 })
 
