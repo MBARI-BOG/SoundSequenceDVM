@@ -388,6 +388,10 @@ test <- ggplot()+
             colour = "green",fill='green',
             stroke = .2, size = 1,
             alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(SAMPLING_platform %in% c('ROV')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+            colour = "purple",fill='purple',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
   geom_text(data = pts, aes(x = lon, y = lat, label=label),
             size=3, vjust=2.5, fontface = "bold", color='black') +
   geom_point(data = pts, aes(x = lon, y = lat),

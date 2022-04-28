@@ -142,10 +142,12 @@ ASV_850,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus
 ASV_852,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_864,Eukaryota,Chordata,Actinopteri,unknown,Moronidae,Morone,Morone saxatilis
 ASV_866,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
+ASV_870,Eukaryota,Chordata,Actinopteri,Stomiiformes,Gonostomatidae,Cyclothone,Cyclothone acclinidens
 ASV_874,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_894,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys sordidus
 ASV_912,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
 ASV_925,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Symbolophorus,Symbolophorus californiensis
+ASV_931,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys stigmaeus
 ASV_935,Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius productus
 ASV_945,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_985,Eukaryota,Chordata,Actinopteri,Lampriformes,Trachipteridae,Trachipterus,unassigned
@@ -401,12 +403,14 @@ ASV_10592,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachiu
 ASV_10595,Eukaryota,Chordata,Actinopteri,unassigned,unassigned,g_,s_
 ASV_10950,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_11381,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Lampanyctus,Lampanyctus tenuiformis
+ASV_11820,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_11823,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti
 ASV_12632,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_12953,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_13284,Eukaryota,Chordata,Mammalia,Cetacea,unassigned,g_,s_
 ASV_13318,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Lampanyctus,Lampanyctus tenuiformis
 ASV_13321,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
+ASV_13345,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_13643,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,s_
 ASV_13651,Eukaryota,Chordata,Mammalia,Cetacea,Physeteridae,Physeter,Physeter catodon
 ASV_14056,Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,g_,s_
@@ -424,5 +428,6 @@ ASV_33581,Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citha
 ASV_33583,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti
 ASV_33593,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,s_
 ASV_33606,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_
+ASV_33608,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_
 ASV_33612,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,s_
 ASV_33620,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax

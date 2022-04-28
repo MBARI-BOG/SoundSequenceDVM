@@ -124,7 +124,8 @@ Ecol_data <- tax.c %>% left_join(sp_desig) %>%
 test <- Ecol_data %>% 
   filter(Ecological_Category == 'epipelagic') %>%
   left_join(meta %>% select(SampleID, diel, depth)) %>%
-  filter(diel == 'night') %>%
+  filter(diel == 'day') %>%
+  filter(depth>-1) %>%
   select(Ecological_Category, depth, sum_per_tot) %>%
   arrange(depth)
 
@@ -171,7 +172,7 @@ legend('topright',
        c('span = 0.3', 'span = 0.5', 'span = 0.6', 'span = 0.75'))
 
 # Open a pdf file
-filename = paste(directory, marker,'_LOESS_spans_epipelagic_night_withse.pdf', sep='')
+filename = paste(directory, marker,'_LOESS_spans_epipelagic_day_withse.pdf', sep='')
 pdf(filename) 
 # 2. Create a plot
 plot(test$sum_per_tot, x=test$depth,main="Loess Smoothing and Prediction", xlab="depth", ylab="sum_per_tot")
@@ -214,6 +215,7 @@ for (val in ecols) {
       filter(Ecological_Category == ecol_level) %>%
       left_join(meta %>% select(SampleID, diel, depth)) %>%
       filter(diel == diel_level) %>%
+      filter(depth>-1) %>%
       select(Ecological_Category, depth, sum_per_tot) %>%
       arrange(depth)
     #LOESS MODEL
@@ -268,6 +270,7 @@ for (val in ecols) {
       filter(Ecological_Category == ecol_level) %>%
       left_join(meta %>% select(SampleID, diel, depth)) %>%
       filter(diel == diel_level) %>%
+      filter(depth>-1) %>%
       select(Ecological_Category, depth, sum_per_tot) %>%
       arrange(depth)
     #LOESS MODEL
@@ -389,6 +392,7 @@ test <- Ecol_data %>%
   filter(Ecological_Category %in% c('epipelagic', 'mesopelagic', 'benthopelagic', 'cosmopolitan')) %>%
   left_join(meta %>% select(SampleID, diel, depth, ESP)) %>%
   filter(diel == 'day') %>%
+  filter(depth > -1) %>%
   #filter(diel %in% c('night', 'day')) %>%
   select(Ecological_Category, depth, sum_per_tot, ESP) %>%
   arrange(depth)
@@ -413,6 +417,7 @@ test <- Ecol_data %>%
   filter(Ecological_Category %in% c('epipelagic', 'mesopelagic', 'benthopelagic', 'cosmopolitan')) %>%
   left_join(meta %>% select(SampleID, diel, depth, ESP)) %>%
   filter(diel == 'night') %>%
+  filter(depth > -1) %>%
   #filter(diel %in% c('night', 'day')) %>%
   select(Ecological_Category, depth, sum_per_tot, ESP) %>%
   arrange(depth)
@@ -466,7 +471,7 @@ plotA <- merged_predictions %>%
   ggplot(aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category)) +
   geom_point(aes( y=sum_per_tot, shape=ESP), size = 2, alpha=0.6) + 
   #scale_shape_manual(values=c(21, 24))+
-  scale_shape_manual(values=c(21, 8))+
+  scale_shape_manual(values=c(17, 8, 1 ))+
   geom_line(  alpha= 1, size=1) +
   #geom_line(aes(y=pred.response -qt(0.975,df)*se))+
   #geom_line(aes(y=pred.response +qt(0.975,df)*se))+
@@ -513,7 +518,7 @@ plotA <- merged_predictions %>%
   filter(diel == 'day') %>%
   ggplot(aes(x=-depth, y=pred.response, color=Ecological_Category, fill=Ecological_Category)) +
   geom_point(aes( y=sum_per_tot, shape=ESP), size = 2, alpha=0.6) + 
-  scale_shape_manual(values=c(21, 8))+
+  scale_shape_manual(values=c(17, 8, 1 ))+
   geom_line(  alpha= 1, size=1) +
   geom_ribbon(aes(ymin=pred.response-qt(0.975,df)*se,ymax=pred.response+qt(0.975,df)*se), alpha=0.5,linetype = 0) +
   coord_flip()+
@@ -555,8 +560,10 @@ plotA <- merged_predictions %>%
   ggplot(aes(x=depth, y=pred.response, color=diel, fill=diel, linestyle=diel)) +
   geom_point(aes( y=sum_per_tot), size = 2, alpha=0.3) + 
   geom_line(  alpha= 1, size=1) +
+  scale_fill_manual(values = c('chocolate1', 'royalblue3', 'darkgreen')) +
+  scale_color_manual(values = c('chocolate1', 'royalblue3', 'darkgreen')) +
   facet_grid(Ecological_Category ~ ., margins=FALSE)
-
+plotA
 filename = paste(directory, marker,'_EcolCat_bydiel_lines5.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
@@ -582,7 +589,7 @@ filename = paste(directory, marker,'_EcolCat_bydiel_lines5_highlighted.png', sep
 print(filename)
 ggsave(filename,height = 8, width =5, units = 'in')
 
-
+###### SCRAP BELOW? ########
 
 
 

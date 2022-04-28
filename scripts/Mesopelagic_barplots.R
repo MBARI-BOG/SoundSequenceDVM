@@ -306,7 +306,7 @@ filename = paste(directory, marker,'_EcolCat_bar_ALL_DayNight.png', sep='')
 print(filename)
 ggsave(filename,height = 6, width =20, units = 'in')
 
-### LIMIT TO CTD SAMPLES <600m ###
+# LIMIT TO CTD samples?
 
 #plot each sample by depth by species disignation
 test <- tax.c %>% left_join(sp_desig) %>%
@@ -321,7 +321,7 @@ test <- tax.c %>% left_join(sp_desig) %>%
 samp_lim <- samp.c %>%
   select(SampleID,SAMPLING_cruise, depth, ESP, SAMPLING_station, SC, SAMPLING_station_number, diel ) %>%
   #filter(depth<600) %>%
-  filter(depth>=0) %>%
+  filter(depth>=-1) %>%
   filter(SAMPLING_station %in% c('MARS', 'OFFMARS_E')) %>%
   #filter(diel == 'day') %>%
   #filter(SC!=57) %>%
@@ -357,10 +357,53 @@ bp_top <- right_join(test, samp_lim,  by = c("SampleID")) %>% #join with metadat
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 
-filename = paste(directory, marker,'_EcolCat_bar.png', sep='')
+filename = paste(directory, marker,'_EcolCat_bar_CTD.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =20, units = 'in')
+
+# ROV
+
+#limit samples
+samp_lim <- samp.c %>%
+  select(SampleID,SAMPLING_cruise, SAMPLING_platform, depth, ESP, SAMPLING_station, SC, SAMPLING_station_number, diel ) %>%
+  filter(depth>=-1) %>%
+  filter(SAMPLING_platform == 'ROV') 
+
+# assign text colour
+textcol <- "grey40"
+print("Begin plotting...")
+bp_top <- right_join(test, samp_lim,  by = c("SampleID")) %>% #join with metadata
+  ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
+  geom_bar(stat = "identity", aes(fill = Ecological_Category))+
+  scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+  labs(x="",y="Percent Total Reads")+
+  #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+  #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+filename = paste(directory, marker,'_EcolCat_bar_ROV.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 6, width =8, units = 'in')
 
 
 # Scatter plot of reads by depth -----------------------------------------
@@ -495,29 +538,19 @@ textcol <- "grey40"
 print("Begin plotting...")
 bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
   filter(depth>-1) %>%
-  #filter(depth<600) %>%
-  #filter(diel %in% c('day', 'night', 'transition')) %>%
-  filter(SAMPLING_platform=='WESTERN FLYER') %>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'daphne', 'LRAUV'))%>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'makai', 'LRAUV'))%>%
   filter(diel %in% c('day')) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
                                     'cosmopolitan')) %>%
   ggplot(aes(x = -depth, y = sum_per_tot)) +
-  #ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
-  geom_point(aes(color = Ecological_Category), alpha=0.7) +
+  geom_point(aes(color = Ecological_Category, shape=SAMPLING_platform), alpha=0.7) +
   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6, level=0.95) +
-  #geom_bar(stat = "identity", aes(fill = Ecological_Category))+
-  #facet_grid(diel ~ ., margins=TRUE)+
-  #scale_color_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_fill_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
-  #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+  scale_shape_manual(values=c(17, 8, 1)) + 
   labs(x="Depth (m)",y="Percent Total Reads")+
   coord_flip() +
-  #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
-  #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
   theme_minimal() +
   guides(fill=guide_legend(ncol=2)) +
   theme(
@@ -539,7 +572,11 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_CTD.png', sep='')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -550,29 +587,19 @@ textcol <- "grey40"
 print("Begin plotting...")
 bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
   filter(depth>-1) %>%
-  filter(SAMPLING_platform=='WESTERN FLYER') %>%
-  #filter(depth<600) %>%
-  #filter(diel %in% c('day', 'night', 'transition')) %>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'daphne', 'LRAUV'))%>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'makai', 'LRAUV'))%>%
   filter(diel %in% c('night')) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
                                     'cosmopolitan')) %>%
   ggplot(aes(x = -depth, y = sum_per_tot)) +
-  #ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
-  geom_point(aes(color = Ecological_Category), alpha=0.7) +
+  geom_point(aes(color = Ecological_Category, shape=SAMPLING_platform), alpha=0.7) +
   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6, level=0.95) +
-  #geom_bar(stat = "identity", aes(fill = Ecological_Category))+
-  #facet_grid(diel ~ ., margins=TRUE)+
-  #scale_color_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_fill_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
-  #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+  scale_shape_manual(values=c(17, 1)) + 
   labs(x="Depth (m)",y="Percent Total Reads")+
   coord_flip() +
-  #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
-  #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
   theme_minimal() +
   guides(fill=guide_legend(ncol=2)) +
   theme(
@@ -594,39 +621,34 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_CTD.png', sep='')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
-# transition
+# TRANSITION
+# assign text colour
 textcol <- "grey40"
 print("Begin plotting...")
 bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
   filter(depth>-1) %>%
-  #filter(depth<600) %>%
-  #filter(diel %in% c('day', 'night', 'transition')) %>%
-  filter(SAMPLING_platform=='WESTERN FLYER') %>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'daphne', 'LRAUV'))%>%
+  mutate(SAMPLING_platform = replace(SAMPLING_platform,SAMPLING_platform== 'makai', 'LRAUV'))%>%
   filter(diel %in% c('transition')) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
                                     'cosmopolitan')) %>%
   ggplot(aes(x = -depth, y = sum_per_tot)) +
-  #ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
-  geom_point(aes(color = Ecological_Category), alpha=0.7) +
+  geom_point(aes(color = Ecological_Category, shape=SAMPLING_platform), alpha=0.7) +
   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6, level=0.95) +
-  #geom_bar(stat = "identity", aes(fill = Ecological_Category))+
-  #facet_grid(diel ~ ., margins=TRUE)+
-  #scale_color_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_fill_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
-  #scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
   scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
-  #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+  scale_shape_manual(values=c(17, 1)) + 
   labs(x="Depth (m)",y="Percent Total Reads")+
   coord_flip() +
-  #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
-  #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
   theme_minimal() +
   guides(fill=guide_legend(ncol=2)) +
   theme(
@@ -648,42 +670,146 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRNS_CTD.png', sep='')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
+# # NIGHT
+# # assign text colour
+# textcol <- "grey40"
+# print("Begin plotting...")
+# bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
+#   filter(depth>-1) %>%
+#   #filter(SAMPLING_platform=='WESTERN FLYER') %>%
+#   #filter(depth<600) %>%
+#   #filter(diel %in% c('day', 'night', 'transition')) %>%
+#   filter(diel %in% c('night')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
+#                                     'cosmopolitan')) %>%
+#   ggplot(aes(x = -depth, y = sum_per_tot)) +
+#   #ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
+#   geom_point(aes(color = Ecological_Category), alpha=0.7) +
+#   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6, level=0.95) +
+#   #geom_bar(stat = "identity", aes(fill = Ecological_Category))+
+#   #facet_grid(diel ~ ., margins=TRUE)+
+#   #scale_color_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
+#   #scale_fill_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
+#   #scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+#   #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+#   labs(x="Depth (m)",y="Percent Total Reads")+
+#   coord_flip() +
+#   #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+#   #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   theme(
+#     #legend
+#     legend.position="right",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=8,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=8,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+#     #axis.text.x=element_text(size=7,colour=textcol),
+#     axis.text.y=element_text(size=6,colour=textcol),
+#     axis.title.y = element_text(size=6),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+#     plot.title=element_blank())
+# 
+# bp_top
+# filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 5, width =5, units = 'in')
+
+# # transition
+# textcol <- "grey40"
+# print("Begin plotting...")
+# bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
+#   filter(depth>-1) %>%
+#   #filter(depth<600) %>%
+#   #filter(diel %in% c('day', 'night', 'transition')) %>%
+#   #filter(SAMPLING_platform=='WESTERN FLYER') %>%
+#   filter(diel %in% c('transition')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
+#                                     'cosmopolitan')) %>%
+#   ggplot(aes(x = -depth, y = sum_per_tot)) +
+#   #ggplot(aes(x = fct_reorder(SampleID, desc(depth)), y = sum_per_tot)) +
+#   geom_point(aes(color = Ecological_Category), alpha=0.7) +
+#   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6, level=0.95) +
+#   #geom_bar(stat = "identity", aes(fill = Ecological_Category))+
+#   #facet_grid(diel ~ ., margins=TRUE)+
+#   #scale_color_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
+#   #scale_fill_tableau(palette = "Classic Color Blind", type = c("regular"), direction = -1)+
+#   #scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+#   #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+#   #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+#   labs(x="Depth (m)",y="Percent Total Reads")+
+#   coord_flip() +
+#   #scale_x_discrete(breaks = year_ticks, labels = year_labels, name = "",drop = FALSE)+
+#   #scale_y_discrete(breaks = ASV_ticks, labels = ASV_labels, name = "",expand=c(0,0))+
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   theme(
+#     #legend
+#     legend.position="right",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=8,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=8,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+#     #axis.text.x=element_text(size=7,colour=textcol),
+#     axis.text.y=element_text(size=6,colour=textcol),
+#     axis.title.y = element_text(size=6),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+#     plot.title=element_blank())
+# 
+# bp_top
+# filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRNS_all.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 5, width =5, units = 'in')
+
 
 ### Plot sampling intensity ####
-# like a heatmap?
 
-#DAY
 textcol <- "grey40"
 print("Begin plotting...")
-bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
-  #filter(depth>-1) %>%
-  #mutate(depth = replace(depth, depth <0, 0)) %>%
-  filter(SAMPLING_platform=='WESTERN FLYER') %>%
-  distinct(SampleID, .keep_all=TRUE) %>%
+
+bp_top <- samp.c %>%
+  select(depth, diel, SAMPLING_platform, SampleID) %>%
   mutate(count=1) %>%
-  #mutate(depth_bin = cut_width(0:700, width=50)) %>%
-  #filter(depth<600) %>%
-  filter(diel %in% c('day', 'night', 'transition')) %>%
-  #filter(diel %in% c('night')) %>%
-  select(depth, count, diel) %>%
   mutate( ints = cut(depth ,breaks = 25, labels=FALSE)) %>% 
-  #mutate( ints = cut(depth ,breaks = 25)) %>% 
-  group_by(ints, diel) %>% 
+  group_by(ints, diel, SAMPLING_platform) %>% 
   mutate(sum_count = sum(count)) %>%
   ungroup() %>%
-  distinct(ints,diel, .keep_all = TRUE) %>%
-  ggplot(aes(y= ints, x=diel, fill=sum_count)) +
+  distinct(ints,diel, SAMPLING_platform,.keep_all = TRUE) %>%
+  ggplot(aes(y= ints, x=SAMPLING_platform, fill=sum_count)) +
+  facet_grid(. ~ diel, margins=FALSE, scales = "free")+
   geom_tile()+
   scale_y_reverse()+
-  scale_fill_viridis()
+  scale_fill_viridis()+
   #labs(y="Percent Total Reads")+
   theme_minimal() +
-  guides(fill=guide_legend(ncol=2)) +
+  #guides(fill=guide_legend(ncol=2)) +
   theme(
     #legend
     legend.position="right",legend.direction="vertical",
@@ -703,14 +829,60 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_sampling_effort_CTD.png', sep='')
+filename = paste(directory, marker,'_sampling_effort_by vehicle.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
-filename = paste(directory, marker,'_sampling_effort_CTD.svg', sep='')
+filename = paste(directory, marker,'_sampling_effort_byvehicle.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
+
+# merged by diel
+bp_top <- samp.c %>%
+  select(depth, diel, SAMPLING_platform, SampleID) %>%
+  mutate(count=1) %>%
+  mutate( ints = cut(depth ,breaks = 25, labels=FALSE)) %>% 
+  group_by(ints, diel, SAMPLING_platform) %>% 
+  mutate(sum_count = sum(count)) %>%
+  ungroup() %>%
+  distinct(ints,diel, SAMPLING_platform,.keep_all = TRUE) %>%
+  ggplot(aes(y= ints, x=diel, fill=sum_count)) +
+  #facet_grid(. ~ diel, margins=FALSE, scales = "free")+
+  geom_tile()+
+  scale_y_reverse()+
+  scale_fill_viridis()+
+  #labs(y="Percent Total Reads")+
+  theme_minimal() +
+  #guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+bp_top
+filename = paste(directory, marker,'_sampling_effort_all.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =3, units = 'in')
+filename = paste(directory, marker,'_sampling_effort_all.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =3, units = 'in')
+
 
 ### Plot EcolCats by Hour and Depth ####
 

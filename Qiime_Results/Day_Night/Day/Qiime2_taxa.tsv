@@ -18,9 +18,7 @@ ASV_30	Eukaryota	Chordata	Actinopteri	Carangiformes	Carangidae	Trachurus	Trachur
 ASV_33	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Microstomus	Microstomus pacificus
 ASV_41	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
 ASV_43	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
-ASV_44	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Thunnus	Thunnus alalunga
 ASV_45	Eukaryota	Chordata	Actinopteri	Tetraodontiformes	Molidae	Mola	unassigned
-ASV_47	Eukaryota	Chordata	Actinopteri	Perciformes	Hexagrammidae	Ophiodon	Ophiodon elongatus
 ASV_50	Eukaryota	Chordata	Actinopteri	Beryciformes	Melamphaidae	Scopelogadus	s_
 ASV_54	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Pseudobathylagus	Pseudobathylagus milleri
 ASV_61	Eukaryota	Chordata	Actinopteri	Scombriformes	Centrolophidae	Icichthys	Icichthys lockingtoni
@@ -34,7 +32,6 @@ ASV_87	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	Sebastes p
 ASV_97	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
 ASV_99	Eukaryota	Chordata	Actinopteri	Scombriformes	Stromateidae	Peprilus	Peprilus medius
 ASV_117	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_123	Eukaryota	Chordata	Actinopteri	Salmoniformes	Salmonidae	Oncorhynchus	Oncorhynchus kisutch
 ASV_125	Eukaryota	Chordata	Actinopteri	Stomiiformes	Gonostomatidae	Cyclothone	Cyclothone acclinidens
 ASV_135	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
 ASV_162	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Pleuronectidae	Lyopsetta	Lyopsetta exilis
@@ -93,7 +90,6 @@ ASV_864	Eukaryota	Chordata	Actinopteri	unknown	Moronidae	Morone	Morone saxatilis
 ASV_894	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys sordidus
 ASV_912	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
 ASV_925	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Symbolophorus	Symbolophorus californiensis
-ASV_931	Eukaryota	Chordata	Actinopteri	Pleuronectiformes	Paralichthyidae	Citharichthys	Citharichthys stigmaeus
 ASV_985	Eukaryota	Chordata	Actinopteri	Lampriformes	Trachipteridae	Trachipterus	unassigned
 ASV_992	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
 ASV_997	Eukaryota	Chordata	Actinopteri	Alepocephaliformes	Platytroctidae	Sagamichthys	Sagamichthys abei
@@ -136,7 +132,6 @@ ASV_1628	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossu
 ASV_1704	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
 ASV_1716	Eukaryota	Chordata	Actinopteri	Scombriformes	Scombridae	Scomberomorus	unassigned
 ASV_1718	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_1729	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
 ASV_1784	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
 ASV_1801	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
 ASV_1816	Eukaryota	Chordata	Chondrichthyes	Chimaeriformes	Chimaeridae	Hydrolagus	Hydrolagus colliei
@@ -202,13 +197,9 @@ ASV_6636	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassign
 ASV_6714	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Triphoturus	s_
 ASV_7035	Eukaryota	Chordata	Actinopteri	Beloniformes	Belonidae	Cololabis	Cololabis saira
 ASV_7081	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Bathylagus	Bathylagus pacificus
-ASV_7136	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	s_
 ASV_7288	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_7322	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
-ASV_7692	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
 ASV_7872	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	g_	s_
 ASV_8107	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Stenobrachius	Stenobrachius leucopsarus
-ASV_8285	Eukaryota	Chordata	Actinopteri	Myctophiformes	Myctophidae	Diaphus	Diaphus theta
 ASV_9109	Eukaryota	Chordata	Actinopteri	Argentiniformes	Bathylagidae	Leuroglossus	Leuroglossus schmidti
 ASV_9335	Eukaryota	Chordata	Actinopteri	Perciformes	Sebastidae	Sebastes	unassigned
 ASV_9948	Eukaryota	Chordata	Actinopteri	Aulopiformes	Paralepididae	Arctozenus	Arctozenus risso
