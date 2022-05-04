@@ -331,7 +331,8 @@ qiime emperor biplot \
 ```{r}
 library(lubridate)
 meta <- samp.c %>% 
-  mutate(time = mdy_hm(local_time)) %>%
+  #2019-05-29 02:42:00
+  mutate(time = ymd_hms(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
