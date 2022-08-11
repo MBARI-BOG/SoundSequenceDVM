@@ -1,0 +1,120 @@
+﻿Kingdom,Phylum,Class,Order,Family,Genus,Species,Common_name,Ecological_Category
+Eukaryota,Chordata,Actinopteri,Alepocephaliformes,Platytroctidae,Holtbyrnia,s_,tubeshoulders,mesopelagic
+Eukaryota,Chordata,Actinopteri,Alepocephaliformes,Platytroctidae,Sagamichthys,Sagamichthys abei,Shining tubeshoulder,mesopelagic
+Eukaryota,Chordata,Actinopteri,Anabantiformes,Channidae,g_,s_,snakeheads (freshwater?),errant classification
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Argentinidae,g_,s_,marine smelts,epipelagic or benthic coastal
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Bathylagus,Bathylagus pacificus,Slender backsmelt,mesopelagic
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti,Northern smoothtongue,mesopelagic
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,s_,deep-sea smelts,mesopelagic
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,Lipolagus ochotensis,Eared blacksmelt,mesopelagic
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,s_,Eared blacksmelt,mesopelagic
+Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Pseudobathylagus,Pseudobathylagus milleri,Stout blacksmelt,mesopelagic
+Eukaryota,Chordata,Actinopteri,Atheriniformes,Atherinopsidae,g_,s_,neotropical silversides,epipelagic or nearshore benthic
+Eukaryota,Chordata,Actinopteri,Aulopiformes,Paralepididae,Arctozenus,Arctozenus risso,Spotted barracudina,meso and bathypelagic
+Eukaryota,Chordata,Actinopteri,Aulopiformes,Paralepididae,g_,s_,barracudinas,meso and bathypelagic
+Eukaryota,Chordata,Actinopteri,Aulopiformes,Paralepididae,Lestidiops,s_,barracudinas,meso and bathypelagic
+Eukaryota,Chordata,Actinopteri,Beloniformes,Belonidae,Cololabis,Cololabis saira,Pacific saury,epipelagic
+Eukaryota,Chordata,Actinopteri,Beryciformes,Melamphaidae,Scopelogadus,s_,ridgeheads,bathypelagic
+Eukaryota,Chordata,Actinopteri,Blenniiformes,Clinidae,Gibbonsia,Gibbonsia metzi,Striped kelpfish,nearshore surface
+Eukaryota,Chordata,Actinopteri,Blenniiformes,Clinidae,Gibbonsia,unassigned,clinids native to eastern pacific,nearshore surface
+Eukaryota,Chordata,Actinopteri,Blenniiformes,Gobiesocidae,Gobiesox,Gobiesox maeandricus,Northern clingfish,nearshore surface
+Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,Seriola lalandi,Yellowtail amberjack,epipelagic
+Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Trachurus,Trachurus symmetricus,Pacific jack mackerel,epipelagic
+Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,Sardinops,Sardinops melanostictus,Japanese pilchard (sardine),epipelagic
+Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax,Northern anchovy,epipelagic
+Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,s_,anchovy,epipelagic
+Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_,anchovy,epipelagic
+Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Coryphaenoides,unassigned,rattails,bathypelagic
+Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius productus,North Pacific hake,cosmopolitan
+Eukaryota,Chordata,Actinopteri,Gobiiformes,Gobiidae,g_,s_,true gobies,nearshore surface
+Eukaryota,Chordata,Actinopteri,Gobiiformes,Gobiidae,Lepidogobius,Lepidogobius lepidus,Bay goby,nearshore surface
+Eukaryota,Chordata,Actinopteri,Labriformes,Labridae,Oxyjulis,Oxyjulis californica,Seniorita,nearshore surface
+Eukaryota,Chordata,Actinopteri,Lampriformes,Trachipteridae,Trachipterus,unassigned,ribbonfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Diaphus,Diaphus theta,California headlightfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_,lanternfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Lampanyctus,Lampanyctus tenuiformis,Slender laternfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Nannobrachium,unassigned,lanternfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Protomyctophum,unassigned,lanternfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus,Northern lampfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Symbolophorus,Symbolophorus californiensis,Bigfin lanternfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Tarletonbeania,Tarletonbeania crenularis,Blue lanternfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Tarletonbeania,unassigned,lanternfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Triphoturus,s_,lanternfishes,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Triphoturus,Triphoturus mexicanus,Mexican lampfish,mesopelagic
+Eukaryota,Chordata,Actinopteri,Myctophiformes,Neoscopelidae,Scopelengys,Scopelengys tristis,Pacific blackchin,mesopelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Anarhichadidae,Anarrhichthys,Anarrhichthys ocellatus,Wolf eel,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Perciformes,Aulorhynchidae,Aulorhynchus,Aulorhynchus flavidus,tubesnout,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,Clinocottus,Clinocottus analis,Woolly sculpin,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,Clinocottus,Clinocottus globiceps,Mosshead sculpin,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,g_,s_,sculpins,nearshore
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,Orthonopias,Orthonopias triacis,Snubnose sculpin,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,Scorpaenichthys,Scorpaenichthys marmoratus,Cabezon,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Perciformes,Cottidae,Synchirus,Synchirus gilli,Manacled sculpin,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Hexagrammidae,Hexagrammos,Hexagrammos decagrammus,Kelp greenling,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Hexagrammidae,Ophiodon,Ophiodon elongatus,Lingcod,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Perciformes,Hexagrammidae,Oxylebius,Oxylebius pictus,Painted greenling,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Liparidae,Liparis <bony fishes>,Liparis florae,Tidepool snailfish,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Liparidae,Liparis <bony fishes>,Liparis mucosus,Slimy snailfish,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Liparidae,Nectoliparis,Nectoliparis pelagicus,Tadpole snailfish,bathypelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Pholidae,Apodichthys,Apodichthys flavidus,Penpoint gunnel,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Pholidae,unassigned,s_,gunnels,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,Sebastes paucispinis,Bocaccio rockfish,benthopelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned,rockfish,benthopelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,unassigned,unassigned,rockfish,benthopelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Stichaeidae,Anoplarchus,unassigned,pricklebacks,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Stichaeidae,unassigned,unassigned,pricklebacks,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,Stichaeidae,Xiphister,unassigned,pricklebacks,nearshore surface
+Eukaryota,Chordata,Actinopteri,Perciformes,unassigned,unassigned,unassigned,ray-finned fish,
+Eukaryota,Chordata,Actinopteri,Perciformes,Zoarcidae,Bothrocara,unassigned,eelpouts,mesopelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Zoarcidae,Lycodes,Lycodes cortezianus,Bigfin eelpout,mesopelagic
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys sordidus,Pacific sanddab,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys stigmaeus,Speckeled sanddab,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,s_,flatfish,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,unassigned,flatfish,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Paralichthys,s_,large-tooth flounders,nearshore bottom
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Pleuronectidae,Lyopsetta,Lyopsetta exilis,Slender sole,benthopelagic
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Pleuronectidae,Microstomus,Microstomus pacificus,Pacific Dover sole,benthopelagic
+Eukaryota,Chordata,Actinopteri,Pleuronectiformes,Pleuronectidae,Pleuronichthys,Pleuronichthys decurrens,Curlfin sole,benthopelagic
+Eukaryota,Chordata,Actinopteri,Salmoniformes,Salmonidae,Oncorhynchus,unassigned,Pacific salmon and trout,epipelagic
+Eukaryota,Chordata,Actinopteri,Scombriformes,Centrolophidae,Icichthys,Icichthys lockingtoni,Medusafish,epipelagic
+Eukaryota,Chordata,Actinopteri,Scombriformes,Scombridae,Sarda,Sarda chiliensis,Eastern Pacific bonito,epipelagic
+Eukaryota,Chordata,Actinopteri,Scombriformes,Scombridae,Scomber,unassigned,true mackerels,epipelagic
+Eukaryota,Chordata,Actinopteri,Scombriformes,Scombridae,Scomberomorus,unassigned,Spanish mackerels,epipelagic
+Eukaryota,Chordata,Actinopteri,Scombriformes,Stromateidae,Peprilus,Peprilus medius,Pacific harvestfish (butterfish),nearshore surface
+Eukaryota,Chordata,Actinopteri,Stomiiformes,Gonostomatidae,Cyclothone,Cyclothone acclinidens,Benttooth bristlemouth,mesopelagic
+Eukaryota,Chordata,Actinopteri,Stomiiformes,Gonostomatidae,Cyclothone,Cyclothone signata,Showy bristlemouth,mesopelagic
+Eukaryota,Chordata,Actinopteri,Stomiiformes,Stomiidae,Chauliodus,Chauliodus macouni,Pacific viperfish,bathypelagic
+Eukaryota,Chordata,Actinopteri,Stomiiformes,Stomiidae,Idiacanthus,Idiacanthus antrostomus,Pacific blackdragon,bathypelagic
+Eukaryota,Chordata,Actinopteri,Stomiiformes,Stomiidae,Pachystomias,Pachystomias microdon,Smalltooth dragonfish,bathypelagic
+Eukaryota,Chordata,Actinopteri,Syngnathiformes,Syngnathidae,Syngnathus,Syngnathus leptorhynchus,Bay pipefish,nearshore surface
+Eukaryota,Chordata,Actinopteri,Tetraodontiformes,Molidae,Mola,unassigned,Mola,epipelagic
+Eukaryota,Chordata,Actinopteri,unassigned,unassigned,g_,s_,bony fishes,
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,Amphistichus,Amphistichus argenteus,Barred surfperch,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,Brachyistius,Brachyistius frenatus,Kelp perch,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,Embiotoca,Embiotoca jacksoni,Black surfperch,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,Embiotoca,Embiotoca lateralis,Striped surfperch,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,g_,s_,surfperches,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,Rhacochilus,Rhacochilus vacca,Pile perch,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Embiotocidae,unassigned,unassigned,surfperches,nearshore surface
+Eukaryota,Chordata,Actinopteri,unknown,Moronidae,Morone,Morone saxatilis,Striped bass,Atlantic species
+Eukaryota,Chordata,Actinopteri,unknown,Sciaenidae,Genyonemus,Genyonemus lineatus,White croaker,nearshore bottom
+Eukaryota,Chordata,Aves,Procellariiformes,Procellariidae,Puffinus,unassigned,small shearwaters,Exclude
+Eukaryota,Chordata,Chondrichthyes,Carcharhiniformes,Scyliorhinidae,Apristurus,Apristurus brunneus,Brown catshark,benthopelagic
+Eukaryota,Chordata,Chondrichthyes,Chimaeriformes,Chimaeridae,Hydrolagus,Hydrolagus colliei,Spotted ratfish,benthopelagic
+Eukaryota,Chordata,Chondrichthyes,Lamniformes,Alopiidae,Alopias,Alopias vulpinus,Common thresher,epipelagic
+Eukaryota,Chordata,Chondrichthyes,Squaliformes,Squalidae,Squalus,unassigned,dogfish sharks,benthopelagic or nearshore bottom
+Eukaryota,Chordata,Mammalia,Carnivora,Otariidae,Zalophus,Zalophus californianus,California sea lion,Exclude
+Eukaryota,Chordata,Mammalia,Carnivora,Phocidae,Mirounga,Mirounga angustirostris,Northern elephant seal,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Balaenopteridae,Balaenoptera,Balaenoptera musculus,Blue whale,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Balaenopteridae,Megaptera,Megaptera novaeangliae,Humpback whale,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Delphinidae,g_,s_,oceanic dolphins,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Delphinidae,Grampus,Grampus griseus,Risso's dolphin,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Delphinidae,Orcinus,Orcinus orca,Orca,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Delphinidae,unassigned,unassigned,oceanic dolphins,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Physeteridae,Physeter,Physeter catodon,Sperm whale,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,unassigned,g_,s_,cetacean,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,Berardius,Berardius bairdii,Baird's beaked whale,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,g_,s_,beaked whale,Exclude
+Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,Ziphius,Ziphius cavirostris,Cuvier's beaked whale,Exclude
+Eukaryota,Chordata,Mammalia,unassigned,unassigned,g_,s_,mammal,Exclude
+Eukaryota,Chordata,Myxini,Myxiniformes,Myxinidae,Eptatretus,unassigned,hagfish,benthopelagic
