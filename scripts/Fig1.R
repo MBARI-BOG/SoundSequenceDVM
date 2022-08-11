@@ -133,23 +133,14 @@ Ecol_data <- tax.c %>% full_join(sp_desig, by=tax_levels) %>%
 
 # Ecological Components by Depth - Percent Reads --------------------------
 
-# df <- tax.c %>% left_join(sp_desig) %>%
-#   left_join(potu.c) %>%
-#   group_by(Ecological_Category, SampleID) %>%
-#   mutate(sum_reads = sum(reads)) %>%
-#   mutate(sum_per_tot = sum(per_tot)) %>%
-#   ungroup() %>%
-#   distinct(SampleID, Ecological_Category, .keep_all=TRUE)
-
 # assign text colour
 textcol <- "grey40"
 print("Begin plotting...")
-bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
-  filter(depth>-1) %>%
-  #filter(depth<600) %>%
+bp_top <- full_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by = c("SampleID")) %>% #join with metadata
   filter(diel %in% c('day', 'night')) %>%
-  filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
-                                    'cosmopolitan')) %>%
+  # filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
+  #                                   'cosmopolitan')) %>%
+  filter(Ecological_Category %in% cats) %>%
   ggplot(aes(x = -depth, y = sum_per_tot)) +
   geom_point(aes(color = Ecological_Category, shape=ESP), alpha=0.7) +
   scale_shape_manual(values= c(16,8)) +
@@ -188,8 +179,45 @@ filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.svg', sep=
 print(filename)
 ggsave(filename,height = 5, width =7, units = 'in')
 
+# Number of Samples by Depth and Diel -------------------------------------
 
-# Presence Absence --------------------------------------------------------
+# define new depth bins that are evenly split:
+meta2 <- meta %>% 
+  mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
+                               depth >100 & depth <=200 ~ "100-200m",
+                               depth >200 & depth <=300 ~ "200-300m",
+                               depth >300 & depth <=400 ~ "300-400m",
+                               depth >400 & depth <=500 ~ "400-500m",
+                               depth >400 & depth <=600 ~ "500-600m",
+                               depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
+  )) 
+
+df <- meta2 %>%
+  mutate(count=1) %>%
+  filter(diel %in% c('day', 'night')) %>%
+  group_by(diel, depth_bin2) %>%
+  mutate(sum_count = sum(count)) %>%
+  ungroup() %>%
+  distinct(diel, depth_bin2, sum_count, .keep_all=TRUE) %>%
+  arrange(depth_bin2, diel) %>%
+  ggplot(aes(y=fct_reorder(depth_bin2, -depth),x=diel, fill = sum_count))+
+  geom_tile()+
+  geom_text(aes(label=sum_count), colour = "white", check_overlap = TRUE)+  
+  #scale_fill_viridis(option="cividis")+
+  #scale_color_grey()+
+  labs(y='Depth', x='', fill='Number of Samples' )
+df
+filename = paste(plot_directory, marker,'_','sample_heatmap.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =6, units = 'in')
+filename = paste(plot_directory, marker,'_','sample_heatmap.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =6, units = 'in')
+df  
+
+# Compare with Presence Absence --------------------------------------------------------
+
+# look above a threshold (0.5%) and also anything > 0% reads is present
 
 df <- tax.c %>% left_join(sp_desig) %>%
   left_join(potu.c) %>%
@@ -201,13 +229,13 @@ df <- tax.c %>% left_join(sp_desig) %>%
   select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
   #filter(sum_reads ==0) %>%
   mutate(present = case_when(sum_per_tot<0.1  ~ 0,
-                            TRUE ~ 1)) %>%
+                             TRUE ~ 1)) %>%
   #mutate(present = 1) %>%
   select(SampleID, Ecological_Category, present) %>%
-  left_join(meta %>% select(diel, SampleID, depth))
+  left_join(meta %>% select(diel, SampleID, depth)) %>%
+  filter(diel %in% c('day', 'night'))
 
 
-cats <- c("epipelagic","mesopelagic", "bathypelagic","cosmopolitan")
 for (val in cats) {
   cat = sym(val)
   p <- df %>% filter(Ecological_Category == cat) %>%
@@ -215,197 +243,11 @@ for (val in cats) {
     geom_point()+
     geom_smooth()+
     coord_flip()+
-    labs(y='Percent Present in eDNA Sample (>0.1% reads)')
-  filename = paste(plot_directory, marker,'_',cat,'_PA_01.png', sep='')
+    labs(y='Percent Present in eDNA Sample (>0.5% reads)')
+  filename = paste(plot_directory, marker,'_',cat,'_PA_05.png', sep='')
   print(filename)
   ggsave(filename,height = 5, width =6, units = 'in')
-  # filename = paste(plot_directory, marker,'_',cat,'_PA_01.svg', sep='')
-  # print(filename)
-  # ggsave(filename,height = 5, width =6, units = 'in')
 }
-
-
-# Ridge Plot of Detections ------------------------------------------------
-
-
-
-
-
-# Number of Samples by Depth and Diel -------------------------------------
-
-df <- meta %>%
-  mutate(count=1) %>%
-  group_by(diel, depth_bin) %>%
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(diel, depth_bin, sum_count, .keep_all=TRUE) %>%
-  arrange(depth_bin, diel) %>%
-  ggplot(aes(y=fct_reorder(depth_bin, -depth),x=diel, fill = sum_count))+
-  geom_tile()+
-  geom_text(aes(label=sum_count), colour = "white", check_overlap = TRUE)+  
-  scale_fill_viridis()+
-  labs(y='Depth', x='', fill='Number of Samples' )
-filename = paste(plot_directory, marker,'_','sample_heatmap.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-filename = paste(plot_directory, marker,'_','sample_heatmap.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-df  
-
-# depths split evenly:
-bp_top <- meta %>%
-  select(depth, diel, ESP, SampleID) %>%
-  mutate(count=1) %>%
-  mutate( ints = cut(depth ,breaks=25, include.lowest = TRUE)) %>%
-  group_by(ints, diel) %>% 
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(ints,diel,.keep_all = TRUE) %>%
-  ggplot(aes(y= fct_reorder(ints, -depth), x=diel, fill=sum_count)) +
-  #facet_grid(. ~ diel, margins=FALSE, scales = "free")+
-  geom_tile()+
-  geom_text(aes(label=sum_count), colour = "white", check_overlap = TRUE)+  
-  #scale_y_reverse()+
-  scale_fill_viridis()+
-  labs(y="Depth Bins",x="")+
-  theme_minimal() +
-  #guides(fill=guide_legend(ncol=2)) +
-  theme(
-    #legend
-    legend.position="right",legend.direction="vertical",
-    legend.text=element_text(colour=textcol,size=8,face="bold"),
-    legend.key.height=grid::unit(0.3,"cm"),
-    legend.key.width=grid::unit(0.3,"cm"),
-    legend.title=element_text(colour=textcol,size=8,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=6,colour=textcol),
-    axis.title.y = element_text(size=6),
-    plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
-    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
-    plot.title=element_blank())
-
-bp_top
-filename = paste(plot_directory, marker,'_','sample_heatmap_depthsplit.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-filename = paste(plot_directory, marker,'_','sample_heatmap_depthsplit.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-df  
-
-# Histogram plot by depth
-bp_top <- meta %>%
-  select(depth, diel, ESP, SampleID) %>%
-  mutate(count=1) %>%
-  filter(diel %in% c("day", "night")) %>%
-  #mutate( ints = cut(depth ,breaks=25, include.lowest = TRUE)) %>%
-  #group_by(ints, diel) %>% 
-  #mutate(sum_count = sum(count)) %>%
-  #ungroup() %>%
-  #distinct(ints,diel,.keep_all = TRUE) %>%
-  ggplot(aes(x= depth,color=diel, fill=diel)) +
-  #facet_grid(. ~ diel, margins=FALSE, scales = "free")+
-  geom_histogram(aes(y=..density..),alpha=0.5, bins=40)+
-  geom_density(alpha=0.5)+
-  scale_color_manual(values=c("#E69F00", "#56B4E9"))+
-  scale_fill_manual(values=c("#E69F00", "#56B4E9"))+
-  #labs(y="Depth",x="Number of Samples")+
-  labs(title="Sampling density with depth")+
-  theme_minimal() +
-  #guides(fill=guide_legend(ncol=2)) +
-  theme(
-    #legend
-    legend.position="right",legend.direction="vertical",
-    legend.text=element_text(colour=textcol,size=8,face="bold"),
-    legend.key.height=grid::unit(0.3,"cm"),
-    legend.key.width=grid::unit(0.3,"cm"),
-    legend.title=element_text(colour=textcol,size=8,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=8,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=8,colour=textcol),
-    axis.title.y = element_text(size=8),
-    axis.title.x = element_text(size=8),
-    plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
-    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
-
-bp_top
-filename = paste(plot_directory, marker,'_','sample_hist.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-filename = paste(plot_directory, marker,'_','sample_hist.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-df  
-
-
-
-
-
-# SCRAP
-
-
-
-  mutate( ints = cut(depth ,breaks = 25, labels=TRUE)) %>% 
-  
-  group_by(ints, diel, ESP) %>% 
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(ints,diel, ESP,.keep_all = TRUE)
-
-
-# merged by diel
-bp_top <- meta %>%
-  select(depth, diel, ESP, SampleID) %>%
-  mutate(count=1) %>%
-  mutate( ints = cut(depth ,breaks = 25, labels=FALSE)) %>% 
-  group_by(ints, diel, ESP) %>% 
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(ints,diel, ESP,.keep_all = TRUE) %>%
-  ggplot(aes(y= ints, x=diel, fill=sum_count)) +
-  #facet_grid(. ~ diel, margins=FALSE, scales = "free")+
-  geom_tile()+
-  scale_y_reverse()+
-  scale_fill_viridis()+
-  #labs(y="Percent Total Reads")+
-  theme_minimal() +
-  #guides(fill=guide_legend(ncol=2)) +
-  theme(
-    #legend
-    legend.position="right",legend.direction="vertical",
-    legend.text=element_text(colour=textcol,size=8,face="bold"),
-    legend.key.height=grid::unit(0.3,"cm"),
-    legend.key.width=grid::unit(0.3,"cm"),
-    legend.title=element_text(colour=textcol,size=8,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=6,colour=textcol),
-    axis.title.y = element_text(size=6),
-    plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
-    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
-    plot.title=element_blank())
-
-bp_top
-filename = paste(plot_directory, marker,'_','sample_heatmap_depthsplit.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-filename = paste(plot_directory, marker,'_','sample_heatmap_depthsplit.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-df  
-
-# Box plot -----------------------------------------------------
 
 df <- tax.c %>% left_join(sp_desig) %>%
   left_join(potu.c) %>%
@@ -413,30 +255,28 @@ df <- tax.c %>% left_join(sp_desig) %>%
   mutate(sum_reads = sum(reads)) %>%
   mutate(sum_per_tot = sum(per_tot)) %>%
   ungroup() %>%
-  distinct(SampleID, Ecological_Category, .keep_all=TRUE)
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
+  #filter(sum_reads ==0) %>%
+  mutate(present = case_when(sum_per_tot<0  ~ 0,
+                             TRUE ~ 1)) %>%
+  #mutate(present = 1) %>%
+  select(SampleID, Ecological_Category, present) %>%
+  left_join(meta %>% select(diel, SampleID, depth)) %>%
+  filter(diel %in% c('day', 'night'))
 
-textcol <- "grey40"
-print("Begin plotting...")
 
-cats <- c("epipelagic","mesopelagic", "bathypelagic","cosmopolitan")
 for (val in cats) {
   cat = sym(val)
-  bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
-  filter(depth>-1) %>%
-  #filter(depth<600) %>%
-  filter(diel %in% c('day', 'night')) %>%
-  # filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
-  #                                   'cosmopolitan')) %>%
-  filter(Ecological_Category %in% c(cat)) %>%
-  #ggplot(aes(x = -depth, y = sum_per_tot)) +
-  ggplot(aes(y = fct_reorder(depth_bin, -depth), x = sum_per_tot, fill=diel)) +
-  geom_boxplot() +
-  facet_grid(. ~ Ecological_Category) +
-  labs(y='Depth', x='Percent Reads')
-  bp_top
-  filename = paste(plot_directory, marker,'_',cat,'_boxplot_diel_depth_perreads.png', sep='')
-  #print('Plot of top 20 Genus average by month:')
+  p <- df %>% filter(Ecological_Category == cat) %>%
+    ggplot(aes(y=present, x=-depth,color=diel, shape=diel))+
+    geom_point()+
+    geom_smooth()+
+    coord_flip()+
+    labs(y='Percent Present in eDNA Sample (>0.0% reads)')
+  filename = paste(plot_directory, marker,'_',cat,'_PA_0.png', sep='')
   print(filename)
-  ggsave(filename,height = 6, width =5, units = 'in')
+  ggsave(filename,height = 5, width =6, units = 'in')
+  
 }
 
