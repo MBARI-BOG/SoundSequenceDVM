@@ -1,6 +1,10 @@
 #040221
 #kpitz
 
+# Create Figure 1 for Manuscript (eDNA portion):
+# day versus night line plots of Ecological Category Percent Total Reads
+# alongside heatmap of sampling effort
+
 # Set Constants -----------------------------------------------------------------
 
 marker = sym("12S")
@@ -109,10 +113,15 @@ meta <- samp.c %>%
                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
   )) 
 
+# Ecological Categories to focus on  ------------------
+
+cats <- c("epipelagic","mesopelagic", "benthopelagic","cosmopolitan")
 
 # Group data by Ecological Category --------------------------------------------
 
-Ecol_data <- tax.c %>% left_join(sp_desig) %>%
+tax_levels = c('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')
+
+Ecol_data <- tax.c %>% full_join(sp_desig, by=tax_levels) %>%
   left_join(potu.c) %>%
   group_by(Ecological_Category, SampleID) %>%
   mutate(sum_reads = sum(reads)) %>%
@@ -124,13 +133,13 @@ Ecol_data <- tax.c %>% left_join(sp_desig) %>%
 
 # Ecological Components by Depth - Percent Reads --------------------------
 
-df <- tax.c %>% left_join(sp_desig) %>%
-  left_join(potu.c) %>%
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(sum_reads = sum(reads)) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  ungroup() %>%
-  distinct(SampleID, Ecological_Category, .keep_all=TRUE)
+# df <- tax.c %>% left_join(sp_desig) %>%
+#   left_join(potu.c) %>%
+#   group_by(Ecological_Category, SampleID) %>%
+#   mutate(sum_reads = sum(reads)) %>%
+#   mutate(sum_per_tot = sum(per_tot)) %>%
+#   ungroup() %>%
+#   distinct(SampleID, Ecological_Category, .keep_all=TRUE)
 
 # assign text colour
 textcol <- "grey40"
