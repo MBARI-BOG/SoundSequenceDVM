@@ -10,7 +10,7 @@ library(dplyr)
 library(ggplot2)
 library(ggthemes)
 library(magrittr)
-#library(tidyr)
+library(tidyr)
 library(RColorBrewer) #colors for plotting
 library(forcats) 
 library(stringr)
@@ -105,7 +105,8 @@ meta <- samp.c %>%
   mutate(year_char = as.character(year)) %>%
   #more detailed depth bins
   mutate(depth_bin = case_when(depth <=25 ~ "00_0-25m",
-                               depth >25 & depth <=75 ~ "01_25-75m",
+                               depth >25 & depth <=50 ~ "01_25-50m",
+                               depth >50 & depth <=75 ~ "02_50-75m",
                                depth >75 & depth <=100 ~ "03_75-100m",
                                depth >100 & depth <=150 ~ "04_100-150m",
                                depth >150 & depth <=200 ~ "05_150-200m",
@@ -128,8 +129,22 @@ meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
                                         depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
 )) 
 
-# Boxplot of Ecological Categories through depth ------------
+# Look at replicate sequenced filters ------
 
+dup_samps <- meta %>% group_by(FilterID) %>% filter(n()>1) %>% ungroup()
+
+#number of samples by diel group:
+test <- meta %>% distinct(FilterID, .keep_all = TRUE) %>% group_by(diel) %>%
+  mutate(count = n())%>%
+  ungroup() %>%
+  distinct(diel, count)
+
+# #deep samples by diel group:
+# test <- meta %>% filter(depth_bin =='09_400-500m')
+# test <- meta %>% filter(depth_bin =='08_300-400m')
+# test <- meta %>% filter(depth_bin =='11_600-750m')
+
+# plot
 df <- tax.c %>% left_join(sp_desig) %>%
   left_join(potu.c) %>%
   group_by(Ecological_Category, SampleID) %>%
@@ -139,6 +154,104 @@ df <- tax.c %>% left_join(sp_desig) %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
 
+dup_samps %>% select(SampleID, FilterID, local_time, depth) %>%
+  left_join(df) %>%
+  # unite(label,depth,local_time,FilterID,SampleID,sep='_' ) %>%
+  ggplot(aes(x=SampleID, y=sum_per_tot))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  geom_bar(stat='identity', aes(fill = Ecological_Category))+
+  coord_flip()+
+  #scale_x_reverse()+
+  scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+  labs(x='',y="Percent Total Reads", title='Replicate Filters')+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=8,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+  
+filename = paste(plot_directory, marker,'_EcolCat_replicate_ESP_comp.png', sep='')
+print(filename)
+ggsave(filename,height = 10, width =10, units = 'in')
+filename = paste(plot_directory, marker,'_EcolCat_replicate_ESP_comp.svg', sep='')
+print(filename)
+ggsave(filename,height = 10, width =10, units = 'in')
+
+# values as points on top of each other
+
+dup_samps %>% select(SampleID, FilterID, local_time, depth) %>%
+  left_join(df) %>%
+  # unite(label,depth,local_time,FilterID,SampleID,sep='_' ) %>%
+  ggplot(aes(x=FilterID, y=sum_per_tot,color= Ecological_Category))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  #geom_bar(stat='identity', aes(fill = Ecological_Category))+
+  geom_point()+
+  geom_line()+
+  coord_flip()+
+  #scale_x_reverse()+
+  scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+  labs(x='',y="Percent Total Reads", title='Replicate Filters')+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=8,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+filename = paste(plot_directory, marker,'_EcolCat_replicate_ESP_points.png', sep='')
+print(filename)
+ggsave(filename,height = 10, width =10, units = 'in')
+filename = paste(plot_directory, marker,'_EcolCat_replicate_ESP_points.svg', sep='')
+print(filename)
+ggsave(filename,height = 10, width =10, units = 'in')
+
+# Boxplot of Ecological Categories through depth ------------
+
+# For the following analysis, take average values of replicate sequenced filters
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  left_join(meta %>% select(SampleID, FilterID)) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot, FilterID) %>%
+  # average by unique filter
+  group_by(Ecological_Category, FilterID) %>%
+  mutate(sum_reads = mean(sum_reads)) %>%
+  mutate(sum_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(FilterID, Ecological_Category, .keep_all=TRUE)
+
 #want to plot median value on top of bar plot, show number of samples in bin
 
 stats <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
@@ -147,6 +260,8 @@ stats <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   filter(diel %in% c('day', 'night')) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel) %>%
+  # drop duplicates
+  distinct(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel, .keep_all = TRUE) %>%
   mutate(count=1) %>%
   group_by(diel, Ecological_Category, depth_bin) %>%
   mutate(median = median(sum_per_tot)) %>%
@@ -157,8 +272,9 @@ stats <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   # make values for segments, end is current median, start is median from previous depth
   mutate(xend = NaN) %>% # will hold depth bin values
   mutate(xend = case_when(depth_bin == "00_0-25m" ~ "00_0-25m",
-                          depth_bin == "01_25-75m" ~ "00_0-25m",
-                          depth_bin == "03_75-100m" ~ "01_25-75m",
+                          depth_bin == "01_25-50m" ~ "00_0-25m",
+                          depth_bin == "02_50-75m" ~ "01_25-50m",
+                          depth_bin == "03_75-100m" ~ "02_50-75m",
                           depth_bin == "04_100-150m" ~ "03_75-100m",
                           depth_bin == "05_150-200m" ~ "04_100-150m",
                           depth_bin == "06_200-250m" ~ "05_150-200m",
@@ -181,6 +297,8 @@ bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   mutate(hour = replace(hour, hour==24,0)) %>%
   filter(diel %in% c('day', 'night')) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+  # drop duplicates
+  distinct(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel, .keep_all = TRUE) %>%
   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel) %>%
   #add in stats df
   full_join(stats2) %>%
@@ -190,7 +308,8 @@ bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   geom_point(aes(y=median, x=depth_bin, color=diel)) +
   geom_segment(aes(y=median,yend=yend, x=depth_bin,xend=xend, color=diel)) +
   # add in count of number of samples?
-  geom_text(aes(label=sum_count, y=102, x=depth_bin, color=diel)) +
+  geom_text(data=. %>% filter(diel=='night') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=102, x=depth_bin, color=diel)) +
+  geom_text(data=. %>% filter(diel=='day') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=112, x=depth_bin, color=diel)) +
   facet_grid(. ~ Ecological_Category, scales = "free") +
   #formatting...
   scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
@@ -227,15 +346,6 @@ print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
 
 # Alternative depth bin boxplot -------------
-
-df <- tax.c %>% left_join(sp_desig) %>%
-  left_join(potu.c) %>%
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(sum_reads = sum(reads)) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  ungroup() %>%
-  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
-  select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
 
 #want to plot median value on top of bar plot, show number of samples in bin
 
@@ -283,6 +393,9 @@ bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   ggplot(aes(x=Ecological_Category, y=sum_per_tot, fill=diel)) +
   geom_boxplot(aes(x=fct_rev(depth_bin2)), alpha=0.3)+
   geom_point(aes(y=median, x=depth_bin2, color=diel)) +
+  # add in count of number of samples?
+  geom_text(data=. %>% filter(diel=='night') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=102, x=depth_bin2, color=diel)) +
+  geom_text(data=. %>% filter(diel=='day') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=112, x=depth_bin2, color=diel)) +
   geom_segment(aes(y=median,yend=yend, x=depth_bin2,xend=xend, color=diel)) +
   facet_grid(. ~ Ecological_Category, scales = "free") +
   #formatting...
@@ -317,3 +430,63 @@ ggsave(filename,height = 5, width =8, units = 'in')
 filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth2.svg', sep='')
 print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
+
+
+# swarm/jitter plot
+
+bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour==24,0)) %>%
+  filter(diel %in% c('day', 'night')) %>%
+  filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+  select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin2, diel) %>%
+  #add in stats df
+  full_join(stats2) %>%
+  #now plot
+  ggplot(aes(x=Ecological_Category, y=sum_per_tot, fill=diel)) +
+  geom_boxplot(aes(x=fct_rev(depth_bin2)), alpha=0.3)+
+  geom_point(aes(x=fct_rev(depth_bin2), color=diel),size=0.4, alpha=0.7, position=position_jitterdodge()) +
+  #geom_jitter(aes(x=fct_rev(depth_bin2), color=diel),size=0.4, alpha=0.9) +
+  geom_point(aes(y=median, x=depth_bin2, color=diel)) +
+  # add in count of number of samples?
+  geom_text(data=. %>% filter(diel=='night') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=102, x=depth_bin2, color=diel)) +
+  geom_text(data=. %>% filter(diel=='day') %>%filter(Ecological_Category=='mesopelagic'),aes(label=sum_count, y=112, x=depth_bin2, color=diel)) +
+  geom_segment(aes(y=median,yend=yend, x=depth_bin2,xend=xend, color=diel)) +
+  facet_grid(. ~ Ecological_Category, scales = "free") +
+  #formatting...
+  scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+  scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+  coord_flip() +
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  labs(y="Percent Total Reads",x="Depth Bin")+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=8,colour=textcol),
+    axis.text.y=element_text(size=8,colour=textcol),
+    #axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+bp_top
+
+filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth2_jitter.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth2_jitter.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+
+
+
+
+

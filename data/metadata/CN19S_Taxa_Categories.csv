@@ -4,9 +4,11 @@ Eukaryota,Chordata,Actinopteri,unknown,Moronidae,Morone,Morone saxatilis,Striped
 Eukaryota,Chordata,Actinopteri,Beryciformes,Melamphaidae,Scopelogadus,s_,ridgeheads,bathypelagic
 Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Coryphaenoides,unassigned,rattails,bathypelagic
 Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Malacocephalus,unassigned,rattails,bathypelagic
+Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,unassigned,unassigned,,bathypelagic
 Eukaryota,Chordata,Actinopteri,Perciformes,Liparidae,Nectoliparis,Nectoliparis pelagicus,Tadpole snailfish,bathypelagic
 Eukaryota,Chordata,Actinopteri,Stomiiformes,Stomiidae,Chauliodus,Chauliodus macouni,Pacific viperfish,bathypelagic
 Eukaryota,Chordata,Actinopteri,Stomiiformes,Stomiidae,Idiacanthus,Idiacanthus antrostomus,Pacific blackdragon,bathypelagic
+Eukaryota,Chordata,Actinopteri,Perciformes,Anoplopomatidae,Anoplopoma,Anoplopoma fimbria,Sablefish,benthopelagic
 Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,s_,rockfish,benthopelagic
 Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,Sebastes paucispinis,Bocaccio rockfish,benthopelagic
 Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned,rockfish,benthopelagic
@@ -22,7 +24,9 @@ Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius pro
 Eukaryota,Chordata,Actinopteri,Beloniformes,Belonidae,Cololabis,Cololabis saira,Pacific saury,epipelagic
 Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,s_,amberjacks,epipelagic
 Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,Seriola lalandi,Yellowtail amberjack,epipelagic
+Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,unassigned,amberjacks,epipelagic
 Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Trachurus,Trachurus symmetricus,Pacific jack mackerel,epipelagic
+Eukaryota,Chordata,Actinopteri,Carangiformes,Coryphaenidae,Coryphaena,Coryphaena hippurus,mahi mahi,epipelagic
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,Sardinops,Sardinops melanostictus,Japanese pilchard (sardine),epipelagic
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,unassigned,unassigned,"herrings, shads, sardines, hilsa, and menhadens",epipelagic
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax,Northern anchovy,epipelagic

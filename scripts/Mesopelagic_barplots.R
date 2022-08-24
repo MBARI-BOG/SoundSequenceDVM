@@ -115,7 +115,7 @@ meta <- samp.c %>%
                                depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
   )) 
 
-# Try different depth bin
+# Alternative depth bins
 
 meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
                                         depth >100 & depth <=200 ~ "100-200m",
@@ -126,6 +126,238 @@ meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
                                         depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
 )) 
 
+# Ecological Reads in Depth Bins through Time -----------------------------
+
+# polar plot
+p <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 %in% c("0-100m","100-200m","200-300m")) %>%
+  #filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time, depth_bin2) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth()
+
+
+b <- ggplot(aes(x = hour, y = median)) +
+  geom_ribbon(aes(ymin = Percentage - 1.19651, ymax = Percentage + 1.19651), fill = "grey70", alpha = 0.2) + 
+  geom_line() + 
+  theme_minimal() + 
+  coord_polar(start = 0) + 
+  scale_y_continuous(breaks = seq(0, 10, by = 2)) + 
+  scale_x_continuous(breaks = seq(0, 24, by = 1), expand = c(0, 0)) + 
+  ylab("Frass production %") + 
+  xlab("") + 
+  geom_vline(xintercept = 6.30, color = "red", linetype = "dashed") +
+  geom_vline(xintercept = 20.3, color = "red", linetype = "dashed")
+
+b + expand_limits(x = 0, y = 0)
+
+## 
+# regular plot (smooth)
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 %in% c("0-100m","100-200m","200-300m")) %>%
+  #filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time, depth_bin2) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup()
+# add in 24 hours of data on either side to get smoothed
+test <- df %>% select(hour, depth_bin2, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour +24)
+test2 <- df %>% select(hour, depth_bin2, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour -24)
+df %>% full_join(test) %>%
+  full_join(test2) %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth(span=0.3)+
+  coord_cartesian(xlim = c(0, 23), expand = FALSE) # +
+#coord_polar()
+
+#plot
+ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth() +
+  coord_polar()
+
+
+# Try larger bin (depth_bin2)
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+#distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill =diel,  color=diel, shape=ESP))+
+  geom_smooth()
+p
+
+
+# Try 25-75m and 04_100-150m; 05_150-200m
+
+# bar plot?
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP)) %>%
+  filter(depth_bin == "01_25-75m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+#distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+
+#hour
+
+
+# 06_200-250m
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP)) %>%
+  filter(depth_bin == "06_200-250m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+#distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+
+
+#100-150
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel)) %>%
+  filter(depth_bin == "04_100-150m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(local_time, .keep_all = TRUE)
+p <- df %>% ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)
+p
+
+######### SCRAP ------------------
 
 
 # # Boxplots of Ecol Cats through depth ------------
@@ -650,7 +882,7 @@ p <- df %>% ggplot(aes(x=local_time, y=mean_per_tot))+
   geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)
 p
 
-######### SCRAP ------------------
+
 # Bar by species designation ------------------------------------------------------------
 
 ### ALL SAMPLES ###
