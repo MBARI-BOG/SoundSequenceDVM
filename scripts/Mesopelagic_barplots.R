@@ -1,9 +1,19 @@
 #040221
 #kpitz
 
-# Set directory to save plots
-directory <- 'figures/Mesopelagic_barplots/'
 
+# Set Constants -----------------------------------------------------------------
+
+marker = sym("12S")
+
+# Set directory to save plots
+plot_directory <- 'figures/Mesopelagic_barplots/'
+# Set directory to retrieve data
+data_directory = "Data/filtered_seq_data/"
+
+#12S_EcolCat_boxplot_depthbin_dielside.png in paper
+
+# also need to make figure tracking reads in binned depth through time
 
 # Load Libraries -----------------------------------------------------------------
 library(readr) #read csv files
@@ -16,10 +26,9 @@ library(tidyr)
 library(RColorBrewer) #colors for plotting
 library(forcats) 
 library(stringr)
-marker = sym("12S")
+library(viridis)
 
 # Import Data -------------------------------------------------------------
-data_directory = "Data/filtered_seq_data/"
 
 #ASV table
 print('ASV table')
@@ -48,6 +57,7 @@ potu.c <- otu.c %>%
   tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
   group_by(SampleID) %>%
   mutate(per_tot = reads / sum(reads) *100) %>%
+  ungroup() %>%
   arrange(-reads)
 head(potu.c)
 
@@ -68,10 +78,10 @@ species_label <- tax.c %>%
                              TRUE ~ as.character(Species)))
 
 
-# Import species designations
+# Import species ecological categories that have been manually determined
 
-filepath = "/Users/kpitz/Projects/CN19all/Canon2019Spring_Taxa_Categories_KBB_KP.csv"
-
+filepath = "data/metadata/CN19S_Taxa_Categories.csv"
+# species designations tibble:
 sp_desig <- read_csv(filepath)
 
 
@@ -105,7 +115,543 @@ meta <- samp.c %>%
                                depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
   )) 
 
-# Bar by sp designation ------------------------------------------------------------
+# Try different depth bin
+
+meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
+                                        depth >100 & depth <=200 ~ "100-200m",
+                                        depth >200 & depth <=300 ~ "200-300m",
+                                        depth >300 & depth <=400 ~ "300-400m",
+                                        depth >400 & depth <=500 ~ "400-500m",
+                                        depth >400 & depth <=600 ~ "500-600m",
+                                        depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
+)) 
+
+
+
+# # Boxplots of Ecol Cats through depth ------------
+# 
+# df <- tax.c %>% left_join(sp_desig) %>%
+#   left_join(potu.c) %>%
+#   group_by(Ecological_Category, SampleID) %>%
+#   mutate(sum_reads = sum(reads)) %>%
+#   mutate(sum_per_tot = sum(per_tot)) %>%
+#   ungroup() %>%
+#   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+#   select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
+# 
+# #want to plot median value on top of bar plot, show number of samples in bin
+# 
+# stats <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   mutate(hour = as.integer(hour)) %>%
+#   mutate(hour = replace(hour, hour==24,0)) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+#   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel) %>%
+#   mutate(count=1) %>%
+#   group_by(diel, Ecological_Category, depth_bin) %>%
+#   mutate(median = median(sum_per_tot)) %>%
+#   mutate(max = max(sum_per_tot)) %>%
+#   mutate(sum_count = sum(count)) %>%
+#   ungroup() %>%
+#   distinct(diel, Ecological_Category, depth_bin, median, sum_count, max) %>%
+#   # make values for segments, end is current median, start is median from previous depth
+#   mutate(xend = NaN) %>% # will hold depth bin values
+#   #mutate(yend = NaN) %>% # will hold per tot values
+#   mutate(xend = case_when(depth_bin == "00_0-25m" ~ "00_0-25m",
+#                           depth_bin == "01_25-75m" ~ "00_0-25m",
+#                           depth_bin == "03_75-100m" ~ "01_25-75m",
+#                           depth_bin == "04_100-150m" ~ "03_75-100m",
+#                           depth_bin == "05_150-200m" ~ "04_100-150m",
+#                           depth_bin == "06_200-250m" ~ "05_150-200m",
+#                           depth_bin == "07_250-300m" ~ "06_200-250m",
+#                           depth_bin == "08_300-400m" ~ "07_250-300m",
+#                           depth_bin == "09_400-500m" ~ "08_300-400m",
+#                           depth_bin == "10_500-600m" ~ "09_400-500m",
+#                           depth_bin == "11_600-750m" ~ "10_500-600m", TRUE ~ "unknown"))
+# #make yend df
+# # xend as index, merge back in to get median value
+# stats2 <- stats %>%
+#   left_join(stats %>% select(depth_bin,median, Ecological_Category, diel) %>% rename(yend=median) %>% rename(xend=depth_bin))
+# 
+# # assign text colour
+# textcol <- "grey40"
+# print("Begin plotting...")
+# 
+# bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   mutate(hour = as.integer(hour)) %>%
+#   mutate(hour = replace(hour, hour==24,0)) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+#   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin, diel) %>%
+#   #add in stats df
+#   full_join(stats2) %>%
+#   #now plot
+#   ggplot(aes(x=Ecological_Category, y=sum_per_tot, fill=diel)) +
+#   geom_boxplot(aes(x=fct_rev(depth_bin)), alpha=0.5)+
+#   geom_point(aes(y=median, x=depth_bin, color=diel)) +
+#   geom_segment(aes(y=median,yend=yend, x=depth_bin,xend=xend, color=diel)) +
+#   #geom_line(aes(y=median, x=depth_bin, color=diel)) +
+#   #geom_text(aes(label=sum_count, y=max+0.08, x=depth_bin)) +
+#   geom_text(aes(label=sum_count, y=102, x=depth_bin, color=diel)) +
+#   facet_grid(. ~ Ecological_Category, scales = "free") +
+#   #formatting...
+#   scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+#   scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+#   coord_flip() +
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   labs(y="Percent Total Reads",x="Depth Bin")+
+#   theme(
+#     #legend
+#     legend.position="right",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=8,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=8,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+#     #axis.text.x=element_text(size=7,colour=textcol),
+#     axis.text.y=element_text(size=6,colour=textcol),
+#     axis.title.y = element_text(size=6),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+#     plot.title=element_blank())
+# 
+# bp_top
+# 
+# filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth.png', sep='')
+# print(filename)
+# ggsave(filename,height = 5, width =8, units = 'in')
+# filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth.svg', sep='')
+# print(filename)
+# ggsave(filename,height = 5, width =8, units = 'in')
+# 
+# # Try different depth bin
+# 
+# meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
+#                               depth >100 & depth <=200 ~ "100-200m",
+#                               depth >200 & depth <=300 ~ "200-300m",
+#                               depth >300 & depth <=400 ~ "300-400m",
+#                               depth >400 & depth <=500 ~ "400-500m",
+#                               depth >400 & depth <=600 ~ "500-600m",
+#                               depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
+# )) 
+# 
+# 
+# df <- tax.c %>% left_join(sp_desig) %>%
+#   left_join(potu.c) %>%
+#   group_by(Ecological_Category, SampleID) %>%
+#   mutate(sum_reads = sum(reads)) %>%
+#   mutate(sum_per_tot = sum(per_tot)) %>%
+#   ungroup() %>%
+#   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+#   select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
+# 
+# #want to plot median value on top of bar plot, show number of samples in bin
+# 
+# stats <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   mutate(hour = as.integer(hour)) %>%
+#   mutate(hour = replace(hour, hour==24,0)) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+#   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin2, diel) %>%
+#   mutate(count=1) %>%
+#   group_by(diel, Ecological_Category, depth_bin2) %>%
+#   mutate(median = median(sum_per_tot)) %>%
+#   mutate(max = max(sum_per_tot)) %>%
+#   mutate(sum_count = sum(count)) %>%
+#   ungroup() %>%
+#   distinct(diel, Ecological_Category, depth_bin2, median, sum_count, max) %>%
+#   # make values for segments, end is current median, start is median from previous depth
+#   mutate(xend = NaN) %>% # will hold depth bin values
+#   #mutate(yend = NaN) %>% # will hold per tot values
+#   mutate(xend = case_when(depth_bin2 == "0-100m" ~ "0-100m",
+#                           depth_bin2 == "100-200m" ~ "0-100m",
+#                           depth_bin2 == "200-300m" ~ "100-200m",
+#                           depth_bin2 == "300-400m" ~ "200-300m",
+#                           depth_bin2 == "400-500m" ~ "300-400m",
+#                           depth_bin2 == "500-600m" ~ "400-500m",
+#                           depth_bin2 == "600-700m" ~ "500-600m", TRUE ~ "unknown"))
+# #make yend df
+# # xend as index, merge back in to get median value
+# stats2 <- stats %>%
+#   left_join(stats %>% select(depth_bin2,median, Ecological_Category, diel) %>% rename(yend=median) %>% rename(xend=depth_bin2))
+# 
+# # assign text colour
+# textcol <- "grey40"
+# print("Begin plotting...")
+# 
+# bp_top <- full_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   mutate(hour = as.integer(hour)) %>%
+#   mutate(hour = replace(hour, hour==24,0)) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+#   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin2, diel) %>%
+#   #add in stats df
+#   full_join(stats2) %>%
+#   #now plot
+#   ggplot(aes(x=Ecological_Category, y=sum_per_tot, fill=diel)) +
+#   geom_boxplot(aes(x=fct_rev(depth_bin2)), alpha=0.3)+
+#   geom_point(aes(y=median, x=depth_bin2, color=diel)) +
+#   geom_segment(aes(y=median,yend=yend, x=depth_bin2,xend=xend, color=diel)) +
+#   #geom_line(aes(y=median, x=depth_bin2, color=diel)) +
+#   #geom_text(aes(label=sum_count, y=max+0.08, x=depth_bin2)) +
+#   #geom_text(aes(label=sum_count, y=102, x=depth_bin2, color=diel)) +
+#   facet_grid(. ~ Ecological_Category, scales = "free") +
+#   #formatting...
+#   scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+#   scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
+#   coord_flip() +
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   labs(y="Percent Total Reads",x="Depth Bin")+
+#   theme(
+#     #legend
+#     legend.position="right",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=8,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=8,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+#     #axis.text.x=element_text(size=7,colour=textcol),
+#     axis.text.y=element_text(size=6,colour=textcol),
+#     axis.title.y = element_text(size=6),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+#     plot.title=element_blank())
+# 
+# bp_top
+# 
+# 
+# 
+# filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth2.png', sep='')
+# print(filename)
+# ggsave(filename,height = 5, width =8, units = 'in')
+# filename = paste(plot_directory, marker,'_EcolCat_boxplot_through_depth2.svg', sep='')
+# print(filename)
+# ggsave(filename,height = 5, width =8, units = 'in')
+
+# Composition of Mesopelagic group through time in depth bin -----------------------------
+
+# Stacked Bar by Cast -----------------------------------------------------
+meso_taxa <- tax.c %>% left_join(sp_desig) %>%
+  filter(Ecological_Category %in% c('mesopelagic'))
+
+taxas <- c('Class','Order', 'Family', 'Genus', 'Species')
+#### Percent Reads
+for (val in taxas) {
+  taxa_level = sym(val)
+  top_taxa <- potu.c %>%
+    right_join(meso_taxa %>% select(ASV)) %>%
+    left_join(species_label) %>%
+    right_join(meta) %>%
+    #filter(SAMPLING_station_number >=1) %>%
+    #filter(SAMPLING_station=='MARS') %>%
+    #filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+    # filter(!!taxa_level != 'Unknown') %>%
+    # filter(!!taxa_level !='no_hit') %>%
+    filter(!!taxa_level !='unassigned') %>%
+    # filter(!!taxa_level !='unknown') %>%
+    # filter(!!taxa_level !='s_') %>%
+    # filter(!!taxa_level !='g_') %>%
+    group_by(!!taxa_level) %>%
+    mutate(sum_per_tot = sum(per_tot)) %>%
+    distinct(!!taxa_level,.keep_all = TRUE ) %>%
+    arrange(-sum_per_tot) %>%
+    select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+    #print(n = Inf) %>%
+    ungroup() %>%
+    select(!!taxa_level, sum_per_tot) %>%
+    top_n(10)
+  
+  # assign text colour
+  textcol <- "grey40"
+  print("Begin plotting...")
+  bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+    left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+    right_join(top_taxa) %>% #limit to top taxa
+    #filter(SAMPLING_station_number >=1) %>%
+    #filter(SAMPLING_station=='MARS') %>%
+    #arrange(SAMPLING_station_number) %>%
+    mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+    filter(ESP=='CTD') %>%
+    unite(title, SAMPLING_station_number, local_time, SAMPLING_station,sep="_" ) %>%
+    #filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+    ggplot(aes(x=depth, y=per_tot))+
+    #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+    geom_bar(stat='identity', aes(fill = !!taxa_level), width=20)+
+    coord_flip()+
+    scale_x_reverse()+
+    #facet_wrap(~ SAMPLING_station_number)+
+    facet_wrap(~title) +
+    scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+    labs(x="",y="Percent Total Reads")+
+    theme_minimal() +
+    guides(fill=guide_legend(ncol=2)) +
+    theme(
+      #legend
+      legend.position="bottom",legend.direction="vertical",
+      legend.text=element_text(colour=textcol,size=8,face="bold"),
+      legend.key.height=grid::unit(0.3,"cm"),
+      legend.key.width=grid::unit(0.3,"cm"),
+      legend.title=element_text(colour=textcol,size=8,face="bold"),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+      #axis.text.x=element_text(size=7,colour=textcol),
+      axis.text.y=element_text(size=6,colour=textcol),
+      axis.title.y = element_text(size=6),
+      plot.background=element_blank(),
+      panel.border=element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(size = .25),
+      plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+      plot.title=element_blank())
+  
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_meso_bar_bycast.png', sep='')
+  #print('Plot of top 20 Genus average by month:')
+  print(filename)
+  ggsave(filename,height = 8, width =15, units = 'in')
+}
+
+
+
+# Ecological Reads in Depth Bins through Time -----------------------------
+
+# polar plot
+p <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 %in% c("0-100m","100-200m","200-300m")) %>%
+  #filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time, depth_bin2) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth()
+
+
+b <- ggplot(aes(x = hour, y = median)) +
+  geom_ribbon(aes(ymin = Percentage - 1.19651, ymax = Percentage + 1.19651), fill = "grey70", alpha = 0.2) + 
+  geom_line() + 
+  theme_minimal() + 
+  coord_polar(start = 0) + 
+  scale_y_continuous(breaks = seq(0, 10, by = 2)) + 
+  scale_x_continuous(breaks = seq(0, 24, by = 1), expand = c(0, 0)) + 
+  ylab("Frass production %") + 
+  xlab("") + 
+  geom_vline(xintercept = 6.30, color = "red", linetype = "dashed") +
+  geom_vline(xintercept = 20.3, color = "red", linetype = "dashed")
+
+b + expand_limits(x = 0, y = 0)
+
+## 
+# regular plot (smooth)
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 %in% c("0-100m","100-200m","200-300m")) %>%
+  #filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time, depth_bin2) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup()
+# add in 24 hours of data on either side to get smoothed
+test <- df %>% select(hour, depth_bin2, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour +24)
+test2 <- df %>% select(hour, depth_bin2, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour -24)
+df %>% full_join(test) %>%
+  full_join(test2) %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth(span=0.3)+
+  coord_cartesian(xlim = c(0, 23), expand = FALSE) # +
+  #coord_polar()
+  
+  #plot
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin2, fill=depth_bin2))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth() +
+  coord_polar()
+
+
+# Try larger bin (depth_bin2)
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+#distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill =diel,  color=diel, shape=ESP))+
+  geom_smooth()
+p
+
+
+# Try 25-75m and 04_100-150m; 05_150-200m
+
+# bar plot?
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP)) %>%
+  filter(depth_bin == "01_25-75m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+  #distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+
+#hour
+
+
+# 06_200-250m
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel, hour, ESP)) %>%
+  filter(depth_bin == "06_200-250m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() #%>%
+#distinct(local_time, .keep_all = TRUE)
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% distinct(local_time, .keep_all = TRUE) %>%
+  ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=hour, y=sum_per_tot))+
+  geom_point(aes(fill = local_time, size=sum_per_tot, color=local_time, shape=ESP))+
+  geom_line()
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=sum_per_tot))+
+  geom_point(aes(fill = diel, size=sum_per_tot, color=diel, shape=ESP))+
+  geom_line()
+p
+
+
+
+#100-150
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, depth_bin, local_time,Sampling_method, diel)) %>%
+  filter(depth_bin == "04_100-150m") %>%
+  group_by(local_time) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(local_time, .keep_all = TRUE)
+p <- df %>% ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_bar(stat = "identity", aes(fill = diel))
+p
+
+p <- df %>% ggplot(aes(x=local_time, y=mean_per_tot))+
+  geom_point(aes(fill = diel, size=mean_per_tot, color=mean_per_tot), shape=21)
+p
+
+######### SCRAP ------------------
+# Bar by species designation ------------------------------------------------------------
 
 ### ALL SAMPLES ###
 
@@ -150,7 +696,7 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 
-filename = paste(directory, marker,'_EcolCat_bar_ALL.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_ALL.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =20, units = 'in')
@@ -208,7 +754,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
 
 bp_top
 
-filename = paste(directory, marker,'_EcolCat_bar_ALL_depthbin.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_ALL_depthbin.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =20, units = 'in')
@@ -260,7 +806,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
 
 bp_top
 
-filename = paste(directory, marker,'_EcolCat_bar_ALL_depthbin_boxplot.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_ALL_depthbin_boxplot.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -301,7 +847,7 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 
-filename = paste(directory, marker,'_EcolCat_bar_ALL_DayNight.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_ALL_DayNight.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =20, units = 'in')
@@ -357,7 +903,7 @@ bp_top <- right_join(test, samp_lim,  by = c("SampleID")) %>% #join with metadat
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 
-filename = paste(directory, marker,'_EcolCat_bar_CTD.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_CTD.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =20, units = 'in')
@@ -400,7 +946,7 @@ bp_top <- right_join(test, samp_lim,  by = c("SampleID")) %>% #join with metadat
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 bp_top
-filename = paste(directory, marker,'_EcolCat_bar_ROV.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_bar_ROV.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =8, units = 'in')
@@ -459,7 +1005,7 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_tab10.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_tab10.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =6, units = 'in')
@@ -518,7 +1064,7 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_tab10_depthy.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_tab10_depthy.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 20, width =6, units = 'in')
@@ -572,11 +1118,11 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.svg', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_DAY_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -621,11 +1167,11 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.svg', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -670,11 +1216,11 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.svg', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_TRANS_all_markers.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -729,7 +1275,7 @@ ggsave(filename,height = 5, width =5, units = 'in')
 #     plot.title=element_blank())
 # 
 # bp_top
-# filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all.png', sep='')
+# filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_NIGHT_all.png', sep='')
 # #print('Plot of top 20 Genus average by month:')
 # print(filename)
 # ggsave(filename,height = 5, width =5, units = 'in')
@@ -783,7 +1329,7 @@ ggsave(filename,height = 5, width =5, units = 'in')
 #     plot.title=element_blank())
 # 
 # bp_top
-# filename = paste(directory, marker,'_EcolCat_scatter_Diel_depthy_TRNS_all.png', sep='')
+# filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_TRNS_all.png', sep='')
 # #print('Plot of top 20 Genus average by month:')
 # print(filename)
 # ggsave(filename,height = 5, width =5, units = 'in')
@@ -829,11 +1375,11 @@ bp_top <- samp.c %>%
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_sampling_effort_by vehicle.png', sep='')
+filename = paste(plot_directory, marker,'_sampling_effort_by vehicle.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
-filename = paste(directory, marker,'_sampling_effort_byvehicle.svg', sep='')
+filename = paste(plot_directory, marker,'_sampling_effort_byvehicle.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
@@ -874,11 +1420,11 @@ bp_top <- samp.c %>%
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_sampling_effort_all.png', sep='')
+filename = paste(plot_directory, marker,'_sampling_effort_all.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
-filename = paste(directory, marker,'_sampling_effort_all.svg', sep='')
+filename = paste(plot_directory, marker,'_sampling_effort_all.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =3, units = 'in')
@@ -944,7 +1490,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_hour_depth_epi.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_hour_depth_epi.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -969,7 +1515,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
   theme_minimal() 
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_hour_depth_epi_std.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_hour_depth_epi_std.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
@@ -1032,7 +1578,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_boxplot_depthbin.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_boxplot_depthbin.png', sep='')
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
@@ -1080,9 +1626,11 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_boxplot_depthbin_dielside.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_boxplot_depthbin_dielside.png', sep='')
 print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
+
+
 
 ### Plot same ecological category, color by Diel ######
 
@@ -1166,7 +1714,7 @@ bp_top <- full_join(test, samp.c,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_Diel_tab10_flipped_CTD.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_tab10_flipped_CTD.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 4, width =6, units = 'in')
@@ -1230,7 +1778,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_depth_time_nozeros_colorpertot.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_depth_time_nozeros_colorpertot.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -1290,7 +1838,7 @@ bp_top <- full_join(test, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_scatter_depth_time_samptype.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_depth_time_samptype.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -1374,7 +1922,7 @@ bp_top <- full_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_barplot_daphne.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_barplot_daphne.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -1447,7 +1995,7 @@ bp_top <- full_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_barplot_daphne_reads.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_barplot_daphne_reads.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -1504,7 +2052,7 @@ bp_top <- full_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_EcolCat_barplot_daphne__Steno_percent.png', sep='')
+filename = paste(plot_directory, marker,'_EcolCat_barplot_daphne__Steno_percent.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 10, width =12, units = 'in')
@@ -1579,7 +2127,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_mesotaxa_bar.png', sep='')
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_mesotaxa_bar.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 6, width =20, units = 'in')
@@ -1639,7 +2187,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_mesotaxa_bar_rawreads.png', sep='')
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_mesotaxa_bar_rawreads.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 6, width =20, units = 'in')
@@ -1703,7 +2251,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_mesotaxa_bar_limCTD.png', sep='')
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_mesotaxa_bar_limCTD.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 6, width =20, units = 'in')
@@ -1764,7 +2312,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_mesotaxa_bar_rawreads_limCTD.png', sep='')
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_mesotaxa_bar_rawreads_limCTD.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 6, width =20, units = 'in')
@@ -1825,7 +2373,7 @@ bp_top <- inner_join(meso_taxa, samp.c,  by = c("SampleID")) %>% #join with meta
     plot.title=element_blank())
 
 bp_top
-filename = paste(directory, marker,'_Genus_mesotaxa_scatter.png', sep='')
+filename = paste(plot_directory, marker,'_Genus_mesotaxa_scatter.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =10, units = 'in')
@@ -1899,7 +2447,7 @@ for (val in taxas) {
       plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
       plot.title=element_blank())
   
-  filename = paste(directory, marker,'_top10',taxa_level,'_meso_bar_bycast.png', sep='')
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_meso_bar_bycast.png', sep='')
   #print('Plot of top 20 Genus average by month:')
   print(filename)
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2007,11 +2555,11 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday.svg', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday.svg', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2075,11 +2623,11 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top10sp_bar_',var,'_comp.png', sep='')
+  filename = paste(plot_directory, marker,'_top10sp_bar_',var,'_comp.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =20, units = 'in')
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp.svg', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp.svg', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =20, units = 'in')
@@ -2145,11 +2693,11 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday.svg', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday.svg', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2217,7 +2765,7 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2285,7 +2833,7 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2354,7 +2902,7 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP_noAnch.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_rawreads_nightday_ESP_noAnch.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2423,7 +2971,7 @@ for (val in phyla) {
   bp_top 
   
   
-  filename = paste(directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP_noAnch.png', sep='')
+  filename = paste(plot_directory, marker,'_top20sp_bar_',var,'_comp_nightday_ESP_noAnch.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2474,7 +3022,7 @@ for (val in phyla) {
       plot.title=element_blank())
   
   bp_top
-  filename = paste(directory, marker,'_NumTaxa_',var,'_byOrder.png', sep='')
+  filename = paste(plot_directory, marker,'_NumTaxa_',var,'_byOrder.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2520,7 +3068,7 @@ for (val in phyla) {
       plot.title=element_blank())
   
   bp_top
-  filename = paste(directory, marker,'_NumASVs_',var,'_byOrder_noanch.png', sep='')
+  filename = paste(plot_directory, marker,'_NumASVs_',var,'_byOrder_noanch.png', sep='')
   print(var)
   filename
   ggsave(filename,height = 8, width =10, units = 'in')
@@ -2635,7 +3183,7 @@ test %>%
   scale_x_reverse()+
   facet_wrap(.~label, nrow=2)
 
-filename = paste(directory, marker,'_Engraulis_casts_pertot.png', sep='')
+filename = paste(plot_directory, marker,'_Engraulis_casts_pertot.png', sep='')
 print(var)
 filename
 ggsave(filename,height = 8, width =20, units = 'in')
@@ -2677,7 +3225,7 @@ test %>%
   scale_x_reverse()+
   facet_wrap(.~label, nrow=2)
 
-filename = paste(directory, marker,'_Stenobrachius_casts_ASVs_2reads.png', sep='')
+filename = paste(plot_directory, marker,'_Stenobrachius_casts_ASVs_2reads.png', sep='')
 print(var)
 filename
 ggsave(filename,height = 8, width =20, units = 'in')
@@ -2736,7 +3284,7 @@ test %>%
   #coord_flip()+
   scale_y_reverse()
 
-filename = paste(directory, marker,'_Stenobrachius_casts_throughtime.png', sep='')
+filename = paste(plot_directory, marker,'_Stenobrachius_casts_throughtime.png', sep='')
 print(var)
 filename
 ggsave(filename,height = 5, width =10, units = 'in')
@@ -2795,7 +3343,7 @@ test %>%
   #coord_flip()+
   scale_y_reverse()
 
-filename = paste(directory, marker,'_Engraulis_casts_throughtime.png', sep='')
+filename = paste(plot_directory, marker,'_Engraulis_casts_throughtime.png', sep='')
 print(var)
 filename
 ggsave(filename,height = 5, width =10, units = 'in')
@@ -2854,7 +3402,7 @@ test %>%
   #coord_flip()+
   scale_y_reverse()
 
-filename = paste(directory, marker,'_Engraulis_ESPcasts_throughtime.png', sep='')
+filename = paste(plot_directory, marker,'_Engraulis_ESPcasts_throughtime.png', sep='')
 print(var)
 filename
 ggsave(filename,height = 5, width =10, units = 'in')
