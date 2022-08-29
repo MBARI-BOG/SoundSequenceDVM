@@ -5,15 +5,6 @@
 # day versus night line plots of Ecological Category Percent Total Reads
 # alongside heatmap of sampling effort
 
-# Set Constants -----------------------------------------------------------------
-
-marker = sym("12S")
-
-# Set directory to save plots
-plot_directory <- 'figures/Fig1/'
-# Set directory to retrieve data
-data_directory = "Data/filtered_seq_data/"
-
 # Load Libraries -----------------------------------------------------------------
 library(readr) #read csv files
 library(lubridate) #for date modifications
@@ -26,6 +17,17 @@ library(RColorBrewer) #colors for plotting
 library(forcats) 
 library(stringr)
 library(viridis)
+
+
+# Set Constants -----------------------------------------------------------------
+
+marker = sym("12S")
+
+# Set directory to save plots
+plot_directory <- 'figures/Fig1/'
+# Set directory to retrieve data
+data_directory = "Data/filtered_seq_data/"
+
 
 # Import Data -------------------------------------------------------------
 
@@ -128,7 +130,15 @@ Ecol_data <- tax.c %>% full_join(sp_desig, by=tax_levels) %>%
   mutate(sum_per_tot = sum(per_tot)) %>%
   ungroup() %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
-  select(SampleID, Ecological_Category, sum_reads, sum_per_tot)
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  # average replicate filters
+  left_join(meta %>% select(SampleID, FilterID)) %>%
+  # get mean values of replicate sequenced filters (some ESP samples)
+  group_by(Ecological_Category, FilterID) %>%
+  mutate(sum_reads = mean(sum_reads)) %>%
+  mutate(sum_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(FilterID, Ecological_Category, .keep_all=TRUE)
 
 
 # Ecological Components by Depth - Percent Reads --------------------------
@@ -136,7 +146,7 @@ Ecol_data <- tax.c %>% full_join(sp_desig, by=tax_levels) %>%
 # assign text colour
 textcol <- "grey40"
 print("Begin plotting...")
-bp_top <- full_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by = c("SampleID")) %>% #join with metadata
+bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by = c("SampleID")) %>% #join with metadata
   filter(diel %in% c('day', 'night')) %>%
   # filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
   #                                   'cosmopolitan')) %>%
@@ -193,6 +203,8 @@ meta2 <- meta %>%
   )) 
 
 df <- meta2 %>%
+  #drop replicates
+  distinct(FilterID, .keep_all=TRUE) %>%
   mutate(count=1) %>%
   filter(diel %in% c('day', 'night')) %>%
   group_by(diel, depth_bin2) %>%
@@ -227,7 +239,14 @@ df <- tax.c %>% left_join(sp_desig) %>%
   ungroup() %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
-  #filter(sum_reads ==0) %>%
+  # average replicate filters
+  left_join(meta %>% select(SampleID, FilterID)) %>%
+  # get mean values of replicate sequenced filters (some ESP samples)
+  group_by(Ecological_Category, FilterID) %>%
+  mutate(sum_reads = mean(sum_reads)) %>%
+  mutate(sum_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
   mutate(present = case_when(sum_per_tot<0.1  ~ 0,
                              TRUE ~ 1)) %>%
   #mutate(present = 1) %>%
@@ -243,8 +262,8 @@ for (val in cats) {
     geom_point()+
     geom_smooth()+
     coord_flip()+
-    labs(y='Percent Present in eDNA Sample (>0.5% reads)')
-  filename = paste(plot_directory, marker,'_',cat,'_PA_05.png', sep='')
+    labs(y='Percent Present in eDNA Sample (>0.1% reads)')
+  filename = paste(plot_directory, marker,'_',cat,'_PA_01.png', sep='')
   print(filename)
   ggsave(filename,height = 5, width =6, units = 'in')
 }
@@ -257,7 +276,14 @@ df <- tax.c %>% left_join(sp_desig) %>%
   ungroup() %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
-  #filter(sum_reads ==0) %>%
+  # average replicate filters
+  left_join(meta %>% select(SampleID, FilterID)) %>%
+  # get mean values of replicate sequenced filters (some ESP samples)
+  group_by(Ecological_Category, FilterID) %>%
+  mutate(sum_reads = mean(sum_reads)) %>%
+  mutate(sum_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
   mutate(present = case_when(sum_per_tot<0  ~ 0,
                              TRUE ~ 1)) %>%
   #mutate(present = 1) %>%

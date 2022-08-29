@@ -268,6 +268,188 @@ print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
 
 
+# Just look at narrower depth bin -----------
+
+# take means of sequenced replicate filters (duplicate FilterID)
+
+df <- tax.c %>% left_join(sp_desig) %>%
+  left_join(potu.c) %>%
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(sum_reads = sum(reads)) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
+  select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
+  filter(Ecological_Category == "mesopelagic") %>%
+  left_join(meta %>% select(SampleID, FilterID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
+  mutate(hour = as.integer(hour)) %>%
+  mutate(hour = replace(hour, hour == 24, 0)) %>%
+  #filter(depth_bin %in% c("00_0-25m", "01_25-75m","03_75-100m","04_100-150m", "05_150-200m", "06_200-250m", "07_250-300m", "08_300-400m")) %>%
+  filter(depth_bin %in% c("00_0-25m", "01_25-75m","03_75-100m","04_100-150m", "05_150-200m", "06_200-250m", "07_250-300m", "08_300-400m")) %>%
+  # get mean values of replicate sequenced filters (some ESP samples)
+  group_by(Ecological_Category, FilterID) %>%
+  mutate(sum_reads = mean(sum_reads)) %>%
+  mutate(sum_per_tot = mean(sum_per_tot)) %>%
+  ungroup() %>%
+  distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
+  #filter(depth_bin2 == "200-300m") %>%
+  group_by(local_time, depth_bin) %>%
+  mutate(mean_per_tot = mean(sum_per_tot)) %>%
+  ungroup()
+# add in 24 hours of data on either side to get smoothed
+test <- df %>% select(hour, depth_bin, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour +24)
+test2 <- df %>% select(hour, depth_bin, sum_per_tot, SampleID, ESP) %>%
+  mutate(hour = hour -24)
+
+# assign text colour
+textcol <- "grey40"
+print("Begin plotting...")
+
+df %>% full_join(test) %>%
+  full_join(test2) %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin, fill=depth_bin, linetype=depth_bin))+
+  geom_point(aes(shape=ESP))+
+  geom_smooth(span=0.3, alpha=0.4,se=FALSE)+
+  coord_cartesian(xlim = c(0, 23), expand = FALSE)+
+  #scale_color_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  #scale_fill_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", title='Mesopelagic', color="depth bin", fill="depth bin", linetype="depth bin")+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
 
 
+filename = paste(plot_directory, marker,'_Mesopelagic_byhour_smallbins.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+filename = paste(plot_directory, marker,'_Mesopelagic_byhour_smallbins.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
 
+bins = c("00_0-25m", "01_25-75m","03_75-100m","04_100-150m", "05_150-200m", "06_200-250m", "07_250-300m", "08_300-400m")
+bins[1]
+
+for (bin in bins) {
+  print(bin)
+  plot_title = paste('Mesopelagic', bin, sep=', ')
+  df %>% full_join(test) %>%
+    full_join(test2) %>%
+    filter(depth_bin==bin) %>%
+    #ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin, fill=depth_bin, linetype=depth_bin))+
+    ggplot(aes(x=hour, y=sum_per_tot))+
+    #geom_point(aes(shape=ESP))+
+    geom_point(aes(shape=ESP, color=diel, fill=diel))+
+    geom_smooth(span=0.3)+
+    coord_cartesian(xlim = c(0, 23), expand = FALSE)+
+    #scale_color_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+    #scale_fill_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+    theme_minimal() +
+    guides(fill=guide_legend(ncol=1)) +
+    labs(y="Percent Total Reads",x="Hour (24-hour)", title=plot_title)+
+    theme(
+      #legend
+      legend.position="right",legend.direction="vertical",
+      legend.text=element_text(size=8,face="bold"),
+      legend.key.height=grid::unit(0.3,"cm"),
+      legend.key.width=grid::unit(0.3,"cm"),
+      legend.title=element_text(size=8,face="bold"),
+      plot.background=element_blank(),
+      panel.border=element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(size = .25),
+      plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+  
+  filename = paste(plot_directory, marker,'_Mesopelagic_byhour_',bin,'.png', sep='')
+  #filename = paste(plot_directory, marker,'_Mesopelagic_byhour_200300.png', sep='')
+  print(filename)
+  ggsave(filename,height = 5, width =8, units = 'in')
+  filename = paste(plot_directory, marker,'_Mesopelagic_byhour_',bin,'.svg', sep='')
+  #filename = paste(plot_directory, marker,'_Mesopelagic_byhour_200300.svg', sep='')
+  print(filename)
+  ggsave(filename,height = 5, width =8, units = 'in')
+  
+  
+}
+df %>% full_join(test) %>%
+  full_join(test2) %>%
+  filter(depth_bin==bins[1]) %>%
+  #ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin, fill=depth_bin, linetype=depth_bin))+
+  ggplot(aes(x=hour, y=sum_per_tot))+
+  #geom_point(aes(shape=ESP))+
+  geom_point(aes(shape=ESP, color=diel, fill=diel))+
+  geom_smooth(span=0.3)+
+  coord_cartesian(xlim = c(0, 23), expand = FALSE)+
+  #scale_color_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  #scale_fill_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", title='Mesopelagic, >200-300m samples')+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+
+
+filename = paste(plot_directory, marker,'_Mesopelagic_byhour_200300.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+filename = paste(plot_directory, marker,'_Mesopelagic_byhour_200300.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+
+#mesopelagic through time
+
+df %>% full_join(test) %>%
+  full_join(test2) %>%
+  filter(depth_bin=="200-300m") %>%
+  #ggplot(aes(x=hour, y=sum_per_tot, color=depth_bin, fill=depth_bin, linetype=depth_bin))+
+  ggplot(aes(x=local_time, y=sum_per_tot))+
+  #geom_point(aes(shape=ESP))+
+  geom_point(aes(shape=ESP, color=diel, fill=diel))+
+  geom_smooth(span=0.2)+
+  #coord_cartesian(xlim = c(0, 23), expand = FALSE)+
+  #scale_color_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  #scale_fill_manual(values=c("chartreuse4", "darkorange", "darkblue")) +
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", title='Mesopelagic, >200-300m samples')+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+
+
+filename = paste(plot_directory, marker,'_Mesopelagic_throughtime_200300.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+filename = paste(plot_directory, marker,'_Mesopelagic_throughtime_200300.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
