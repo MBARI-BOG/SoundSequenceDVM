@@ -1,15 +1,6 @@
 #081122
 #kpitz
 
-# Set Constants -----------------------------------------------------------------
-
-marker = sym("12S")
-
-# Set directory to save plots
-plot_directory <- 'figures/Ecological_category/'
-# Set directory to retrieve data
-data_directory = "Data/filtered_seq_data/"
-
 # Load Libraries -----------------------------------------------------------------
 library(readr) #read csv files
 library(lubridate) #for date modifications
@@ -23,7 +14,16 @@ library(forcats)
 library(stringr)
 library(viridis)
 
-# Import Data -------------------------------------------------------------
+# Set Constants -----------------------------------------------------------------
+
+marker = sym("12S")
+
+# Set directory to save plots
+plot_directory <- 'figures/Ecological_category/'
+# Set directory to retrieve data
+data_directory = "Data/filtered_seq_data/"
+
+# Import Genetic Data -------------------------------------------------------------
 
 #ASV table
 print('ASV table')
@@ -108,6 +108,7 @@ meta <- samp.c %>%
                                depth >400 & depth <=600 ~ "500-600m",
                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
   )) 
+
 
 # Species composition within Ecological Category ------------------
 

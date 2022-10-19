@@ -85,7 +85,6 @@ filepath = "data/metadata/CN19S_Taxa_Categories.csv"
 # species designations tibble:
 sp_desig <- read_csv(filepath)
 
-
 # Modify metadata -----------------------------------------------
 
 # create time variables, manual depth bins, sample type variable
@@ -114,6 +113,43 @@ meta <- samp.c %>%
                                depth >400 & depth <=600 ~ "500-600m",
                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
   )) 
+
+# Import Acoustic data -------------------------------------------
+
+filepath <- 'data/acoustic_data/Spring canon acoustics summaries_bydepth_overall.csv'
+ac_sum <- read_csv(filepath) 
+
+
+# Plot Acoustic Data -----------------------------------------
+glimpse(ac_sum)
+p <- ac_sum %>%
+  ggplot(aes(x = -depth, y=mean, color=diel, group=diel), alpha=0.4)+
+  geom_point(aes(shape=diel, size=diel), alpha=0.7)+
+  #geom_errorbar(aes(ymin=Mean-SD, ymax =Mean+SD), width=.2,
+  #              position=position_dodge(0.05))+
+  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+  geom_line()+theme_minimal() +
+  coord_flip()
+
+p
+filename = paste(plot_directory, 'Acoustic_DayNight_point.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 6, width =5, units = 'in')
+
+p <- ac_sum %>%
+  ggplot(aes(x = -depth, y=mean, color=diel, group=diel)) +
+  geom_smooth(aes(ymin=mean-SD, ymax =mean+SD, fill=diel),  stat="identity")+
+  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+  theme_minimal() +
+  coord_flip()
+
+p
+filename = paste(plot_directory, 'Acoustic_DayNight_smooth.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 6, width =5, units = 'in')
+
 
 # Ecological Categories to focus on  ------------------
 
@@ -188,6 +224,73 @@ ggsave(filename,height = 5, width =8, units = 'in')
 filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.svg', sep='')
 print(filename)
 ggsave(filename,height = 5, width =7, units = 'in')
+
+
+# Add Acoustic Data -------------------------------------------------------
+
+# assign text colour
+textcol <- "grey40"
+print("Begin plotting...")
+bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by = c("SampleID")) %>% #join with metadata
+  filter(diel %in% c('day', 'night')) %>%
+  # filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
+  #                                   'cosmopolitan')) %>%
+  filter(Ecological_Category %in% cats) %>%
+  ggplot(aes(x = -depth, y = sum_per_tot)) +
+  geom_point(aes(color = Ecological_Category, shape=ESP), alpha=0.7) +
+  scale_shape_manual(values= c(16,8)) +
+  geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6) +
+  facet_grid(. ~ diel, margins=FALSE)+
+  # #add acoustic data
+  # geom_point(data=ac_sum, aes(x=-depth, y=mean,shape=diel, size=diel), alpha=0.7)+
+  # geom_errorbar(data=ac_sum,aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+  # geom_line(data=ac_sum,aes(x=-depth, y=mean, color=diel))+
+  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,0))+
+  labs(x="Depth (m)",y="Percent Total Reads")+
+  coord_flip() +
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+
+bp_top 
+
++ ggplot(data = ac_sum, aes(x = -depth, y=mean, color=diel, group=diel), alpha=0.4)+
+  geom_point(aes(shape=diel, size=diel), alpha=0.7)+
+  #geom_errorbar(aes(ymin=Mean-SD, ymax =Mean+SD), width=.2,
+  #              position=position_dodge(0.05))+
+  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+  geom_line()+theme_minimal() +
+  coord_flip()
+
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_Acoustic.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =8, units = 'in')
+filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_Acoustic.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =7, units = 'in')
+
+
+
+
+
 
 # Number of Samples by Depth and Diel -------------------------------------
 
