@@ -28,7 +28,6 @@ plot_directory <- 'figures/Boxplot/'
 # Set directory to retrieve data
 data_directory = "Data/filtered_seq_data/"
 
-#12S_EcolCat_boxplot_depthbin_dielside.png in paper
 
 paletteDayNight <- c(wes_palette("Chevalier1", type = "discrete")[2], wes_palette("Darjeeling2", type = "discrete")[2], 'darkgrey')
 paletteEcolCat <- c('blue3', 'darkorchid', 'deepskyblue','chartreuse' )

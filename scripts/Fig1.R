@@ -17,6 +17,7 @@ library(RColorBrewer) #colors for plotting
 library(forcats) 
 library(stringr)
 library(viridis)
+library(wesanderson)
 
 
 # Set Constants -----------------------------------------------------------------
@@ -28,6 +29,8 @@ plot_directory <- 'figures/Fig1/'
 # Set directory to retrieve data
 data_directory = "Data/filtered_seq_data/"
 
+paletteDayNight <- c(wes_palette("Chevalier1", type = "discrete")[2], wes_palette("Darjeeling2", type = "discrete")[2], 'darkgrey')
+paletteEcolCat <- c('blue3', 'darkorchid', 'deepskyblue','chartreuse' )
 
 # Import Data -------------------------------------------------------------
 
@@ -114,42 +117,6 @@ meta <- samp.c %>%
                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
   )) 
 
-# Import Acoustic data -------------------------------------------
-
-filepath <- 'data/acoustic_data/Spring canon acoustics summaries_bydepth_overall.csv'
-ac_sum <- read_csv(filepath) 
-
-
-# Plot Acoustic Data -----------------------------------------
-glimpse(ac_sum)
-p <- ac_sum %>%
-  ggplot(aes(x = -depth, y=mean, color=diel, group=diel), alpha=0.4)+
-  geom_point(aes(shape=diel, size=diel), alpha=0.7)+
-  #geom_errorbar(aes(ymin=Mean-SD, ymax =Mean+SD), width=.2,
-  #              position=position_dodge(0.05))+
-  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
-  geom_line()+theme_minimal() +
-  coord_flip()
-
-p
-filename = paste(plot_directory, 'Acoustic_DayNight_point.png', sep='')
-#print('Plot of top 20 Genus average by month:')
-print(filename)
-ggsave(filename,height = 6, width =5, units = 'in')
-
-p <- ac_sum %>%
-  ggplot(aes(x = -depth, y=mean, color=diel, group=diel)) +
-  geom_smooth(aes(ymin=mean-SD, ymax =mean+SD, fill=diel),  stat="identity")+
-  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
-  theme_minimal() +
-  coord_flip()
-
-p
-filename = paste(plot_directory, 'Acoustic_DayNight_smooth.png', sep='')
-#print('Plot of top 20 Genus average by month:')
-print(filename)
-ggsave(filename,height = 6, width =5, units = 'in')
-
 
 # Ecological Categories to focus on  ------------------
 
@@ -192,8 +159,8 @@ bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by 
   scale_shape_manual(values= c(16,8)) +
   geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6) +
   facet_grid(. ~ diel, margins=FALSE)+
-  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
+  scale_color_manual(values=paletteEcolCat )+
+  scale_fill_manual(values=paletteEcolCat)+
   scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,0))+
   labs(x="Depth (m)",y="Percent Total Reads")+
   coord_flip() +
