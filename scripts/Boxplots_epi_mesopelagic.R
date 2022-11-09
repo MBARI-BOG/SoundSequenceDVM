@@ -109,7 +109,8 @@ p1 <- ac_sum %>%
   scale_x_continuous(n.breaks = 6)+
   #scale_x_continuous(breaks=x_ticks_hr) +
   xlab('Depth (m)')+
-  ylab('Mean Scattering (dB)')+
+  #ylab('Mean Scattering (dB)')+
+  labs(y=expression(paste("Mean Scattering "," (dB re 1", m^-1, ')')))+
   labs(fill='Diel', color='Diel', shape='Diel')
 
 p1
@@ -233,13 +234,14 @@ p2 <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   geom_boxplot(aes(x=fct_rev(depth_bin2)), alpha=0.5)+
   geom_point(aes(y=median, x=depth_bin2, color=diel)) +
   # add in count of number of samples?
-  geom_text(data=.%>%filter(Ecological_Category=='mesopelagic') %>% distinct(depth_bin2,diel, .keep_all = TRUE), aes(label=sum_count, y=106, x=depth_bin2, color=diel), position = position_dodge(width = 0.9))+
+  geom_text(data=.%>%filter(Ecological_Category=='mesopelagic') %>% distinct(depth_bin2,diel, .keep_all = TRUE), aes(label=sum_count, y=110, x=depth_bin2, color=diel), position = position_dodge(width = 0.9))+
   #geom_text(data=. %>% filter(diel=='night') %>%filter(Ecological_Category=='mesopelagic'),
   #          aes(label=sum_count, y=102, x=depth_bin2, color=diel), position = position_dodge(width = 0.9)) +
   #geom_text(data=. %>% filter(diel=='day') %>%filter(Ecological_Category=='mesopelagic'),
   #          aes(label=sum_count, y=112, x=depth_bin2, color=diel), position = position_dodge(width = 0.9)) +
   geom_segment(aes(y=median,yend=yend, x=depth_bin2,xend=xend, color=diel)) +
-  facet_grid(. ~ Ecological_Category, scales = "free") +
+  #facet_grid(. ~ Ecological_Category, scales = "free") +
+  facet_grid(. ~ Ecological_Category) +
   #formatting...
   scale_color_manual(values=paletteDayNight )+
   scale_fill_manual(values=paletteDayNight)+
@@ -280,7 +282,7 @@ ggsave(filename,height = 5, width =8, units = 'in')
 # Join plots --------------
 
 #Put all together
-pf1 <- p1  + theme_minimal() + theme(text = element_text(size=10), 
+pf1 <- p1  + theme_minimal() + theme(text = element_text(size=14), 
                                     legend.position = 'none',
                                     axis.line = element_line(color = "black"),
                                     axis.ticks = element_line(color = "black"),
@@ -293,7 +295,7 @@ pf1 <- p1  + theme_minimal() + theme(text = element_text(size=10),
                                     panel.grid.major = element_blank(), 
                                     panel.grid.minor = element_blank()
 )
-pf2 <- p2  + theme_minimal() + theme(text = element_text(size=10), 
+pf2 <- p2  + theme_minimal() + theme(text = element_text(size=14), 
                                     legend.position = 'none',
                                     axis.line = element_line(color = "black"),
                                     axis.ticks = element_line(color = "black"),

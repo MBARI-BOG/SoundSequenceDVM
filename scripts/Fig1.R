@@ -162,6 +162,7 @@ bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by 
   scale_color_manual(values=paletteEcolCat )+
   scale_fill_manual(values=paletteEcolCat)+
   scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,0))+
+  scale_y_continuous(breaks=c(0,20,40,60,80,100))+
   labs(x="Depth (m)",y="Percent Total Reads")+
   coord_flip() +
   theme_minimal() +
@@ -180,9 +181,12 @@ bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by 
     plot.background=element_blank(),
     panel.border=element_blank(),
     panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
+    panel.grid.major = element_blank(),
+    #panel.grid.major = element_line(size = .25),
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
-    plot.title=element_blank())
+    plot.title=element_blank(),
+    axis.line = element_line(color = "black", size=0.2),
+    axis.ticks = element_line(color = "black", size=0.2))
 
 bp_top
 filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.png', sep='')
@@ -191,188 +195,3 @@ ggsave(filename,height = 5, width =8, units = 'in')
 filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.svg', sep='')
 print(filename)
 ggsave(filename,height = 5, width =7, units = 'in')
-
-
-# Add Acoustic Data -------------------------------------------------------
-
-# assign text colour
-textcol <- "grey40"
-print("Begin plotting...")
-bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by = c("SampleID")) %>% #join with metadata
-  filter(diel %in% c('day', 'night')) %>%
-  # filter(Ecological_Category %in% c('mesopelagic', 'epipelagic', 'benthopelagic',
-  #                                   'cosmopolitan')) %>%
-  filter(Ecological_Category %in% cats) %>%
-  ggplot(aes(x = -depth, y = sum_per_tot)) +
-  geom_point(aes(color = Ecological_Category, shape=ESP), alpha=0.7) +
-  scale_shape_manual(values= c(16,8)) +
-  geom_smooth(aes(color = Ecological_Category, fill=Ecological_Category), alpha=0.5, span=0.6) +
-  facet_grid(. ~ diel, margins=FALSE)+
-  # #add acoustic data
-  # geom_point(data=ac_sum, aes(x=-depth, y=mean,shape=diel, size=diel), alpha=0.7)+
-  # geom_errorbar(data=ac_sum,aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
-  # geom_line(data=ac_sum,aes(x=-depth, y=mean, color=diel))+
-  scale_color_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  scale_fill_manual(values = c('blue3', 'darkorchid', 'deepskyblue','chartreuse')) +
-  scale_x_continuous(breaks=c(-890,-800,-700,-600,-500,-400,-300,-200,-100,0), limits=c(-890,0))+
-  labs(x="Depth (m)",y="Percent Total Reads")+
-  coord_flip() +
-  theme_minimal() +
-  guides(fill=guide_legend(ncol=2)) +
-  theme(
-    #legend
-    legend.position="right",legend.direction="vertical",
-    legend.text=element_text(colour=textcol,size=8,face="bold"),
-    legend.key.height=grid::unit(0.3,"cm"),
-    legend.key.width=grid::unit(0.3,"cm"),
-    legend.title=element_text(colour=textcol,size=8,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=6,colour=textcol),
-    axis.title.y = element_text(size=6),
-    plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
-    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
-    plot.title=element_blank())
-
-bp_top 
-
-+ ggplot(data = ac_sum, aes(x = -depth, y=mean, color=diel, group=diel), alpha=0.4)+
-  geom_point(aes(shape=diel, size=diel), alpha=0.7)+
-  #geom_errorbar(aes(ymin=Mean-SD, ymax =Mean+SD), width=.2,
-  #              position=position_dodge(0.05))+
-  geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
-  geom_line()+theme_minimal() +
-  coord_flip()
-
-filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_Acoustic.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =8, units = 'in')
-filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy_Acoustic.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =7, units = 'in')
-
-
-
-
-
-
-# Number of Samples by Depth and Diel -------------------------------------
-
-# define new depth bins that are evenly split:
-meta2 <- meta %>% 
-  mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
-                               depth >100 & depth <=200 ~ "100-200m",
-                               depth >200 & depth <=300 ~ "200-300m",
-                               depth >300 & depth <=400 ~ "300-400m",
-                               depth >400 & depth <=500 ~ "400-500m",
-                               depth >400 & depth <=600 ~ "500-600m",
-                               depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
-  )) 
-
-df <- meta2 %>%
-  #drop replicates
-  distinct(FilterID, .keep_all=TRUE) %>%
-  mutate(count=1) %>%
-  filter(diel %in% c('day', 'night')) %>%
-  group_by(diel, depth_bin2) %>%
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(diel, depth_bin2, sum_count, .keep_all=TRUE) %>%
-  arrange(depth_bin2, diel) %>%
-  ggplot(aes(y=fct_reorder(depth_bin2, -depth),x=diel, fill = sum_count))+
-  geom_tile()+
-  geom_text(aes(label=sum_count), colour = "white", check_overlap = TRUE)+  
-  #scale_fill_viridis(option="cividis")+
-  #scale_color_grey()+
-  labs(y='Depth', x='', fill='Number of Samples' )
-df
-filename = paste(plot_directory, marker,'_','sample_heatmap.png', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-filename = paste(plot_directory, marker,'_','sample_heatmap.svg', sep='')
-print(filename)
-ggsave(filename,height = 5, width =6, units = 'in')
-df  
-
-# Compare with Presence Absence --------------------------------------------------------
-
-# look above a threshold (0.5%) and also anything > 0% reads is present
-
-df <- tax.c %>% left_join(sp_desig) %>%
-  left_join(potu.c) %>%
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(sum_reads = sum(reads)) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  ungroup() %>%
-  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
-  select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
-  # average replicate filters
-  left_join(meta %>% select(SampleID, FilterID)) %>%
-  # get mean values of replicate sequenced filters (some ESP samples)
-  group_by(Ecological_Category, FilterID) %>%
-  mutate(sum_reads = mean(sum_reads)) %>%
-  mutate(sum_per_tot = mean(sum_per_tot)) %>%
-  ungroup() %>%
-  distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
-  mutate(present = case_when(sum_per_tot<0.1  ~ 0,
-                             TRUE ~ 1)) %>%
-  #mutate(present = 1) %>%
-  select(SampleID, Ecological_Category, present) %>%
-  left_join(meta %>% select(diel, SampleID, depth)) %>%
-  filter(diel %in% c('day', 'night'))
-
-
-for (val in cats) {
-  cat = sym(val)
-  p <- df %>% filter(Ecological_Category == cat) %>%
-    ggplot(aes(y=present, x=-depth,color=diel, shape=diel))+
-    geom_point()+
-    geom_smooth()+
-    coord_flip()+
-    labs(y='Percent Present in eDNA Sample (>0.1% reads)')
-  filename = paste(plot_directory, marker,'_',cat,'_PA_01.png', sep='')
-  print(filename)
-  ggsave(filename,height = 5, width =6, units = 'in')
-}
-
-df <- tax.c %>% left_join(sp_desig) %>%
-  left_join(potu.c) %>%
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(sum_reads = sum(reads)) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  ungroup() %>%
-  distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
-  select(SampleID, Ecological_Category, sum_per_tot, sum_reads) %>%
-  # average replicate filters
-  left_join(meta %>% select(SampleID, FilterID)) %>%
-  # get mean values of replicate sequenced filters (some ESP samples)
-  group_by(Ecological_Category, FilterID) %>%
-  mutate(sum_reads = mean(sum_reads)) %>%
-  mutate(sum_per_tot = mean(sum_per_tot)) %>%
-  ungroup() %>%
-  distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
-  mutate(present = case_when(sum_per_tot<0  ~ 0,
-                             TRUE ~ 1)) %>%
-  #mutate(present = 1) %>%
-  select(SampleID, Ecological_Category, present) %>%
-  left_join(meta %>% select(diel, SampleID, depth)) %>%
-  filter(diel %in% c('day', 'night'))
-
-
-for (val in cats) {
-  cat = sym(val)
-  p <- df %>% filter(Ecological_Category == cat) %>%
-    ggplot(aes(y=present, x=-depth,color=diel, shape=diel))+
-    geom_point()+
-    geom_smooth()+
-    coord_flip()+
-    labs(y='Percent Present in eDNA Sample (>0.0% reads)')
-  filename = paste(plot_directory, marker,'_',cat,'_PA_0.png', sep='')
-  print(filename)
-  ggsave(filename,height = 5, width =6, units = 'in')
-  
-}
-

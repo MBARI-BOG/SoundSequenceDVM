@@ -465,7 +465,7 @@ pf1 <- p1 + theme_minimal() + theme(text = element_text(size=10),
                                     legend.position = 'none',
                                     axis.title.x=element_blank(),
                                     axis.text.x=element_blank(),
-                                    axis.ticks.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
                                     panel.grid.major = element_blank(), 
                                     panel.grid.minor = element_blank(),
                                     #axis.title.y=element_blank(),
@@ -473,8 +473,8 @@ pf1 <- p1 + theme_minimal() + theme(text = element_text(size=10),
                                     #axis.ticks.y=element_blank(),
                                     #axis.line.x  = element_line(color = "black"), 
                                     #axis.line.y  = element_line(color = "black")
-                                    #axis.line = element_line(color = "black"),
-                                    #axis.ticks = element_line(color = "black"),
+                                    axis.line = element_line(color = "black", size=0.2),
+                                    axis.ticks = element_line(color = "black", size=0.2),
 )
 # two vertical plots with 2 ecol cats each
 # first mesopelagic + epipelagic ; then cosmopolitan and benthopelagic
@@ -483,7 +483,7 @@ pf2 <- p2me + theme_minimal() + theme(text = element_text(size=10),
                                      legend.position = 'none',
                                      axis.title.x=element_blank(),
                                      axis.text.x=element_blank(),
-                                     axis.ticks.x=element_blank(),
+                                     #axis.ticks.x=element_blank(),
                                      panel.grid.major = element_blank(), 
                                      panel.grid.minor = element_blank(),
                                      strip.background = element_blank(), 
@@ -493,15 +493,15 @@ pf2 <- p2me + theme_minimal() + theme(text = element_text(size=10),
                                      #axis.ticks.y=element_blank(),
                                      #axis.line.x  = element_line(color = "black"), 
                                      #axis.line.y  = element_line(color = "black")
-                                     #axis.line = element_line(color = "black"),
-                                     #axis.ticks = element_line(color = "black"),
+                                     axis.line = element_line(color = "black", size=0.2),
+                                     axis.ticks = element_line(color = "black", size=0.2),
 )
 
 pf4 <- p2bc + theme_minimal() + theme(text = element_text(size=10), 
                                       legend.position = 'none',
                                       axis.title.x=element_blank(),
                                       axis.text.x=element_blank(),
-                                      axis.ticks.x=element_blank(),
+                                      #axis.ticks.x=element_blank(),
                                       panel.grid.major = element_blank(), 
                                       panel.grid.minor = element_blank(),
                                       strip.background = element_blank(), 
@@ -511,8 +511,8 @@ pf4 <- p2bc + theme_minimal() + theme(text = element_text(size=10),
                                       #axis.ticks.y=element_blank(),
                                       #axis.line.x  = element_line(color = "black"), 
                                       #axis.line.y  = element_line(color = "black")
-                                      #axis.line = element_line(color = "black"),
-                                      #axis.ticks = element_line(color = "black"),
+                                      axis.line = element_line(color = "black", size=0.2),
+                                      axis.ticks = element_line(color = "black", size=0.2),
 )
 
 pf3 <- p3 + theme_minimal() + theme(text = element_text(size=10), 
@@ -527,8 +527,8 @@ pf3 <- p3 + theme_minimal() + theme(text = element_text(size=10),
                                     #axis.ticks.y=element_blank(),
                                     #axis.line.x  = element_line(color = "black"), 
                                     #axis.line.y  = element_line(color = "black")
-                                    #axis.line = element_line(color = "black"),
-                                    #axis.ticks = element_line(color = "black"),
+                                    axis.line = element_line(color = "black", size=0.2),
+                                    axis.ticks = element_line(color = "black", size=0.2),
 )
 
 library(cowplot)
