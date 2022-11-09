@@ -162,7 +162,8 @@ p1 <- ac_sum %>%
   coord_cartesian(xlim = c(0, 86400), expand = FALSE)+
   scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
   theme_minimal() +
-  ylab("Mean Scattering 200-300 m (dB)")
+  labs(y=expression(paste("Mean Scattering 200-300m "," (dB re 1", m^-1, ')')))
+  #ylab("Mean Scattering 200-300 m (dB re 1m^-1)")
 
 p1
 filename = paste(plot_directory, 'Acoustic_DayNight_duration_smooth.png', sep='')
@@ -177,6 +178,7 @@ ggsave(filename,height = 5, width =8, units = 'in')
 # 59 unique samples in the 200-300m bin (80 including sequenced duplicates)
 # should be 59*4 = 236  observations across all Ecol Cats
 
+## Original ---------
 df <- tax.c %>% 
   # create merged reads and percent reads for each ecological group
   left_join(sp_desig) %>%
@@ -285,6 +287,135 @@ filename = paste(plot_directory, marker,'_Meso_byhour_200300.svg', sep='')
 print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
 
+## Split out Ecol Cats ---------------
+
+p2 <- df %>% full_join(test) %>%
+  full_join(test2) %>%
+  #filter(depth_bin2=="200-300m") %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=Ecological_Category, fill=Ecological_Category))+
+  #geom_point(aes(shape=ESP))+
+  #don't repeat 0hr and 24hr points:
+  geom_point(data = df %>% full_join(test) %>%
+               full_join(test2) %>% filter(hour!=24), aes(color=Ecological_Category, fill=Ecological_Category))+
+  geom_smooth(span=0.3)+
+  #geom_rug(sides='b', alpha=0.1, size=4) +
+  coord_cartesian(xlim = c(0, 24), expand = FALSE)+
+  scale_x_continuous(breaks=x_ticks_hr) +
+  scale_color_manual(values=paletteEcolCat )+
+  scale_fill_manual(values=paletteEcolCat)+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", fill='Ecological Category', color='Ecological Category')+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+
+#Horizonal split
+p2h <- p2 + facet_grid( ~ Ecological_Category, margins = FALSE)
+p2h
+filename = paste(plot_directory, marker,'_SplitEco_horiz_byhour_200300.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =6, units = 'in')
+filename = paste(plot_directory, marker,'_SplitEco_horiz_byhour_200300.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =6, units = 'in')
+
+#Box split
+p2b <- p2 + facet_wrap( Ecological_Category ~., scales="free")
+p2b
+filename = paste(plot_directory, marker,'_SplitEco_box_byhour_200300.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(plot_directory, marker,'_SplitEco_box_byhour_200300.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+#Vertical split
+p2v <- p2 + facet_wrap( Ecological_Category ~.,  scales="free", ncol = 1)
+p2v
+filename = paste(plot_directory, marker,'_SplitEco_vert_byhour_200300.png', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(plot_directory, marker,'_SplitEco_vert_byhour_200300.svg', sep='')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+
+# 2 Ecol cats each:
+p2me <- df %>% full_join(test) %>%
+  full_join(test2) %>%
+  #filter(depth_bin2=="200-300m") %>%
+  filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=Ecological_Category, fill=Ecological_Category))+
+  #geom_point(aes(shape=ESP))+
+  #don't repeat 0hr and 24hr points:
+  geom_point(data = df %>% full_join(test) %>%
+               filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
+               full_join(test2) %>% filter(hour!=24), aes(color=Ecological_Category, fill=Ecological_Category))+
+  geom_smooth(span=0.3)+
+  #geom_rug(sides='b', alpha=0.1, size=4) +
+  coord_cartesian(xlim = c(0, 24), expand = FALSE)+
+  scale_x_continuous(breaks=x_ticks_hr) +
+  scale_color_manual(values=paletteEcolCat )+
+  scale_fill_manual(values=paletteEcolCat)+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", fill='Ecological Category', color='Ecological Category')+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+p2me
+
+p2bc <- df %>% full_join(test) %>%
+  full_join(test2) %>%
+  #filter(depth_bin2=="200-300m") %>%
+  filter(Ecological_Category %in% c('benthopelagic', 'cosmopolitan')) %>%
+  ggplot(aes(x=hour, y=sum_per_tot, color=Ecological_Category, fill=Ecological_Category))+
+  #geom_point(aes(shape=ESP))+
+  #don't repeat 0hr and 24hr points:
+  geom_point(data = df %>% full_join(test) %>%
+               filter(Ecological_Category %in% c('benthopelagic', 'cosmopolitan')) %>%
+               full_join(test2) %>% filter(hour!=24), aes(color=Ecological_Category, fill=Ecological_Category))+
+  geom_smooth(span=0.3)+
+  #geom_rug(sides='b', alpha=0.1, size=4) +
+  coord_cartesian(xlim = c(0, 24), expand = FALSE)+
+  scale_x_continuous(breaks=x_ticks_hr) +
+  scale_color_manual(values=paletteEcolCat )+
+  scale_fill_manual(values=paletteEcolCat)+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=1)) +
+  labs(y="Percent Total Reads",x="Hour (24-hour)", fill='Ecological Category', color='Ecological Category')+
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(size=8,face="bold"),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+p2bc
+
 
 # Sampling Effort --------
 
@@ -327,23 +458,245 @@ ggsave(filename,height = 2, width =8, units = 'in')
 
 # Join plots --------------
 
+## Vertical combined -------
+#Put all together
+pf1 <- p1 + theme_minimal() + theme(text = element_text(size=10), 
+                                    axis.title = element_text(size = 8),
+                                    legend.position = 'none',
+                                    axis.title.x=element_blank(),
+                                    axis.text.x=element_blank(),
+                                    axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+                                    #axis.line = element_line(color = "black"),
+                                    #axis.ticks = element_line(color = "black"),
+)
+# two vertical plots with 2 ecol cats each
+# first mesopelagic + epipelagic ; then cosmopolitan and benthopelagic
+
+pf2 <- p2me + theme_minimal() + theme(text = element_text(size=10), 
+                                     legend.position = 'none',
+                                     axis.title.x=element_blank(),
+                                     axis.text.x=element_blank(),
+                                     axis.ticks.x=element_blank(),
+                                     panel.grid.major = element_blank(), 
+                                     panel.grid.minor = element_blank(),
+                                     strip.background = element_blank(), 
+                                     strip.text.x = element_blank(),
+                                     #axis.title.y=element_blank(),
+                                     #axis.text.y=element_blank(),
+                                     #axis.ticks.y=element_blank(),
+                                     #axis.line.x  = element_line(color = "black"), 
+                                     #axis.line.y  = element_line(color = "black")
+                                     #axis.line = element_line(color = "black"),
+                                     #axis.ticks = element_line(color = "black"),
+)
+
+pf4 <- p2bc + theme_minimal() + theme(text = element_text(size=10), 
+                                      legend.position = 'none',
+                                      axis.title.x=element_blank(),
+                                      axis.text.x=element_blank(),
+                                      axis.ticks.x=element_blank(),
+                                      panel.grid.major = element_blank(), 
+                                      panel.grid.minor = element_blank(),
+                                      strip.background = element_blank(), 
+                                      strip.text.x = element_blank(),
+                                      #axis.title.y=element_blank(),
+                                      #axis.text.y=element_blank(),
+                                      #axis.ticks.y=element_blank(),
+                                      #axis.line.x  = element_line(color = "black"), 
+                                      #axis.line.y  = element_line(color = "black")
+                                      #axis.line = element_line(color = "black"),
+                                      #axis.ticks = element_line(color = "black"),
+)
+
+pf3 <- p3 + theme_minimal() + theme(text = element_text(size=10), 
+                                    legend.position = 'none',
+                                    #axis.title.x=element_blank(),
+                                    #axis.text.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+                                    #axis.line = element_line(color = "black"),
+                                    #axis.ticks = element_line(color = "black"),
+)
+
+library(cowplot)
+
+# legend
+legend <- get_legend(p2)
+
+#aligned <- align_plots(pf1, pf2,pf3, align = "v")
+aligned <- align_plots(pf1, pf2, pf3, align = "v")
+
+#ggdraw(aligned[[1]])
+#plot_grid(pf1, pf2, ncol = 1, align = "v")
+
+plot_grid(pf1, pf2,pf4, pf3,ncol = 1, align = "v", rel_heights = c(1,1,1, 0.5))
+
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv_comb.png', sep='')
+filename
+ggsave(filename, width=4, height=8, units = 'in')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv_comb.svg', sep='')
+filename
+ggsave(filename, width=4, height=8, units = 'in')
+
+## Vertical --------------
 #Put all together
 pf1 <- p1 + theme_minimal() + theme(text = element_text(size=13), 
                                     legend.position = 'none',
                                     axis.title.x=element_blank(),
                                     axis.text.x=element_blank(),
                                     axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+pf2 <- p2v + theme_minimal() + theme(text = element_text(size=13), 
+                                     legend.position = 'none',
+                                     axis.title.x=element_blank(),
+                                     axis.text.x=element_blank(),
+                                     axis.ticks.x=element_blank(),
+                                     panel.grid.major = element_blank(), 
+                                     panel.grid.minor = element_blank(),
+                                     strip.background = element_blank(), 
+                                     strip.text.x = element_blank(),
+                                     #axis.title.y=element_blank(),
+                                     #axis.text.y=element_blank(),
+                                     #axis.ticks.y=element_blank(),
+                                     #axis.line.x  = element_line(color = "black"), 
+                                     #axis.line.y  = element_line(color = "black")
+)
+pf3 <- p3 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    #axis.title.x=element_blank(),
+                                    #axis.text.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+
+library(cowplot)
+
+# legend
+legend <- get_legend(p2)
+
+#aligned <- align_plots(pf1, pf2,pf3, align = "v")
+aligned <- align_plots(pf1, pf2, pf3, align = "v")
+
+#ggdraw(aligned[[1]])
+#plot_grid(pf1, pf2, ncol = 1, align = "v")
+
+plot_grid(pf1, pf2, pf3,ncol = 1, align = "v", rel_heights = c(1.2,4.5, 0.6))
+
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv.png', sep='')
+filename
+ggsave(filename, width=4, height=15, units = 'in')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv.svg', sep='')
+filename
+ggsave(filename, width=4, height=15, units = 'in')
+## Box --------------
+
+#Put all together
+pf1 <- p1 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    axis.title.x=element_blank(),
+                                    axis.text.x=element_blank(),
+                                    axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+pf2 <- p2b + theme_minimal() + theme(text = element_text(size=13), 
+                                     legend.position = 'none',
+                                     #axis.title.x=element_blank(),
+                                     #axis.text.x=element_blank(),
+                                     #axis.ticks.x=element_blank(),
+                                     panel.grid.major = element_blank(), 
+                                     panel.grid.minor = element_blank(),
+                                     #axis.title.y=element_blank(),
+                                     #axis.text.y=element_blank(),
+                                     #axis.ticks.y=element_blank(),
+                                     #axis.line.x  = element_line(color = "black"), 
+                                     #axis.line.y  = element_line(color = "black")
+)
+pf3 <- p3 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    #axis.title.x=element_blank(),
+                                    #axis.text.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+
+library(cowplot)
+
+# legend
+legend <- get_legend(p2)
+
+#aligned <- align_plots(pf1, pf2,pf3, align = "v")
+aligned <- align_plots(pf1, pf2, pf3, align = "v")
+
+
+plot_grid(pf1, pf3, pf2,ncol = 1, align = "v", rel_heights = c(1.2,0.5,2.5))
+
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitb.png', sep='')
+filename
+ggsave(filename, width=4, height=12, units = 'in')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitb.svg', sep='')
+filename
+ggsave(filename, width=4, height=12, units = 'in')
+
+## Horizontal --------------
+#Put all together
+pf1 <- p1 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    axis.title.x=element_blank(),
+                                    axis.text.x=element_blank(),
+                                    axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
                                     #axis.title.y=element_blank(),
                                     #axis.text.y=element_blank(),
                                     #axis.ticks.y=element_blank(),
                                     #axis.line.x  = element_line(color = "black"), 
                                     #axis.line.y  = element_line(color = "black")
                                     )
-pf2 <- p2 + theme_minimal() + theme(text = element_text(size=13), 
+pf2 <- p2h + theme_minimal() + theme(text = element_text(size=13), 
                                     legend.position = 'none',
-                                    axis.title.x=element_blank(),
-                                    axis.text.x=element_blank(),
-                                    axis.ticks.x=element_blank(),
+                                    #axis.title.x=element_blank(),
+                                    #axis.text.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
                                     #axis.title.y=element_blank(),
                                     #axis.text.y=element_blank(),
                                     #axis.ticks.y=element_blank(),
@@ -355,6 +708,70 @@ pf3 <- p3 + theme_minimal() + theme(text = element_text(size=13),
                                     #axis.title.x=element_blank(),
                                     #axis.text.x=element_blank(),
                                     #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+
+library(cowplot)
+
+# legend
+legend <- get_legend(p2)
+
+#aligned <- align_plots(pf1, pf2,pf3, align = "v")
+aligned <- align_plots(pf1, pf3, pf2, align = "v")
+
+#ggdraw(aligned[[1]])
+#plot_grid(pf1, pf2, ncol = 1, align = "v")
+
+plot_grid(pf1, pf3, pf2,ncol = 1, align = "v", rel_heights = c(1,0.3, 1))
+
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splith.png', sep='')
+filename
+ggsave(filename, width=8, height=10, units = 'in')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splith.svg', sep='')
+filename
+ggsave(filename, width=8, height=10, units = 'in')
+
+## Original --------------
+#Put all together
+pf1 <- p1 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    axis.title.x=element_blank(),
+                                    axis.text.x=element_blank(),
+                                    axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                    #axis.title.y=element_blank(),
+                                    #axis.text.y=element_blank(),
+                                    #axis.ticks.y=element_blank(),
+                                    #axis.line.x  = element_line(color = "black"), 
+                                    #axis.line.y  = element_line(color = "black")
+)
+pf2 <- p2 + theme_minimal() + theme(text = element_text(size=13), 
+                                     legend.position = 'none',
+                                     axis.title.x=element_blank(),
+                                     axis.text.x=element_blank(),
+                                     axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
+                                     #axis.title.y=element_blank(),
+                                     #axis.text.y=element_blank(),
+                                     #axis.ticks.y=element_blank(),
+                                     #axis.line.x  = element_line(color = "black"), 
+                                     #axis.line.y  = element_line(color = "black")
+)
+pf3 <- p3 + theme_minimal() + theme(text = element_text(size=13), 
+                                    legend.position = 'none',
+                                    #axis.title.x=element_blank(),
+                                    #axis.text.x=element_blank(),
+                                    #axis.ticks.x=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank(),
                                     #axis.title.y=element_blank(),
                                     #axis.text.y=element_blank(),
                                     #axis.ticks.y=element_blank(),
@@ -373,13 +790,12 @@ aligned <- align_plots(pf1, pf2,pf3, align = "v")
 
 plot_grid(pf1, pf2,pf3 ,ncol = 1, align = "v", rel_heights = c(1, 1, 0.3))
 
-filename = paste(plot_directory, 'Acoustic_Ecolcat_SampE.png', sep='')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp.png', sep='')
 filename
 ggsave(filename, width=8, height=10, units = 'in')
-filename = paste(plot_directory, 'Acoustic_Ecolcat_SampE.svg', sep='')
+filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp.svg', sep='')
 filename
 ggsave(filename, width=8, height=10, units = 'in')
-
 
 ## Exploration below ----------
 

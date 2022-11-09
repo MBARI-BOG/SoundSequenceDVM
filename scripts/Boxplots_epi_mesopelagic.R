@@ -106,6 +106,7 @@ p1 <- ac_sum %>%
   scale_fill_manual(values=paletteDayNight)+
   theme_minimal() +
   coord_flip(xlim = c(-660, 60), expand = FALSE)+
+  scale_x_continuous(n.breaks = 6)+
   #scale_x_continuous(breaks=x_ticks_hr) +
   xlab('Depth (m)')+
   ylab('Mean Scattering (dB)')+
@@ -259,9 +260,9 @@ p2 <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
     axis.text.y=element_text(size=8,colour=textcol),
     #axis.title.y = element_text(size=6),
     plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
+    #panel.border=element_blank(),
+    #panel.grid.minor = element_blank(),
+    #panel.grid.major = element_line(size = .25),
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 
@@ -279,23 +280,31 @@ ggsave(filename,height = 5, width =8, units = 'in')
 # Join plots --------------
 
 #Put all together
-pf1 <- p1 + theme_minimal() + theme(text = element_text(size=13), 
+pf1 <- p1  + theme_minimal() + theme(text = element_text(size=10), 
                                     legend.position = 'none',
+                                    axis.line = element_line(color = "black"),
+                                    axis.ticks = element_line(color = "black"),
                                     #axis.title.x=element_blank(),
                                     #axis.text.x=element_blank(),
                                     #axis.ticks.x=element_blank(),
                                     axis.title.y=element_blank(),
                                     axis.text.y=element_blank(),
-                                    axis.ticks.y=element_blank()
+                                    #axis.ticks.y=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank()
 )
-pf2 <- p2 + theme_minimal() + theme(text = element_text(size=13), 
+pf2 <- p2  + theme_minimal() + theme(text = element_text(size=10), 
                                     legend.position = 'none',
+                                    axis.line = element_line(color = "black"),
+                                    axis.ticks = element_line(color = "black"),
                                     #axis.title.x=element_blank(),
                                     #axis.text.x=element_blank(),
                                     #axis.ticks.x=element_blank(),
                                     #axis.title.y=element_blank(),
                                     #axis.text.y=element_blank(),
                                     #axis.ticks.y=element_blank(),
+                                    panel.grid.major = element_blank(), 
+                                    panel.grid.minor = element_blank()
 )
 
 
