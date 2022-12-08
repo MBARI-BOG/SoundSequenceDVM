@@ -2,6 +2,7 @@
 #kpitz
 
 # figure tracking reads in binned depth through time (hourly)
+# include M1 asimet light averaged over experiment period
 
 # Load Libraries -----------------------------------------------------------------
 library(readr) #read csv files
@@ -91,6 +92,14 @@ filepath = "data/metadata/CN19S_Taxa_Categories.csv"
 # species designations tibble:
 sp_desig <- read_csv(filepath)
 
+# Import M1 asimet data -----------------
+
+filepath = "data/asimet/Interp_Mean_Values.csv"
+asimet <- read_csv(filepath)
+# Time is local (PDT)
+asimet <- asimet %>%
+  mutate(timeofday = hms(timeofday))
+
 
 # Create Seasonal Variables -----------------------------------------------
 
@@ -151,27 +160,65 @@ glimpse(ac_sum)
 
 #geom_smooth
 
-x_ticks_min <- x_ticks_hr *60*60
+# x_ticks_min <- x_ticks_hr *60*60
+# 
+# p1 <- ac_sum %>%
+#   mutate(local_time2 = hm(local_time))%>%
+#   mutate(duration = as.duration(local_time2)) %>%
+#   ggplot(aes(x = duration, y=mean)) +
+#   geom_smooth(aes(ymin=mean-SD, ymax =mean+SD),  stat="identity")+
+#   geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+#   coord_cartesian(xlim = c(0, 86400), expand = FALSE)+
+#   scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
+#   theme_minimal() +
+#   labs(y=expression(paste("Mean Scattering 200-300m "," (dB re 1", m^-1, ')')))
+#   #ylab("Mean Scattering 200-300 m (dB re 1m^-1)")
+# 
+# p1
+# filename = paste(plot_directory, 'Acoustic_DayNight_duration_smooth.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 5, width =8, units = 'in')
 
+# With Asimet data
+
+x_ticks_min <- x_ticks_hr *60*60
+df <- asimet %>%
+  mutate(duration = as.duration(timeofday))
+
+
+coeff = 800/10
 p1 <- ac_sum %>%
   mutate(local_time2 = hm(local_time))%>%
+  full_join(asimet, by=c('local_time2' = 'timeofday')) %>%
   mutate(duration = as.duration(local_time2)) %>%
   ggplot(aes(x = duration, y=mean)) +
+  #asimet data
+  #geom_point(aes(y= mean_SW_flux/coeff -71, x=duration), color='orange')+
+  #geom_point(aes(y= mean_SW_flux/coeff -71, x=duration), color='orange')+
+  geom_line(data= df, aes(y= mean_SW_flux/coeff-71, x=duration), color='orange') +
+  geom_errorbar(aes(ymin = (mean_SW_flux/coeff-71) - (std_SW_flux/coeff), ymax = (mean_SW_flux/coeff-71)+std_SW_flux/coeff), width=0.2, color=paletteDayNight[1]) +
+  #acoustic data
   geom_smooth(aes(ymin=mean-SD, ymax =mean+SD),  stat="identity")+
   geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
+  #axes
   coord_cartesian(xlim = c(0, 86400), expand = FALSE)+
   scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
-  theme_minimal() +
-  labs(y=expression(paste("Mean Scattering 200-300m "," (dB re 1", m^-1, ')')))
-  #ylab("Mean Scattering 200-300 m (dB re 1m^-1)")
+  scale_y_continuous(
+    # Features of the first axis
+    name = expression(paste("Mean Scattering "," (dB re 1", m^-1, ')')),
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~(.+71)*coeff, name=expression(paste("Daylight: Short Wave Flux "," (W ", m^2, ')')))
+                        )+
+  theme_minimal()+
+  theme(axis.text.y.right = element_text(color = 'orange'))
 
 p1
-filename = paste(plot_directory, 'Acoustic_DayNight_duration_smooth.png', sep='')
+
+filename = paste(plot_directory, 'Acoustic_DayNight_duration_smooth_asimet.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 5, width =8, units = 'in')
-
-
 
 # Plot Ecological Groups in Depth Bins through Time 200-300m --------------
 
@@ -461,7 +508,7 @@ ggsave(filename,height = 2, width =8, units = 'in')
 ## Vertical combined -------
 #Put all together
 pf1 <- p1 + theme_minimal() + theme(text = element_text(size=10), 
-                                    axis.title = element_text(size = 8),
+                                    axis.title = element_text(size = 10),
                                     legend.position = 'none',
                                     axis.title.x=element_blank(),
                                     axis.text.x=element_blank(),
@@ -546,10 +593,10 @@ plot_grid(pf1, pf2,pf4, pf3,ncol = 1, align = "v", rel_heights = c(1,1,1, 0.5))
 
 filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv_comb.png', sep='')
 filename
-ggsave(filename, width=4, height=8, units = 'in')
+ggsave(filename, width=4.5, height=8, units = 'in')
 filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv_comb.svg', sep='')
 filename
-ggsave(filename, width=4, height=8, units = 'in')
+ggsave(filename, width=4.5, height=8, units = 'in')
 
 ## Vertical --------------
 #Put all together

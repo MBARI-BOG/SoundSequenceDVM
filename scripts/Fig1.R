@@ -174,10 +174,11 @@ bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by 
     legend.key.height=grid::unit(0.3,"cm"),
     legend.key.width=grid::unit(0.3,"cm"),
     legend.title=element_text(colour=textcol,size=8,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    text = element_text(size=14),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,colour=textcol),
     #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=6,colour=textcol),
-    axis.title.y = element_text(size=6),
+    axis.text.y=element_text(colour=textcol),
+    #axis.title.y = element_text(size=6),
     plot.background=element_blank(),
     panel.border=element_blank(),
     panel.grid.minor = element_blank(),
@@ -191,7 +192,7 @@ bp_top <- left_join(Ecol_data, meta %>% select(SampleID, depth, diel, ESP),  by 
 bp_top
 filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.png', sep='')
 print(filename)
-ggsave(filename,height = 5, width =8, units = 'in')
+ggsave(filename,height = 5, width =7, units = 'in')
 filename = paste(plot_directory, marker,'_EcolCat_scatter_Diel_depthy.svg', sep='')
 print(filename)
 ggsave(filename,height = 5, width =7, units = 'in')
