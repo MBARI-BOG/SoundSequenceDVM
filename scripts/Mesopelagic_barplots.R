@@ -1,6 +1,18 @@
 #040221
 #kpitz
 
+# Load Libraries -----------------------------------------------------------------
+library(readr) #read csv files
+library(lubridate) #for date modifications
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(magrittr)
+library(tidyr)
+library(RColorBrewer) #colors for plotting
+library(forcats) 
+library(stringr)
+library(viridis)
 
 # Set Constants -----------------------------------------------------------------
 
@@ -15,18 +27,7 @@ data_directory = "Data/filtered_seq_data/"
 
 # also need to make figure tracking reads in binned depth through time
 
-# Load Libraries -----------------------------------------------------------------
-library(readr) #read csv files
-library(lubridate) #for date modifications
-library(dplyr)
-library(ggplot2)
-library(ggthemes)
-library(magrittr)
-library(tidyr)
-library(RColorBrewer) #colors for plotting
-library(forcats) 
-library(stringr)
-library(viridis)
+
 
 # Import Data -------------------------------------------------------------
 
@@ -125,6 +126,95 @@ meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
                                         depth >400 & depth <=600 ~ "500-600m",
                                         depth >600 & depth <=750 ~ "600-700m", TRUE ~ "unknown"
 )) 
+
+# Bar plots of species diversity -----------------
+
+# Stacked Bar by Cast -----------------------------------------------------
+meso_taxa <- tax.c %>% left_join(sp_desig) #%>%
+  #filter(Ecological_Category %in% c('mesopelagic', 'epipelagic' ,'cosmopolitan', 'benthopelagic'))
+
+taxas <- c('Class','Order', 'Family', 'Genus', 'Species')
+#### Percent Reads
+for (val in taxas) {
+  taxa_level = sym(val)
+  top_taxa <- potu.c %>%
+    right_join(meso_taxa %>% select(ASV)) %>%
+    left_join(species_label) %>%
+    right_join(meta) %>%
+    #filter(SAMPLING_station_number >=1) %>%
+    #filter(SAMPLING_station=='MARS') %>%
+    #filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+    # filter(!!taxa_level != 'Unknown') %>%
+    # filter(!!taxa_level !='no_hit') %>%
+    filter(!!taxa_level !='unassigned') %>%
+    # filter(!!taxa_level !='unknown') %>%
+    # filter(!!taxa_level !='s_') %>%
+    # filter(!!taxa_level !='g_') %>%
+    group_by(!!taxa_level) %>%
+    mutate(sum_per_tot = sum(per_tot)) %>%
+    distinct(!!taxa_level,.keep_all = TRUE ) %>%
+    arrange(-sum_per_tot) %>%
+    select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+    #print(n = Inf) %>%
+    ungroup() %>%
+    select(!!taxa_level, sum_per_tot) %>%
+    top_n(10)
+  
+  # assign text colour
+  textcol <- "grey40"
+  print("Begin plotting...")
+  bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+    left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+    right_join(top_taxa) %>% #limit to top taxa
+    #filter(SAMPLING_station_number >=1) %>%
+    #filter(SAMPLING_station=='MARS') %>%
+    #arrange(SAMPLING_station_number) %>%
+    mutate(SAMPLING_station_number = replace(SAMPLING_station_number, SAMPLING_station_number=='3', '03')) %>%
+    filter(ESP=='CTD') %>%
+    unite(title, SAMPLING_station_number, local_time, SAMPLING_station,sep="_" ) %>%
+    #filter(SAMPLING_station_number %in% c('11', '13', '16', '20', '23', '27') ==FALSE) %>%
+    #ggplot(aes(x=depth, y=per_tot))+
+    ggplot(aes(x=depth, y=reads))+
+    #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+    geom_bar(stat='identity', aes(fill = !!taxa_level), width=30)+
+    coord_flip()+
+    scale_x_reverse()+
+    #facet_wrap(~ SAMPLING_station_number)+
+    facet_wrap(~title) +
+    scale_fill_tableau(palette = "Tableau 20", type = c("regular"), direction = 1)+
+    labs(x="",y="Percent Total Reads")+
+    theme_minimal() +
+    guides(fill=guide_legend(ncol=2)) +
+    theme(
+      #legend
+      legend.position="bottom",legend.direction="vertical",
+      legend.text=element_text(colour=textcol,size=8,face="bold"),
+      legend.key.height=grid::unit(0.3,"cm"),
+      legend.key.width=grid::unit(0.3,"cm"),
+      legend.title=element_text(colour=textcol,size=8,face="bold"),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+      #axis.text.x=element_text(size=7,colour=textcol),
+      axis.text.y=element_text(size=6,colour=textcol),
+      axis.title.y = element_text(size=6),
+      plot.background=element_blank(),
+      panel.border=element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(size = .25),
+      plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+      plot.title=element_blank())
+  
+  filename = paste(plot_directory, marker,'_top10',taxa_level,'_bar_bycast_width.png', sep='')
+  #print('Plot of top 20 Genus average by month:')
+  print(filename)
+  ggsave(filename,height = 8, width =15, units = 'in')
+}
+
+
+
+
+
+
+
 
 # Ecological Reads in Depth Bins through Time -----------------------------
 
