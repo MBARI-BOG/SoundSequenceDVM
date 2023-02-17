@@ -148,27 +148,34 @@ qiime emperor biplot \
 ```{r}
 library(lubridate)
 meta <- samp.c %>% 
-  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time = ymd_hms(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
-  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
-                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
-                         str_detect(SampleID, '_V')==TRUE ~'ROV',
-                         TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
+  mutate(hour = hour(time)) %>%
   mutate(day =  day(time)) %>%
   mutate(year =  year(time)) %>%
   mutate(jday = yday(time)) %>%
   mutate(month_char = as.character(month)) %>%
   mutate(year_char = as.character(year)) %>%
-  mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
-                               depth >50 & depth <=100 ~ "50-100m",
-                               depth >100 & depth <=200 ~ "100-200m",
-                               depth >200 & depth <=300 ~ "200-300m",
-                               depth >300 & depth <=400 ~ "300-400m",
-                               depth >400 & depth <=500 ~ "400-500m",
-                               depth >400 & depth <=600 ~ "500-600m",
-                               depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
-                               )) 
+  #Make consistent label for samples taken during the same night (before and after midnight, labeled as 5-31-night)
+  mutate(consistent_label = case_when(diel !='night' ~ time_label, 
+                                      diel =='night' & hour >18 ~ time_label,
+                                      diel =='night' & hour <6 ~ paste(as.character(format(time -days(1), "%m-%d")),' night', sep=''),
+                                      TRUE ~ time_label) )  %>%
+  mutate(depth_bin = case_when(depth <=25 ~ "00_0-25m",
+                               depth >25 & depth <=75 ~ "01_25-75m",
+                               #depth >50 & depth <=75 ~ "02_50-75m",
+                               depth >75 & depth <=100 ~ "03_75-100m",
+                               depth >100 & depth <=150 ~ "04_100-150m",
+                               depth >150 & depth <=200 ~ "05_150-200m",
+                               depth >200 & depth <=250 ~ "06_200-250m",
+                               depth >250 & depth <=300 ~ "07_250-300m",
+                               depth >300 & depth <=400 ~ "08_300-400m",
+                               depth >400 & depth <=500 ~ "09_400-500m",
+                               depth >400 & depth <=600 ~ "10_500-600m",
+                               depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
+  )) 
+
 ```
 
 ```{r}

@@ -13,6 +13,7 @@ library(RColorBrewer) #colors for plotting
 library(forcats) 
 library(stringr)
 library(viridis)
+library(wesanderson)
 
 # Set Constants -----------------------------------------------------------------
 
@@ -27,6 +28,7 @@ data_directory = "Data/filtered_seq_data/"
 
 # also need to make figure tracking reads in binned depth through time
 
+paletteDayNight <- c(wes_palette("Chevalier1", type = "discrete")[2], wes_palette("Darjeeling2", type = "discrete")[2], 'darkgrey')
 
 
 # Import Data -------------------------------------------------------------
@@ -144,13 +146,63 @@ unique_potu_meta <- left_join(potu.merged, meta,  by = c("SampleID")) %>%
   ungroup() %>%
   distinct(FilterID, Kingdom, Phylum, Class, Order, Family, Genus, Species, .keep_all = TRUE) %>%
   # Only include day/night samples
-  filter(diel %in% c('day','night'))  %>%
-  # Take mean by depth bin
-  group_by(depth_bin2, diel, Kingdom, Phylum, Class, Order, Family, Genus, Species) %>%
-  mutate(mean_per_tot = mean(per_tot)) %>%
-  ungroup() %>%
-  distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, depth_bin2,diel, .keep_all = TRUE)
+  filter(diel %in% c('day','night'))
+
+# %>%
+#   # Take mean by depth bin
+#   group_by(depth_bin2, diel, Kingdom, Phylum, Class, Order, Family, Genus, Species) %>%
+#   mutate(mean_per_tot = mean(per_tot)) %>%
+#   ungroup() %>%
+#   distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, depth_bin2,diel, .keep_all = TRUE)
   
+
+# Plot single species -----------------------------------------------------
+
+bp_top <-  unique_potu_meta %>%
+  # filter(Species == 'Diaphus theta') %>%
+  filter(Species %in% c('Diaphus theta', 'Stenobrachius leucopsarus', 'Cyclothone acclinidens', 'Lipolagus ochotensis')) %>%
+  # ggplot(aes(x=fct_reorder(depth_bin2, desc(depth)), y=mean_per_tot))+
+  ggplot(aes(x=depth, y=per_tot, group=diel, fill=diel, color=diel))+
+  #geom_bar(stat='identity', aes(fill = Species))+
+  geom_smooth(span=0.6) +
+  geom_point() +
+  coord_flip()+
+  scale_x_reverse()+
+  facet_grid(Species ~.)+
+  #facet_grid(~Species)+
+  #facet_grid(~diel)+
+  #facet_wrap(~title) +
+  scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = 1)+
+  labs(x="Depth",y="Mean Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  scale_color_manual(values=paletteDayNight )+
+  scale_fill_manual(values=paletteDayNight)+
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour="grey40",size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour="grey40",size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour="grey40"),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour="grey40"),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+filename = paste(plot_directory, marker,'single_sp_daynight.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =5, units = 'in')
+
+
+
 # plot just meso
 taxas <- c('Family', 'Genus', 'Species')
 #tax_cats <- c('mesopelagic', 'epipelagic' ,'cosmopolitan', 'benthopelagic')

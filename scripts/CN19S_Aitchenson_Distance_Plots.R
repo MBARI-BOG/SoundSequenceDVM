@@ -8,8 +8,8 @@ results_directory <- 'Qiime_Results/'
 
 
 # Load Libraries -----------------------------------------------------------------
-library(qiime2R)
 library(tidyverse)
+library(qiime2R)
 library(lubridate) #for date modifications
 library(vegan)
 library(ggthemes)
@@ -54,6 +54,7 @@ potu.c <- otu.c %>%
   tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
   group_by(SampleID) %>%
   mutate(per_tot = reads / sum(reads) *100) %>%
+  ungroup() %>%
   arrange(-reads)
 head(potu.c)
 
@@ -75,8 +76,8 @@ species_label <- tax.c %>%
 
 
 # Modify Metadata ---------------------------------------------------------
-library(magrittr)
-library(lubridate)
+# library(magrittr)
+# library(lubridate)
 # meta <- samp.c %>% 
 #   mutate(time = mdy_hm(local_time)) %>%
 #   mutate(time_since = as.numeric(time)) %>%
@@ -101,31 +102,63 @@ library(lubridate)
 
 #different depth bins
 #most migratory organisms from 250-400m
+#2019-06-06 04:25:00
+
+# 
+# meta <- samp.c %>% 
+#   mutate(time = mdy_hm(local_time)) %>%
+#   mutate(time_since = as.numeric(time)) %>%
+#   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
+#                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
+#                          TRUE~'CTD')) %>%
+#   mutate(month =  month(time)) %>%
+#   mutate(day =  day(time)) %>%
+#   mutate(year =  year(time)) %>%
+#   mutate(jday = yday(time)) %>%
+#   mutate(month_char = as.character(month)) %>%
+#   mutate(year_char = as.character(year)) %>%
+#   mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
+#                                depth >50 & depth <=100 ~ "50-100m",
+#                                depth >100 & depth <=250 ~ "100-250m",
+#                                depth >250 & depth <=400 ~ "250-400m",
+#                                depth >400 & depth <=500 ~ "400-500m",
+#                                depth >400 & depth <=600 ~ "500-600m",
+#                                depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
+#   )) 
+
 meta <- samp.c %>% 
-  mutate(time = mdy_hm(local_time)) %>%
+  mutate(time = ymd_hms(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
-  mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
-                         str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
-                         TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
+  mutate(hour = hour(time)) %>%
   mutate(day =  day(time)) %>%
   mutate(year =  year(time)) %>%
   mutate(jday = yday(time)) %>%
   mutate(month_char = as.character(month)) %>%
   mutate(year_char = as.character(year)) %>%
-  mutate(depth_bin = case_when(depth <=50 ~ "0-50m",
-                               depth >50 & depth <=100 ~ "50-100m",
-                               depth >100 & depth <=250 ~ "100-250m",
-                               depth >250 & depth <=400 ~ "250-400m",
-                               depth >400 & depth <=500 ~ "400-500m",
-                               depth >400 & depth <=600 ~ "500-600m",
-                               depth >600 & depth <=750 ~ "600-750m", TRUE ~ "unknown"
+  #Make consistent label for samples taken during the same night (before and after midnight, labeled as 5-31-night)
+  mutate(consistent_label = case_when(diel !='night' ~ time_label, 
+                                      diel =='night' & hour >18 ~ time_label,
+                                      diel =='night' & hour <6 ~ paste(as.character(format(time -days(1), "%m-%d")),' night', sep=''),
+                                      TRUE ~ time_label) )  %>%
+  mutate(depth_bin = case_when(depth <=25 ~ "00_0-25m",
+                               depth >25 & depth <=75 ~ "01_25-75m",
+                               #depth >50 & depth <=75 ~ "02_50-75m",
+                               depth >75 & depth <=100 ~ "03_75-100m",
+                               depth >100 & depth <=150 ~ "04_100-150m",
+                               depth >150 & depth <=200 ~ "05_150-200m",
+                               depth >200 & depth <=250 ~ "06_200-250m",
+                               depth >250 & depth <=300 ~ "07_250-300m",
+                               depth >300 & depth <=400 ~ "08_300-400m",
+                               depth >400 & depth <=500 ~ "09_400-500m",
+                               depth >400 & depth <=600 ~ "10_500-600m",
+                               depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
   )) 
 
 
 # Import DEICODE Results --------------------------------------------------
 
-library(qiime2R)
+# library(qiime2R)
 
 #Import Qiime2 Results
 file = paste(results_directory,"ordination.qza",sep="")
@@ -185,57 +218,78 @@ ait_tib <-as_tibble(aitmat,rownames = "SampleID") %>%
   pivot_longer(-SampleID,names_to = "SampleID2", values_to = "distance")
 
 # add in metadata for both 1 and 2:
-lim_meta <- select(meta,c('SampleID','depth_bin', 'depth', 'diel', 'day', 'time'))
+lim_meta <- select(meta,c('SampleID','depth_bin', 'depth', 'diel', 'day', 'time', 'ESP', 'PlateID'))
 ait_tib %<>% left_join(lim_meta, by="SampleID")
 ait_tib %<>% left_join(lim_meta %>% mutate(SampleID2 = SampleID), by="SampleID2", suffix= (c("1","2"))) %>%
   select(-SampleID22) %>%
   mutate(interaction_type = paste(diel1,'-',diel2),sep='')
 
-
+#drop BK plate replicates
+ait_tib %<>% filter(PlateID1 !='BK') %>%
+  filter(PlateID2 != 'BK')
+lim_meta %<>% filter(PlateID !='BK')
+  
 #plot
 
 #Number of samples in depth bins:
 p <- lim_meta %>%
   mutate(count=1) %>%
   filter(diel !='transition') %>%
-  group_by(depth_bin) %>%
-  mutate(sum_count = sum(count)) %>%
-  ungroup() %>%
-  distinct(depth_bin,.keep_all=TRUE) %>%
-  ggplot(aes(x= fct_reorder(depth_bin, depth), y=sum_count)) +
+  #group_by(depth_bin) %>%
+  #mutate(sum_count = sum(count)) %>%
+  #ungroup() %>%
+  #distinct(depth_bin,.keep_all=TRUE) %>%
+  ggplot(aes(x= fct_reorder(depth_bin, depth), y=count, fill=diel)) +
   geom_bar(stat='identity') +
-  labs(y='Number of Samples', x='Depth bin')
+  labs(y='Number of Samples', x='Depth bin')+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 filename = paste(plot_dir, 'Aitdist_',marker,'_numberofsamples.png', sep='')
+filename
+ggsave(filename,height = 4, width =6, units = 'in')
+p
+
+#Number of samples in depth bins:
+p <- lim_meta %>%
+  mutate(count=1) %>%
+  filter(diel !='transition') %>%
+  #group_by(depth_bin) %>%
+  #mutate(sum_count = sum(count)) %>%
+  #ungroup() %>%
+  #distinct(depth_bin,.keep_all=TRUE) %>%
+  ggplot(aes(x= fct_reorder(depth_bin, depth), y=count, fill=ESP)) +
+  geom_bar(stat='identity') +
+  labs(y='Number of Samples', x='Depth bin')+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+filename = paste(plot_dir, 'Aitdist_',marker,'_numberofsamples_ESP.png', sep='')
 filename
 ggsave(filename,height = 4, width =6, units = 'in')
 p
 
 # distribution of distance in interaction types between depths
 p <- ait_tib %>%
-  drop_na() %>%
+  # drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
   geom_boxplot(aes(color=interaction_type))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 p
-
 filename = paste(plot_dir, 'Aitdist_',marker,'_surface_to_alldepths.png', sep='')
 filename
 ggsave(filename,height = 6, width =12, units = 'in')
-p
+
 
 p <- ait_tib %>%
-  drop_na() %>%
+  # drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='200-300m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
   geom_boxplot(aes(color=interaction_type))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 p
-filename = paste(plot_dir, 'Aitdist_',marker,'_200300_to_alldepths.png', sep='')
+filename = paste(plot_dir, 'Aitdist_',marker,'_300400_to_alldepths.png', sep='')
 filename
 ggsave(filename,height = 6, width =12, units = 'in')
 p
@@ -244,40 +298,40 @@ p <- ait_tib %>%
   drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='100-200m') %>%
+  filter(depth_bin1=='05_150-200m') %>%
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
   geom_boxplot(aes(color=interaction_type))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 p
-filename = paste(plot_dir, 'Aitdist_',marker,'_100200_to_alldepths.png', sep='')
+filename = paste(plot_dir, 'Aitdist_',marker,'_150200_to_alldepths.png', sep='')
 filename
 ggsave(filename,height = 6, width =12, units = 'in')
 p
 
 # test if distribution is the same of distance values
 data1 <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
-  filter(depth_bin2=='300-400m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
+  filter(depth_bin2=='08_300-400m') %>%
   filter(interaction_type == 'day - day') %>%
   pull(distance)
 data2 <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='200-300m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
   filter(interaction_type == 'day - night') %>%
   pull(distance)
 ks.test(data1, data2)
 
 p <- ait_tib %>%
-  drop_na() %>%
+  # drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   ggplot(aes(x=diel1, y=distance)) +
   geom_boxplot(aes(color=diel2))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
@@ -288,11 +342,11 @@ filename
 ggsave(filename,height = 8, width =8, units = 'in')
 
 p <- ait_tib %>%
-  drop_na() %>%
+  # drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   mutate(day1_char = as.character(day1)) %>%
   mutate(day2_char = as.character(day2)) %>%
   ggplot(aes(x=fct_reorder(day1_char, time1), y=distance)) +
@@ -307,10 +361,10 @@ p
 
 
 p <- ait_tib %>%
-  drop_na() %>%
+  # drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
@@ -329,7 +383,7 @@ p <- ait_tib %>%
   drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
@@ -349,7 +403,7 @@ p
 p <- ait_tib %>%
   filter(depth1>=0) %>%
   filter(depth2>=0) %>%
-  filter(depth_bin1=='0-50m') %>%
+  filter(depth_bin1=='00_0-25m') %>%
   filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
@@ -361,10 +415,10 @@ p <- ait_tib %>%
 p
 
 p <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='300-400m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
@@ -379,16 +433,16 @@ ggsave(filename,height = 8, width =12, units = 'in')
 p
 
 p <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='300-400m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=fct_reorder(depth_bin2, depth2), y=distance)) +
   #geom_boxplot(aes(color=diel2))+
   geom_boxplot(aes(color=diel1))+
-  #geom_point(alpha=0.1)+
+  geom_jitter(alpha=0.1)+
   #facet_wrap(~diel1, ncol=2, nrow=3)+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 filename = paste(plot_dir, 'Aitdist_',marker,'_300400day_1_colordiel1.png', sep='')
@@ -398,29 +452,30 @@ p
 
 #calculate mean distances
 mean1 <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='300-400m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   #filter(diel1=='day') %>%
-  group_by(diel1) %>%
+  group_by(diel1, diel2) %>%
   mutate(mean_dist = mean(distance)) %>%
   ungroup() %>%
-  distinct(diel1,mean_dist)
+  distinct(diel1,diel2,mean_dist)
 
 p <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='300-400m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='08_300-400m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=distance, color=diel1, fill=diel1)) +
   geom_freqpoly(size=2, alpha=0.8)+
   geom_vline(data=mean1, aes(xintercept=mean_dist, color=diel1), linetype = "longdash")+
-  labs(color='300-400m', x='Distance to surface 0-50m samples (all)')
+  facet_wrap(~diel2)+
+  labs(color='300-400m', x='Distance to surface 0-25m samples (all)')
   #geom_vline(xintercept=2.06)
 
 filename = paste(plot_dir, 'Aitdist_',marker,'_300400day_tosurface_all.png', sep='')
@@ -429,36 +484,37 @@ ggsave(filename,height = 4, width =6, units = 'in')
 p
 
 p <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='200-300m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='07_250-300m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=distance, color=diel1, fill=diel1)) +
   geom_freqpoly(size=2, alpha=0.8)+
   geom_vline(data=mean1, aes(xintercept=mean_dist, color=diel1), linetype = "longdash")+
-  labs(color='200-300m', x='Distance to surface 0-50m samples (all)')
+  labs(color='200-300m', x='Distance to surface 0-25m samples (all)')
 #geom_vline(xintercept=2.06)
 
-filename = paste(plot_dir, 'Aitdist_',marker,'_200300day_tosurface_all.png', sep='')
+filename = paste(plot_dir, 'Aitdist_',marker,'_250300day_tosurface_all.png', sep='')
 filename
 ggsave(filename,height = 4, width =6, units = 'in')
 p
 
 p <- ait_tib %>%
-  drop_na() %>%
+  #drop_na() %>%
   filter(diel1 !='transition') %>%
   filter(diel2 !='transition') %>%
-  filter(depth_bin1=='400-500m') %>%
-  filter(depth_bin2=='0-50m') %>%
+  filter(depth_bin1=='09_400-500m') %>%
+  filter(depth_bin2=='00_0-25m') %>%
   #filter(diel1=='day' ) %>%
   #ggplot(aes(x=fct_reorder(depth_bin, depth), y=distance)) +
   ggplot(aes(x=distance, color=diel1, fill=diel1)) +
   geom_freqpoly(size=2, alpha=0.8)+
   geom_vline(data=mean1, aes(xintercept=mean_dist, color=diel1), linetype = "longdash")+
-  labs(color='400-500m', x='Distance to surface 0-50m samples (all)')
+  facet_wrap(~diel2)+
+  labs(color='400-500m', x='Distance to surface 0-25m samples (all)')
 #geom_vline(xintercept=2.06)
 
 filename = paste(plot_dir, 'Aitdist_',marker,'_400500day_tosurface_all.png', sep='')
