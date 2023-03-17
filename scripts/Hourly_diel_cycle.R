@@ -181,15 +181,15 @@ glimpse(ac_sum)
 # ggsave(filename,height = 5, width =8, units = 'in')
 
 # With Asimet data
-
-x_ticks_min <- x_ticks_hr *60*60
+x_ticks_hr2 <- c(0:24)
+x_ticks_min <- x_ticks_hr2 *60*60
 df <- asimet %>%
   mutate(duration = as.duration(timeofday))
 
 
 coeff = 800/10
 p1 <- ac_sum %>%
-  mutate(local_time2 = hm(local_time))%>%
+  mutate(local_time2 = hms(local_time))%>%
   full_join(asimet, by=c('local_time2' = 'timeofday')) %>%
   mutate(duration = as.duration(local_time2)) %>%
   ggplot(aes(x = duration, y=mean)) +
@@ -203,7 +203,8 @@ p1 <- ac_sum %>%
   geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
   #axes
   coord_cartesian(xlim = c(0, 86400), expand = FALSE)+
-  scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
+  #scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
+  scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr2) +
   scale_y_continuous(
     # Features of the first axis
     name = expression(paste("Mean Scattering "," (dB re 1", m^-1, ')')),

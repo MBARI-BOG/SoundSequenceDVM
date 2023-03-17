@@ -225,7 +225,6 @@ ASV_1109,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engra
 ASV_1110,Eukaryota,Chordata,Actinopteri,Alepocephaliformes,Platytroctidae,Sagamichthys,Sagamichthys abei
 ASV_1115,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Diaphus,Diaphus theta
 ASV_1120,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
-ASV_1121,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_1145,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_1151,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_1159,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti
@@ -357,7 +356,6 @@ ASV_2413,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Lampanyctus,L
 ASV_2428,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
 ASV_2429,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_2450,Bacteria,unknown,unknown,unknown,unknown,unknown,bacterium
-ASV_2456,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_2458,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_2485,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_2496,Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,Ziphius,Ziphius cavirostris
@@ -396,10 +394,8 @@ ASV_2962,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_2970,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_2980,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_2984,Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius productus
-ASV_2989,Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,Sardinops,Sardinops melanostictus
 ASV_2995,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_3004,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_3005,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,unassigned,s_
 ASV_3012,Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,Seriola lalandi
 ASV_3023,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Leuroglossus,Leuroglossus schmidti
 ASV_3025,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -444,7 +440,6 @@ ASV_3447,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_3461,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_3463,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_3489,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Diaphus,Diaphus theta
-ASV_3490,Eukaryota,Chordata,Actinopteri,Perciformes,Hexagrammidae,Ophiodon,Ophiodon elongatus
 ASV_3508,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_3517,Eukaryota,Chordata,Actinopteri,Perciformes,Sebastidae,Sebastes,unassigned
 ASV_3520,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -522,7 +517,6 @@ ASV_4457,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_4461,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,Lipolagus ochotensis
 ASV_4471,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_4494,Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,g_,s_
-ASV_4521,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Diaphus,Diaphus theta
 ASV_4522,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax
 ASV_4529,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_4580,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
@@ -578,7 +572,6 @@ ASV_5204,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_5227,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_5233,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Stenobrachius,Stenobrachius leucopsarus
 ASV_5237,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_5240,Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,Sardinops,Sardinops melanostictus
 ASV_5247,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,Diaphus,s_
 ASV_5265,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_5271,Eukaryota,Ascomycota,Eurotiomycetes,Eurotiales,Aspergillaceae,Penicillium,unassigned
@@ -735,7 +728,6 @@ ASV_7250,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_7255,Eukaryota,Chordata,Actinopteri,Argentiniformes,Bathylagidae,Lipolagus,Lipolagus ochotensis
 ASV_7263,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_7274,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_7283,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_
 ASV_7319,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_7331,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_7386,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -828,7 +820,6 @@ ASV_8486,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_8494,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_8543,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_8551,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
-ASV_8553,Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,Sardinops,Sardinops melanostictus
 ASV_8555,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_8564,Eukaryota,Chordata,Actinopteri,Carangiformes,Carangidae,Seriola,s_
 ASV_8601,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
@@ -912,7 +903,6 @@ ASV_9545,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_9564,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
 ASV_9567,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_9569,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit
-ASV_9573,Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_
 ASV_9577,Eukaryota,Chordata,Actinopteri,Myctophiformes,Myctophidae,g_,s_
 ASV_9581,no_hit,no_hit,no_hit,no_hit,no_hit,g_,s_
 ASV_9635,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit,no_hit

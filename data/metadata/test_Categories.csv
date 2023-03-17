@@ -23,7 +23,6 @@ Eukaryota,Chordata,Actinopteri,Clupeiformes,Clupeidae,unassigned,unassigned,1.0,
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,Engraulis mordax,1.0,Northern anchovy,epipelagic
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,Engraulis,s_,1.0,anchovy,epipelagic
 Eukaryota,Chordata,Actinopteri,Clupeiformes,Engraulidae,g_,s_,1.0,anchovy,epipelagic
-Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Coryphaenoides,unassigned,,rattails,bathypelagic
 Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Malacocephalus,unassigned,1.0,rattails,bathypelagic
 Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,unassigned,unassigned,1.0,,bathypelagic
 Eukaryota,Chordata,Actinopteri,Gadiformes,Merlucciidae,Merluccius,Merluccius productus,1.0,North Pacific hake,cosmopolitan
@@ -97,3 +96,4 @@ Eukaryota,Chordata,Mammalia,Cetacea,Ziphiidae,g_,s_,1.0,beaked whale,Exclude
 Eukaryota,Chordata,Mammalia,Cetacea,unassigned,g_,s_,1.0,cetacean,Exclude
 Eukaryota,Chordata,Mammalia,unassigned,unassigned,g_,s_,1.0,mammal,Exclude
 Eukaryota,Chordata,Myxini,Myxiniformes,Myxinidae,Eptatretus,unassigned,1.0,hagfish,benthopelagic
+Eukaryota,Chordata,Actinopteri,Gadiformes,Macrouridae,Coryphaenoides,unassigned,,rattails,bathypelagic
