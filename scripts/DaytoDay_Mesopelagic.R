@@ -59,7 +59,6 @@ potu.c <- otu.c %>%
   arrange(-reads)
 head(potu.c)
 
-
 #get lowest taxonomic annotation level for ASVs
 species_label <- tax.c %>%
   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
@@ -153,6 +152,221 @@ potu.merged <- left_join(potu.c, species_label) %>%
   ungroup() %>%
   distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, Ecological_Category, SampleID, .keep_all = TRUE)
 
+# Day Night Average -------------------------------------------------------
+
+test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE) %>%
+  # average over diel Day or Night
+  filter(diel %in% c('day','night')) %>%
+  group_by(Species,diel, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+  
+# Plot
+# assign text colour
+textcol <- "grey40"
+  
+# top 10 species:
+top_taxa <- test %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  filter(Species !='unassigned') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(5)
+
+bp_top <- test %>% 
+  right_join(top_taxa) %>% #limit to top taxa
+  ggplot(aes(x=depth_bin2, y=per_tot))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  #geom_bar(data = samples, stat='identity', aes(x=SAMPLING_rdepth, y=100), color='lightgrey', fill='lightgrey', alpha=0.2,width=5)+
+  geom_bar(stat='identity', aes(fill = Species))+
+  coord_flip()+
+  scale_x_discrete(limits=rev) +
+  #scale_x_reverse()+
+  #facet_wrap(~ SAMPLING_station_number)+
+  facet_wrap(~diel, nrow=1) +
+  #scale_colour_brewer(palette = "Set1") +
+  #scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+filename = paste(plot_directory, marker,'_Meso_Diel_avgDayfirst.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
+
+# Show Variability -----------------
+test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE) %>%
+  # average over diel Day or Night
+  filter(diel %in% c('day','night')) %>%
+  group_by(Species,diel, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+
+
+bp_top <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  filter(diel %in% c('day','night')) %>%
+  right_join(top_taxa) %>% #limit to top taxa
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE) %>%
+  ggplot(aes(x=depth_bin2, y=per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  #geom_boxplot(aes(fill = Species)) +
+  #geom_bar(stat='identity', aes(fill = Species))+
+  coord_flip()+
+  scale_x_discrete(limits=rev) +
+  #scale_x_reverse()+
+  #facet_wrap(~ SAMPLING_station_number)+
+  facet_wrap(~diel, nrow=1) +
+  #scale_colour_brewer(palette = "Set1") +
+  #scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+
+
+
+# Average all samples (not by day first) -------------
+test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  # group_by(Species,night_label, depth_bin2) %>%
+  # mutate(reads = mean(reads)) %>%
+  # mutate(per_tot = mean(per_tot)) %>%
+  # ungroup() %>%
+  # distinct(Species,night_label, depth_bin2, .keep_all = TRUE) %>%
+  # average over diel Day or Night
+  filter(diel %in% c('day','night')) %>%
+  group_by(Species,diel, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+
+# Plot
+# top 10 species:
+top_taxa <- test %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  filter(Species !='unassigned') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(5)
+
+bp_top <- test %>% 
+  right_join(top_taxa) %>% #limit to top taxa
+  ggplot(aes(x=depth_bin2, y=per_tot))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  #geom_bar(data = samples, stat='identity', aes(x=SAMPLING_rdepth, y=100), color='lightgrey', fill='lightgrey', alpha=0.2,width=5)+
+  geom_bar(stat='identity', aes(fill = Species))+
+  coord_flip()+
+  scale_x_discrete(limits=rev) +
+  #scale_x_reverse()+
+  #facet_wrap(~ SAMPLING_station_number)+
+  facet_wrap(~diel, nrow=1) +
+  #scale_colour_brewer(palette = "Set1") +
+  #scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+filename = paste(plot_directory, marker,'_Meso_Diel_avgAll.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
 
 # Plot through time -----------------------
 
@@ -224,6 +438,143 @@ filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_long.png', sep=
 print(filename)
 ggsave(filename,height = 3, width =20, units = 'in')
 
+# long depthbin2 ---------
+
+test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+
+# top 10 species:
+top_taxa <- test %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  filter(Species !='unassigned') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(5)
+
+# assign text colour
+textcol <- "grey40"
+print("Begin plotting...")
+# make df of just sample times/depths:
+samples <- test %>% #join with metadata
+    left_join(species_label,  by = c("ASV")) %>%
+    distinct(depth_bin2, night_label, time) %>%
+    mutate(count = 1) %>%
+    group_by(depth_bin2, night_label) %>%
+    mutate(count = sum(count)) %>%
+    ungroup() %>%
+    distinct(depth_bin2, night_label, .keep_all = TRUE)
+  
+bp_top <- test %>% #join with metadata
+    #left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+    right_join(top_taxa) %>% #limit to top taxa
+    ggplot(aes(x=depth_bin2, y=per_tot))+
+    #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+    geom_bar(data = samples, stat='identity', aes(x=depth_bin2, y=100), color='lightgrey', fill='lightgrey', alpha=0.2)+
+    geom_bar(stat='identity', aes(fill = Species))+
+    coord_flip()+
+    scale_x_discrete(limits=rev) +
+    #scale_x_reverse()+
+    #facet_wrap(~ SAMPLING_station_number)+
+    facet_wrap(~night_label, nrow=1) +
+    #scale_colour_brewer(palette = "Set1") +
+    #scale_fill_brewer(palette = "Set1") +
+    scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+    #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+    labs(x="",y="Percent Total Reads")+
+    theme_minimal() +
+    guides(fill=guide_legend(ncol=2)) +
+    theme(
+      #legend
+      legend.position="bottom",legend.direction="vertical",
+      legend.text=element_text(colour=textcol,size=8,face="bold"),
+      legend.key.height=grid::unit(0.3,"cm"),
+      legend.key.width=grid::unit(0.3,"cm"),
+      legend.title=element_text(colour=textcol,size=8,face="bold"),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+      #axis.text.x=element_text(size=7,colour=textcol),
+      axis.text.y=element_text(size=6,colour=textcol),
+      axis.title.y = element_text(size=6),
+      plot.background=element_blank(),
+      panel.border=element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(size = .25),
+      plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+      plot.title=element_blank())
+  bp_top
+  
+  filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_long_depthbin2.png', sep='')
+  #print('Plot of top 20 Genus average by month:')
+  print(filename)
+  ggsave(filename,height = 5, width =20, units = 'in')
+
+# Long big bars --------
+
+samples_DN  <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+  left_join(species_label,  by = c("ASV")) %>%
+  filter(diel %in% c('day', 'night')) %>%
+  distinct(SAMPLING_rdepth, night_label, time) %>%
+  mutate(count = 1) %>%
+  group_by(SAMPLING_rdepth, night_label) %>%
+  mutate(count = sum(count)) %>%
+  ungroup() %>%
+  distinct(SAMPLING_rdepth, night_label, .keep_all = TRUE)
+
+bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+  left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+  right_join(top_taxa) %>% #limit to top taxa
+  filter(diel %in% c('day', 'night')) %>%
+  ggplot(aes(x=SAMPLING_rdepth, y=per_tot))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  geom_bar(data = samples_DN, stat='identity', aes(x=SAMPLING_rdepth, y=100), color='lightgrey', fill='lightgrey', alpha=0.2,width=5)+
+  geom_bar(stat='identity', aes(fill = Species), width=20)+
+  coord_flip()+
+  scale_x_reverse()+
+  #facet_wrap(~ SAMPLING_station_number)+
+  facet_wrap(~night_label, nrow=1) +
+  #scale_colour_brewer(palette = "Set1") +
+  #scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #title of facet plots
+    strip.text.x = element_text(size = 6),
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_long_wide_daynight.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =12, units = 'in')
+
 
 # Proportion Per Time -------------
 bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
@@ -273,7 +624,53 @@ filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.png', sep=
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
+# Proportion Per Time Scaled -------------
+bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+  left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+  right_join(top_taxa) %>% #limit to top taxa
+  # take proportion per time point
+  group_by(night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot)) %>%
+  ungroup() %>%
+  #distinct(night_label, Species, .keep_all=TRUE) %>%
+  ggplot(aes(x=night_label, y=prop_per_tot))+
+  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
+  #geom_bar(data = samples, stat='identity', aes(x=SAMPLING_rdepth, y=100), color='lightgrey', fill='lightgrey', alpha=0.2,width=5)+
+  geom_bar(stat='identity', aes(fill = Species))+
+  #coord_flip()+
+  #scale_x_reverse()+
+  #facet_wrap(~ SAMPLING_station_number)+
+  #facet_wrap(~night_label, nrow=1) +
+  #scale_colour_brewer(palette = "Set1") +
+  #scale_fill_brewer(palette = "Set1") +
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
 
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
 
 # SCRAP BELOW ----------
 

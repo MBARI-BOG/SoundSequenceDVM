@@ -3,7 +3,6 @@
 
 # Create Figure 1 for Manuscript (eDNA portion):
 # day versus night line plots of Ecological Category Percent Total Reads
-# alongside heatmap of sampling effort
 
 # Load Libraries -----------------------------------------------------------------
 library(readr) #read csv files
@@ -134,13 +133,8 @@ Ecol_data <- tax.c %>% full_join(sp_desig, by=tax_levels) %>%
   ungroup() %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
-  # average replicate filters
+  # add FilterID
   left_join(meta %>% select(SampleID, FilterID)) %>%
-  # get mean values of replicate sequenced filters (some ESP samples)
-  group_by(Ecological_Category, FilterID) %>%
-  mutate(sum_reads = mean(sum_reads)) %>%
-  mutate(sum_per_tot = mean(sum_per_tot)) %>%
-  ungroup() %>%
   distinct(FilterID, Ecological_Category, .keep_all=TRUE)
 
 

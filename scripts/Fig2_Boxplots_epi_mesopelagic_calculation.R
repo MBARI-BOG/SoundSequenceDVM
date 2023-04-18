@@ -18,7 +18,7 @@ library(stringr)
 library(wesanderson)
 library(cowplot)
 library(tibble)
-#library(viridis)
+
 
 # Set Constants -----------------------------------------------------------------
 
@@ -175,9 +175,6 @@ meta %<>% mutate(depth_bin2 = case_when(depth <=100 ~ "0-100m",
 
 # Create Diel Boxplot of Mesopelagic and Epipelagic EcolCats --------------
 
-# For the following analysis, take average values of replicate sequenced filters
-# 245 unique samples
-# 207 from day or night periods
 meta %>% distinct(FilterID, .keep_all = TRUE) %>% filter(diel %in% c('day', 'night')) %>% glimpse()
 
 df <- tax.c %>% left_join(sp_desig) %>%
@@ -189,11 +186,6 @@ df <- tax.c %>% left_join(sp_desig) %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   left_join(meta %>% select(SampleID, FilterID)) %>%
   select(SampleID, Ecological_Category, sum_reads, sum_per_tot, FilterID) %>%
-  # average by unique filter
-  group_by(Ecological_Category, FilterID) %>%
-  mutate(sum_reads = mean(sum_reads)) %>%
-  mutate(sum_per_tot = mean(sum_per_tot)) %>%
-  ungroup() %>%
   distinct(FilterID, Ecological_Category, .keep_all=TRUE) %>%
   filter(Ecological_Category %in% c('mesopelagic', 'epipelagic'))
 
@@ -211,7 +203,6 @@ stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   distinct(diel, Ecological_Category, depth_bin2, median, sum_count, max) %>%
   # make values for segments, end is current median, start is median from previous depth
   mutate(xend = NaN) %>% # will hold depth bin values
-  #mutate(yend = NaN) %>% # will hold per tot values
   mutate(xend = case_when(depth_bin2 == "0-100m" ~ "0-100m",
                           depth_bin2 == "100-200m" ~ "0-100m",
                           depth_bin2 == "200-300m" ~ "100-200m",
@@ -232,7 +223,6 @@ p2 <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   mutate(hour = as.integer(hour)) %>%
   mutate(hour = replace(hour, hour==24,0)) %>%
   filter(diel %in% c('day', 'night')) %>%
-  #filter(Ecological_Category %in% c('mesopelagic', 'epipelagic')) %>%
   select(time, depth, sum_per_tot, Ecological_Category, hour, depth_bin2, diel) %>%
   #add in stats df
   full_join(stats2) %>%
@@ -240,20 +230,13 @@ p2 <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
   ggplot(aes(x=Ecological_Category, y=sum_per_tot, fill=diel)) +
   geom_boxplot(aes(x=fct_rev(depth_bin2)), alpha=0.5)+
   geom_point(aes(y=median, x=depth_bin2, color=diel)) +
-  # add in count of number of samples?
+  # add in count of number of samples
   geom_text(data=.%>%filter(Ecological_Category=='mesopelagic') %>% distinct(depth_bin2,diel, .keep_all = TRUE), aes(label=sum_count, y=110, x=depth_bin2, color=diel), position = position_dodge(width = 0.9))+
-  #geom_text(data=. %>% filter(diel=='night') %>%filter(Ecological_Category=='mesopelagic'),
-  #          aes(label=sum_count, y=102, x=depth_bin2, color=diel), position = position_dodge(width = 0.9)) +
-  #geom_text(data=. %>% filter(diel=='day') %>%filter(Ecological_Category=='mesopelagic'),
-  #          aes(label=sum_count, y=112, x=depth_bin2, color=diel), position = position_dodge(width = 0.9)) +
   geom_segment(aes(y=median,yend=yend, x=depth_bin2,xend=xend, color=diel)) +
-  #facet_grid(. ~ Ecological_Category, scales = "free") +
   facet_grid(. ~ Ecological_Category) +
   #formatting...
   scale_color_manual(values=paletteDayNight )+
   scale_fill_manual(values=paletteDayNight)+
-  #scale_fill_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
-  #scale_color_tableau(palette = "Tableau 10", type = c("regular"), direction = -1)+
   coord_flip() +
   theme_minimal() +
   guides(fill=guide_legend(ncol=2)) +
@@ -267,11 +250,7 @@ p2 <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
     legend.title=element_text(colour=textcol,size=8,face="bold"),
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=8,colour=textcol),
     axis.text.y=element_text(size=8,colour=textcol),
-    #axis.title.y = element_text(size=6),
     plot.background=element_blank(),
-    #panel.border=element_blank(),
-    #panel.grid.minor = element_blank(),
-    #panel.grid.major = element_line(size = .25),
     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
     plot.title=element_blank())
 

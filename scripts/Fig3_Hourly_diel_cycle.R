@@ -178,7 +178,6 @@ p1 <- ac_sum %>%
   geom_errorbar(aes(ymin=mean-SD, ymax =mean+SD), width=.2)+
   #axes
   coord_cartesian(xlim = c(0, 86400), expand = FALSE)+
-  #scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr) +
   scale_x_continuous(breaks=x_ticks_min, labels= x_ticks_hr2) +
   scale_y_continuous(
     # Features of the first axis
@@ -198,9 +197,6 @@ ggsave(filename,height = 5, width =8, units = 'in')
 
 # Plot Ecological Groups in Depth Bins through Time 200-300m --------------
 
-# 59 unique samples in the 200-300m bin (80 including sequenced duplicates)
-# should be 59*4 = 236  observations across all Ecol Cats
-
 ## Original ---------
 df <- tax.c %>%
   # create merged reads and percent reads for each ecological group
@@ -213,16 +209,10 @@ df <- tax.c %>%
   distinct(SampleID, Ecological_Category, .keep_all=TRUE) %>%
   select(SampleID, Ecological_Category, sum_reads, sum_per_tot) %>%
   filter(Ecological_Category %in% c("mesopelagic", "epipelagic", "cosmopolitan", "benthopelagic")) %>%
-  #filter(Ecological_Category %in% c("mesopelagic", "epipelagic", "cosmopolitan")) %>%
   left_join(meta %>% select(SampleID, FilterID, depth_bin, local_time,Sampling_method, diel, hour, ESP, depth_bin2)) %>%
   mutate(hour = as.integer(hour)) %>%
   mutate(hour = replace(hour, hour == 24, 0)) %>%
   filter(depth_bin2 %in% c("200-300m")) %>%
-  # get mean values of replicate sequenced filters (some ESP samples)
-  group_by(Ecological_Category, FilterID) %>%
-  mutate(sum_reads = mean(sum_reads)) %>%
-  mutate(sum_per_tot = mean(sum_per_tot)) %>%
-  ungroup() %>%
   distinct(FilterID, Ecological_Category, .keep_all=TRUE)
   # now have 236 observations from 59 unique filters
 
@@ -327,8 +317,6 @@ p2bc
 
 # Sampling Effort --------
 
-# 59 unique samples in the 200-300m bin
-
 p3 <- meta %>% 
   filter(depth_bin2 == "200-300m") %>%
   #remove ESP replicates
@@ -430,3 +418,4 @@ ggsave(filename, width=4.5, height=8, units = 'in')
 filename = paste(plot_directory, 'Acoustic_Ecolcat_Samp_splitv_comb.svg', sep='')
 filename
 ggsave(filename, width=4.5, height=8, units = 'in')
+
