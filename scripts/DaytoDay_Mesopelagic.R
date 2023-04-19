@@ -152,10 +152,79 @@ potu.merged <- left_join(potu.c, species_label) %>%
   ungroup() %>%
   distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, Ecological_Category, SampleID, .keep_all = TRUE)
 
+# Proportion Per Time -------------
+
+avg.time <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(reads = mean(reads)) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+
+# top 5 species:
+top_taxa <- avg.time %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  filter(Species !='unassigned') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(5)
+
+bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
+  left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
+  right_join(top_taxa) %>% #limit to top taxa
+  # take proportion per time point
+  group_by(night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot)) %>%
+  ungroup() %>%
+  ggplot(aes(x=night_label, y=prop_per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
 # Day Night Average -------------------------------------------------------
 
-test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
-  # average by day first and then by diel pattern? (night_label)
+# Bar plot of average percent total reads of highest relative abundance mesopelagic species
+# (top 5)
+
+avg.diel <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern (night_label)
   # average within depth bins by diel
   group_by(Species,night_label, depth_bin2) %>%
   mutate(reads = mean(reads)) %>%
@@ -175,7 +244,7 @@ test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
 textcol <- "grey40"
   
 # top 10 species:
-top_taxa <- test %>%
+top_taxa <- avg.diel %>%
   filter(Ecological_Category %in% c('mesopelagic')) %>%
   filter(Species !='unassigned') %>%
   group_by(Species) %>%
@@ -187,7 +256,7 @@ top_taxa <- test %>%
   select(Species, sum_per_tot) %>%
   top_n(5)
 
-bp_top <- test %>% 
+bp_top <- avg.diel %>% 
   right_join(top_taxa) %>% #limit to top taxa
   ggplot(aes(x=depth_bin2, y=per_tot))+
   #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
@@ -229,8 +298,13 @@ filename = paste(plot_directory, marker,'_Meso_Diel_avgDayfirst.png', sep='')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
 
+filename = paste(plot_directory, marker,'_Meso_Diel_avgDayfirst.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
 
 # Show Variability -----------------
+# per species per depth bin?
 test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
   # average by day first and then by diel pattern? (night_label)
   # average within depth bins by diel
