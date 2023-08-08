@@ -59,10 +59,18 @@ potu.c <- otu.c %>%
   arrange(-reads)
 head(potu.c)
 
-#get lowest taxonomic annotation level for ASVs
-species_label <- tax.c %>%
+# Import species ecological categories that have been manually determined
+
+filepath = "data/metadata/CN19S_Taxa_Categories.csv"
+# species designations tibble:
+sp_desig <- read_csv(filepath)
+
+# Merge taxa table and ecological categories
+# adjust Species label
+
+species_label <- full_join(tax.c, sp_desig) %>%
   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
-                             TRUE ~ as.character(Species))) %>%
+                                                            TRUE ~ as.character(Species))) %>%
   mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
                              TRUE ~ as.character(Species))) %>%
   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
@@ -75,11 +83,6 @@ species_label <- tax.c %>%
                              TRUE ~ as.character(Species)))
 
 
-# Import species ecological categories that have been manually determined
-
-filepath = "data/metadata/CN19S_Taxa_Categories.csv"
-# species designations tibble:
-sp_desig <- read_csv(filepath)
 
 
 # Create Seasonal Variables -----------------------------------------------
@@ -144,7 +147,8 @@ meta %<>%
 # Make merged OTU table by taxonomic ID; can keep ASV column to mark unique taxon
 potu.merged <- left_join(potu.c, species_label) %>%
   left_join(sp_desig) %>%
-  group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species, Ecological_Category, SampleID) %>%
+  group_by(Kingdom, Phylum, Class, Order, Family, Genus, 
+           Species, Ecological_Category, SampleID) %>%
   mutate(reads = sum(reads)) %>%
   mutate(per_tot = sum(per_tot)) %>%
   ungroup() %>%
@@ -152,38 +156,42 @@ potu.merged <- left_join(potu.c, species_label) %>%
 
 # Proportion Per Time -------------
 
-avg.time <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
-  # average by day first and then by diel pattern? (night_label)
-  # average within depth bins by diel
-  group_by(Species,night_label, depth_bin2) %>%
-  mutate(reads = mean(reads)) %>%
-  mutate(per_tot = mean(per_tot)) %>%
-  ungroup() %>%
-  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+# Find 5 mesopelagic species with highest relative abundance over experiment:
+# merge by both depth and time, then look overall
 
-# top 5 species:
-top_taxa <- avg.time %>%
+top_taxa <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
   filter(Ecological_Category %in% c('mesopelagic')) %>%
-  filter(Species !='unassigned') %>%
-  group_by(Species) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  distinct(Species,.keep_all = TRUE ) %>%
-  arrange(-sum_per_tot) %>%
-  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  group_by(depth_bin2, night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
   ungroup() %>%
-  select(Species, sum_per_tot) %>%
+  # now merge same species
+  group_by(Species) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,prop_per_tot ) %>%
+  arrange(-prop_per_tot) %>%
+  select(Species, prop_per_tot) %>%
   top_n(5)
+top_taxa
 
 # assign text colour
 textcol <- "grey40"
-  
-bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
-  left_join(species_label,  by = c("ASV")) %>%  #join with taxonomy
-  right_join(top_taxa) %>% #limit to top taxa
-  # take proportion per time point
+
+# Just take these top taxa and plot through time, proportionally by time point (day-diel category):
+bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+  # Now want just one bar per time point, make proportional to whole
   group_by(night_label) %>%
-  mutate(prop_per_tot = per_tot/sum(per_tot)) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
   ungroup() %>%
+  # Now sum same species within night_label bins:
+  group_by(Species, night_label) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,prop_per_tot) %>%
+  # plot
   ggplot(aes(x=night_label, y=prop_per_tot))+
   geom_bar(stat='identity', aes(fill = Species))+
   scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
@@ -198,7 +206,6 @@ bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
     legend.key.width=grid::unit(0.3,"cm"),
     legend.title=element_text(colour=textcol,size=8,face="bold"),
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
     axis.text.y=element_text(size=6,colour=textcol),
     axis.title.y = element_text(size=6),
     plot.background=element_blank(),
@@ -209,13 +216,11 @@ bp_top <- left_join(potu.c, meta,  by = c("SampleID")) %>% #join with metadata
     plot.title=element_blank())
 bp_top
 
-filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.png', sep='')
-#print('Plot of top 20 Genus average by month:')
+filename = paste(plot_directory, marker,'_Day_Diel_prop.png', sep='')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
 
-filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.svg', sep='')
-#print('Plot of top 20 Genus average by month:')
+filename = paste(plot_directory, marker,'_Day_Diel_prop.svg', sep='')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
 
@@ -224,54 +229,22 @@ ggsave(filename,height = 3, width =5, units = 'in')
 # Bar plot of average percent total reads of highest relative abundance mesopelagic species
 # (top 5)
 
-avg.diel <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
-  # average by day first and then by diel pattern (night_label)
-  # average within depth bins by diel
-  group_by(Species,night_label, depth_bin2) %>%
-  mutate(reads = mean(reads)) %>%
-  mutate(per_tot = mean(per_tot)) %>%
+# Now Average:
+bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2, diel),  by = c("SampleID")) %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+  filter(diel %in% c('day', 'night')) %>%  # just keep samples taken during the day and night
+  # Take Average
+  group_by(Species, diel, depth_bin2) %>%
+  mutate(prop_per_tot = mean(per_tot)) %>%
   ungroup() %>%
-  distinct(Species,night_label, depth_bin2, .keep_all = TRUE) %>%
-  # average over diel Day or Night
-  filter(diel %in% c('day','night')) %>%
-  group_by(Species,diel, depth_bin2) %>%
-  mutate(reads = mean(reads)) %>%
-  mutate(per_tot = mean(per_tot)) %>%
-  ungroup() %>%
-  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
-  
-# Plot
-# assign text colour
-textcol <- "grey40"
-  
-# top 10 species:
-top_taxa <- avg.diel %>%
-  filter(Ecological_Category %in% c('mesopelagic')) %>%
-  filter(Species !='unassigned') %>%
-  group_by(Species) %>%
-  mutate(sum_per_tot = sum(per_tot)) %>%
-  distinct(Species,.keep_all = TRUE ) %>%
-  arrange(-sum_per_tot) %>%
-  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
-  ungroup() %>%
-  select(Species, sum_per_tot) %>%
-  top_n(5)
-
-bp_top <- avg.diel %>% 
-  right_join(top_taxa) %>% #limit to top taxa
-  ggplot(aes(x=depth_bin2, y=per_tot))+
-  #geom_bar(aes( y=0.5),stat='identity', fill = "grey",alpha=0.8, width=20)+
-  #geom_bar(data = samples, stat='identity', aes(x=SAMPLING_rdepth, y=100), color='lightgrey', fill='lightgrey', alpha=0.2,width=5)+
-  geom_bar(stat='identity', aes(fill = Species))+
+  distinct(Species, diel, depth_bin2,prop_per_tot) %>%
+  # plot
+  ggplot(aes(x=depth_bin2, y=prop_per_tot))+
+  geom_bar(stat='identity',  aes(fill = Species))+
   coord_flip()+
   scale_x_discrete(limits=rev) +
-  #scale_x_reverse()+
-  #facet_wrap(~ SAMPLING_station_number)+
   facet_wrap(~diel, nrow=1) +
-  #scale_colour_brewer(palette = "Set1") +
-  #scale_fill_brewer(palette = "Set1") +
   scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
-  #scale_color_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
   labs(x="",y="Percent Total Reads")+
   theme_minimal() +
   guides(fill=guide_legend(ncol=2)) +
@@ -283,7 +256,6 @@ bp_top <- avg.diel %>%
     legend.key.width=grid::unit(0.3,"cm"),
     legend.title=element_text(colour=textcol,size=8,face="bold"),
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
     axis.text.y=element_text(size=6,colour=textcol),
     axis.title.y = element_text(size=6),
     plot.background=element_blank(),
@@ -294,15 +266,63 @@ bp_top <- avg.diel %>%
     plot.title=element_blank())
 bp_top
 
-filename = paste(plot_directory, marker,'_Meso_Diel_avgDayfirst.png', sep='')
+filename = paste(plot_directory, marker,'_Meso_Diel_all.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
 
-filename = paste(plot_directory, marker,'_Meso_Diel_avgDayfirst.svg', sep='')
+filename = paste(plot_directory, marker,'_Meso_Diel_all.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
+
+# Line Plot of top species -------
+
+paletteDayNightSp <- c(wes_palette(5, name = "Darjeeling1", type = "continuous")[1:5], wes_palette("Chevalier1", type = "discrete")[2], wes_palette("Darjeeling2", type = "discrete")[2], 'darkgrey')
+
+
+bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2, diel, depth),  by = c("SampleID")) %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+  filter(diel %in% c('day', 'night')) %>%  # just keep samples taken during the day and night
+  mutate(across(diel, str_replace, 'day', 'z_day')) %>%
+  mutate(across(diel, str_replace, 'night', 'z_night')) %>%
+  #ggplot(aes(x=-depth, y=per_tot,color = Species))+
+  ggplot(aes(x=-depth, y=per_tot,shape = diel, linetype = diel, color=Species))+
+  geom_point(aes(color=diel))+
+  facet_wrap(~Species, nrow=2) +
+  geom_smooth( span=0.6)+
+  coord_flip()+
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  scale_color_manual(values = paletteDayNightSp, name = "") +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    #legend.text=element_text(colour=textcol,size=8,face="bold"),
+    #legend.key.height=grid::unit(0.3,"cm"),
+    #legend.key.width=grid::unit(0.3,"cm"),
+    #legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+  
+filename = paste(plot_directory, marker,'_Meso_lineplots.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 8, width =8, units = 'in')
+
+filename = paste(plot_directory, marker,'_Meso_lineplots.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 8, width =8, units = 'in')
 
 # Number of Samples by Depth Bin--------
 
@@ -435,3 +455,463 @@ filename = paste(plot_directory, marker,'_num_samples_bytype.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 3, width =5, units = 'in')
+
+# Proportion of all Mesopelagic reads ------
+
+# Try out different methods of looking at average or proportional patterns across the mesopelagic slice of the dataset:
+
+# Irrespective of depth, time, just proportion of all samples
+
+# ALL DATA together
+test <- potu.merged %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, sum_per_tot) %>%
+  arrange(-sum_per_tot)
+test
+
+# Species                   sum_per_tot
+# <chr>                           <dbl>
+#   1 Stenobrachius leucopsarus      2546. 
+# 2 Leuroglossus schmidti          1829. 
+# 3 Diaphus theta                  1826. 
+# 4 Lipolagus ochotensis            552. 
+# 5 Cyclothone acclinidens          166. 
+# 6 Trachipterus                    126. 
+# 7 Sagamichthys abei                99.3
+# 8 Lampanyctus tenuiformis          77.1
+# 9 Pseudobathylagus milleri         55.2
+# 10 Protomyctophum                   45.5
+
+# Proportion for each time point (night_label) - Equally weigh days
+test <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(night_label) %>%
+  # mutate(sum_per_tot = sum(per_tot)) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
+  #mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, prop_per_tot, night_label) %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, sum_per_tot) %>%
+  arrange(-sum_per_tot)
+test
+
+# Species                   sum_per_tot
+# <chr>                           <dbl>
+#   1 Diaphus theta                   784. 
+# 2 Stenobrachius leucopsarus       662. 
+# 3 Leuroglossus schmidti           513. 
+# 4 Lipolagus ochotensis            334. 
+# 5 Lampris guttatus                 95.0
+# 6 Trachipterus                     78.7
+# 7 Cyclothone acclinidens           41.5
+# 8 Sagamichthys abei                22.2
+# 9 Lampanyctus tenuiformis          21.3
+# 10 Protomyctophum                   12.2
+
+# Proportion by depth - Equally weigh depth
+test <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(depth_bin2) %>%
+  # mutate(sum_per_tot = sum(per_tot)) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
+  #mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  # now merge same species
+  group_by(Species) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,prop_per_tot ) %>%
+  arrange(-prop_per_tot)
+test
+
+# Species                   prop_per_tot
+# <chr>                            <dbl>
+#   1 Stenobrachius leucopsarus       229.  
+# 2 Leuroglossus schmidti           180.  
+# 3 Cyclothone acclinidens           88.2 
+# 4 Diaphus theta                    87.5 
+# 5 Lipolagus ochotensis             27.9 
+# 6 Scopelengys tristis              23.2 
+# 7 Pseudobathylagus milleri         20.2 
+# 8 Sagamichthys abei                11.5 
+# 9 Holtbyrnia                        8.94
+# 10 Trachipterus                      7.71
+
+# Same TOP 5 when looking at overall dataset, as well as when looking at "one" merged sample per depth_bin
+  
+# Now first take one depth bin merged sample per day: (merge by both depth and time, then look overall)
+
+test <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(depth_bin2, night_label) %>%
+  # mutate(sum_per_tot = sum(per_tot)) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
+  #mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  # now merge same species
+  group_by(Species) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,prop_per_tot ) %>%
+  arrange(-prop_per_tot)
+test
+
+# # A tibble: 26 × 2
+# Species                   prop_per_tot
+# <chr>                            <dbl>
+#   1 Stenobrachius leucopsarus        3517.
+# 2 Leuroglossus schmidti            2058.
+# 3 Diaphus theta                    1945.
+# 4 Lipolagus ochotensis             1064.
+# 5 Cyclothone acclinidens            293.
+# 6 Trachipterus                      217.
+# 7 Lampanyctus tenuiformis           182.
+# 8 Scopelengys tristis               115.
+# 9 Holtbyrnia                        114.
+# 10 Nannobrachium                     113.
+
+# Now plot that last result:
+
+# top 5 species:
+top_taxa <- test %>%
+  select(Species, prop_per_tot) %>%
+  top_n(5)
+top_taxa
+
+# Just take these top taxa and plot through time, averaging just by day:
+bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+  # Now want just one bar per time point, make proportional to whole
+  group_by(night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  ungroup() %>%
+  # Now sum same species within night_label bins:
+  group_by(Species, night_label) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,prop_per_tot) %>%
+  # plot
+  ggplot(aes(x=night_label, y=prop_per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+  
+
+
+
+
+  
+  
+  
+  
+  group_by(depth_bin2, night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
+  #mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top taxa
+  # want to take sum over single timepoint, depth, by Species:
+  group_by(Species, night_label, depth_bin2) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,depth_bin2,prop_per_tot) %>%
+  # Now want just one bar per time point, make proportional to whole
+  group_by(night_label) %>%
+  mutate(prop_per_tot = prop_per_tot/sum(prop_per_tot) *100) %>%
+  ungroup() %>%
+  # sum same species
+  group_by(Species, night_label) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,prop_per_tot) %>%
+  # plot
+  ggplot(aes(x=night_label, y=prop_per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+
+
+
+
+
+
+
+
+bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+  group_by(depth_bin2, night_label) %>%
+  mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+  # if 0 reads in sample for species, want that value to be 0 and not NaN in table
+  mutate(prop_per_tot = ifelse(is.na(prop_per_tot), 0, prop_per_tot)) %>%
+  #mutate(sum_per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  right_join(top_taxa %>% select(Species)) %>% #limit to top taxa
+  # want to take sum over single timepoint, depth, by Species:
+  group_by(Species, night_label, depth_bin2) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,depth_bin2,prop_per_tot) %>%
+  # Now want just one bar per time point, make proportional to whole
+  group_by(night_label) %>%
+  mutate(prop_per_tot = prop_per_tot/sum(prop_per_tot) *100) %>%
+  ungroup() %>%
+  # sum same species
+  group_by(Species, night_label) %>%
+  mutate(prop_per_tot = sum(prop_per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label,prop_per_tot) %>%
+  # plot
+  ggplot(aes(x=night_label, y=prop_per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+  
+  
+
+
+
+
+
+
+
+
+
+
+# Average first by depth bin, then by time point
+# Here want to keep the value which reflects the percent of the total sample
+test <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(Species, night_label, depth_bin2) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, per_tot, night_label, depth_bin2) %>%
+  
+  
+  
+  
+  group_by(night_label, depth_bin2) %>%
+  mutate(per_tot = (per_tot/sum(per_tot)) *100) %>%
+  ungroup() %>%
+  # now average for each time point
+  group_by(Species, night_label) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, per_tot, night_label) %>%
+  group_by(night_label) %>%
+  mutate(per_tot = (per_tot/sum(per_tot)) *100) %>%
+  ungroup()
+
+#mean instead?
+test <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2),  by = c("SampleID")) %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  # group_by(Species, night_label, depth_bin2) %>%
+  # mutate(per_tot = mean(per_tot)) %>%
+  # ungroup() %>%
+  # distinct(Species, per_tot, night_label, depth_bin2) %>%
+  # group_by(night_label, depth_bin2) %>%
+  # mutate(per_tot = (per_tot/sum(per_tot)) *100) %>%
+  # ungroup() %>%
+  # now average for each time point
+  group_by(Species, night_label) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, per_tot, night_label) %>%
+  group_by(night_label) %>%
+  mutate(per_tot = (per_tot/sum(per_tot)) *100) %>%
+  ungroup()
+
+test <- full_join(potu.merged, meta,  by = c("SampleID")) %>%
+  # average by day first and then by diel pattern? (night_label)
+  # average within depth bins by diel
+  group_by(Species,night_label, depth_bin2) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species,night_label, depth_bin2, .keep_all = TRUE)
+
+# top 5 species:
+top_taxa <- test %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  filter(Species !='unassigned') %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Kingdom, Phylum, Class, Order, Family,Genus, Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(5)
+
+# top 5 species:
+top_taxa <- test %>%
+  filter(Ecological_Category %in% c('mesopelagic')) %>%
+  group_by(Species) %>%
+  mutate(sum_per_tot = sum(per_tot)) %>%
+  distinct(Species,.keep_all = TRUE ) %>%
+  arrange(-sum_per_tot) %>%
+  select(Species, sum_per_tot) %>%
+  ungroup() %>%
+  select(Species, sum_per_tot) %>%
+  top_n(10)
+
+
+# assign text colour
+textcol <- "grey40"
+  
+bp_top <- test %>%
+  right_join(top_taxa) %>% #limit to top taxa
+  # want to take mean over single timepoint:
+  group_by(Species, night_label) %>%
+  mutate(per_tot = mean(per_tot)) %>%
+  ungroup() %>%
+  distinct(Species, night_label, per_tot) %>%
+  ggplot(aes(x=night_label, y=per_tot))+
+  geom_bar(stat='identity', aes(fill = Species))+
+  scale_fill_manual(values = wes_palette(10, name = "Darjeeling1", type = "continuous"), name = "") +
+  labs(x="",y="Percent Total Reads")+
+  theme_minimal() +
+  guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="bottom",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=8,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=8,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=6,colour=textcol),
+    axis.title.y = element_text(size=6),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+    plot.title=element_blank())
+bp_top
+
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
+filename = paste(plot_directory, marker,'_rDepth_Day_Diel_ESPCTD_prop.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 3, width =5, units = 'in')
+
+
+# # Proportional:
+# bp_top <- full_join(potu.merged, meta %>% select(SampleID, night_label, depth_bin2, diel),  by = c("SampleID")) %>%
+#   right_join(top_taxa %>% select(Species)) %>% #limit to top identified mesopelagic taxa
+#   filter(diel %in% c('day', 'night')) %>%  # just keep samples taken during the day and night
+#   # Now want just one bar per diel and depthbin, make proportional to whole
+#   group_by(diel, depth_bin2) %>%
+#   mutate(prop_per_tot = per_tot/sum(per_tot) *100) %>%
+#   ungroup() %>%
+#   # Now sum same species within diel, depth_bin2 bins:
+#   group_by(Species, diel, depth_bin2) %>%
+#   mutate(prop_per_tot = sum(prop_per_tot)) %>%
+#   ungroup() %>%
+#   distinct(Species, diel, depth_bin2,prop_per_tot) %>%
+#   # plot
+#   ggplot(aes(x=depth_bin2, y=prop_per_tot))+
+#   geom_bar(stat='identity', aes(fill = Species))+
+#   coord_flip()+
+#   scale_x_discrete(limits=rev) +
+#   facet_wrap(~diel, nrow=1) +
+#   scale_fill_manual(values = wes_palette(5, name = "Darjeeling1", type = "continuous"), name = "") +
+#   labs(x="",y="Percent Total Reads")+
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   theme(
+#     #legend
+#     legend.position="bottom",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=8,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=8,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5,colour=textcol),
+#     axis.text.y=element_text(size=6,colour=textcol),
+#     axis.title.y = element_text(size=6),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"),
+#     plot.title=element_blank())
+# bp_top
+
