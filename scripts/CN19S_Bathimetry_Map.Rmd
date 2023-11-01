@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-library(marmap) #if want to download data from NOAA quickly - lower res
+#library(marmap) #if want to download data from NOAA quickly - lower res
 library(ggplot2)
 library(mapdata)
 library(mapproj)
@@ -32,88 +32,47 @@ library(forcats) #working with factor data (reordering)
 library(patchwork) #putting graphs together on same plot
 ```
 
+# Set Constants
+```{r}
+marker = sym("12S")
+# Set directory to save plots
+plot_directory <- '../figures/Map/'
+# Set directory to retrieve data
+data_directory = "../Data/filtered_seq_data/"
+```
+
 # Import Data
 
 ```{r}
-marker='12S'
-
-# Set directory to save plots
-directory <- '/Users/kpitz/github/MBARI-BOG/CN19S_12S/figures/Map/'
-
-data_directory = "/Users/kpitz/github/MBARI-BOG/CN19S_12S/Data/filtered_seq_data/"
-
-#ASV table
-print('ASV table')
-file = paste("CN19S_",marker,"_otu_Filtered.csv", sep='')
-filepath = paste(data_directory, file, sep='')
-print(filepath)
-otu.c <- read_csv(filepath) %>% rename('ASV' = 1)
-
-#taxa table
-print('taxa table')
-file = paste("CN19S_",marker,"_taxa_Filtered.csv", sep='')
-filepath = paste(data_directory, file, sep='')
-print(filepath)
-tax.c <- read_csv(filepath) %>% rename('ASV' = 1)
-
 #metadata table
 print('metadata table')
 #file = "A2W_12S_meta_Filtered.csv"
-file = paste("CN19S_",marker,"_meta_Filtered.csv", sep='')
+file = paste("CN19S_",marker,"_meta_filtered.csv", sep='')
 filepath = paste(data_directory, file, sep='')
 print(filepath)
 samp.c <- read_csv(filepath) %>% rename('SampleID' = 1)
 
-
-#OTU table long format with percent total reads
-potu.c <- otu.c %>%
-  tidyr::pivot_longer( -ASV, names_to ='SampleID',values_to = 'reads' ) %>%
-  group_by(SampleID) %>%
-  mutate(per_tot = reads / sum(reads) *100) %>%
-  arrange(-reads)
-head(potu.c)
-
-#get lowest taxonomic annotation level for ASVs
-species_label <- tax.c %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Class),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Phylum),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
-                             TRUE ~ as.character(Species)))
-
-
-# Import species designations
-
-filepath = "/Users/kpitz/Projects/CN19all/Canon2019Spring_Taxa_Categories_KBB_KP.csv"
-
-sp_desig <- read_csv(filepath)
-
-
-# Create Seasonal Variables -----------------------------------------------
-
+```
+# Edit metadata
+```{r}
 meta <- samp.c %>% 
-  mutate(time = mdy_hm(local_time)) %>%
+  # create date/time format column from local time
+  mutate(time = ymd_hms(local_time)) %>%
   mutate(time_since = as.numeric(time)) %>%
   mutate(ESP = case_when(str_detect(SampleID, 'SC')==TRUE ~'ESP',
                          str_detect(SampleID, 'Bongo')==TRUE ~'Bongo',
                          str_detect(SampleID, '_V')==TRUE ~'ROV',
                          TRUE~'CTD')) %>%
   mutate(month =  month(time)) %>%
+  mutate(hour = hour(time)) %>%
   mutate(day =  day(time)) %>%
   mutate(year =  year(time)) %>%
   mutate(jday = yday(time)) %>%
   mutate(month_char = as.character(month)) %>%
   mutate(year_char = as.character(year)) %>%
   mutate(depth_bin = case_when(depth <=25 ~ "00_0-25m",
-                               depth >25 & depth <=50 ~ "01_25-50m",
-                               depth >50 & depth <=75 ~ "02_50-75m",
+                               depth >25 & depth <=75 ~ "01_25-75m",
+                               #depth >50 & depth <=75 ~ "02_50-75m",
                                depth >75 & depth <=100 ~ "03_75-100m",
                                depth >100 & depth <=150 ~ "04_100-150m",
                                depth >150 & depth <=200 ~ "05_150-200m",
@@ -124,76 +83,12 @@ meta <- samp.c %>%
                                depth >400 & depth <=600 ~ "10_500-600m",
                                depth >600 & depth <=750 ~ "11_600-750m", TRUE ~ "unknown"
   )) 
-
-
-
-
-# # Set Time Variables -----------------------------------------------
-# 
-# #edit sample metadata to get date columns
-# samp.c %<>% mutate(DATE_TIME = as_datetime(SAMPLING_date_time, tz = "GMT")) %>%
-#   #change to local time
-#   mutate(LOCAL_TIME = with_tz(DATE_TIME, "America/Los_Angeles")) %>% #change to local time zone
-#   # extract date components
-#   mutate(month =  month(LOCAL_TIME)) %>%
-#   mutate(day =  day(LOCAL_TIME)) %>%
-#   mutate(year =  year(LOCAL_TIME)) %>%
-#   mutate(jday = yday(LOCAL_TIME)) %>%
-#   mutate(hour = hour(LOCAL_TIME)) %>%
-#   mutate(hour_char = as.character(hour)) %>%
-#   mutate(month_2 = format.Date(LOCAL_TIME, "%m")) %>%  #two digit month
-#   #mutate(ym = ym(DATE_TIME)) %>%   #lubridate will be adding this function soon; have to work around it for now.
-#   #change column data types
-#   mutate(month_char = as.character(month)) %>%
-#   mutate(year_char = as.character(year)) %>%
-#   mutate(month_2 = as.character(month_2)) %>%
-#   #year/month for labeling
-#   unite(ym, year_char, month_2, sep='/', remove=FALSE) %>%
-#   #create seasonal categories
-#   # 12,1,2; 3,4,5; 6,7,8; 9,10,11
-#   mutate(season = "Dec-Feb") %>% #create new column
-#   mutate(season = case_when(month<=11 & month >=9  ~"Sep-Nov",
-#                             TRUE ~ season)) %>%
-#   mutate(season = case_when(month<=8 & month >=6  ~"June-Aug",
-#                             TRUE ~ season)) %>%
-#   mutate(season = case_when(month<=5 & month >=3  ~"March-May",
-#                             TRUE ~ season)) %>%
-#   #make Diel markers
-#   mutate(Diel = "na") %>% #create new column
-#   mutate(Diel = case_when(hour<=24 & hour >=20  ~"8pm-5am",
-#                           TRUE ~ Diel)) %>%
-#   mutate(Diel = case_when(hour>=0 & hour <5  ~"8pm-5am",
-#                           TRUE ~ Diel)) %>%
-#   mutate(Diel = case_when(hour>=7 & hour <18  ~"7am-6pm",
-#                           TRUE ~ Diel)) %>%
-#   mutate(Diel = case_when(hour>=18 & hour <20  ~"6pm-8pm",
-#                           TRUE ~ Diel)) %>% 
-#   mutate(Diel = case_when(hour>=5 & hour <7  ~"5am-7am",
-#                           TRUE ~ Diel))
-
 ```
 
 
-#Points to plot, for example
-#Stations
-Station	Latitude	Longitude
-		
-ML	36.8	-121.75
-C1	36.79666667	-121.8466667
-M1	36.735	-122.02
-DEIMOS/MARS	36.71211	-122.187028
-M2	36.71246833	-122.1868983 (check)
-1F	36.626	-122.419
-2F	36.73333333	-122.5875
-3F	36.80833333	-122.525
-4F	36.89166667	-122.4625
-5F	36.96666667	-122.4
-DEIMOS/MARS	36.71211	-122.187028
-```{r}
-#label = "C1"
-#lat = 36.79666667
-#lon= -121.8466667
 
+# Define reference points
+```{r}
 # make a few points
 pts = data.frame(
   lon = c(-121.8466667, -122.02, -122.187028),
@@ -201,9 +96,15 @@ pts = data.frame(
   label = c('C1', 'M1',  'MARS')
 )
 
+mars = data.frame(
+  lon = c(-122.187028),
+  lat = c(36.71211),
+  label = c('MARS')
+)
+
 ```
 
-
+# Define bathymetry
 ```{r}
 # # get bathymetry data
 # b = getNOAA.bathy(lon1 = -120, lon2 = -124, lat1 = 35, lat2 = 38, 
@@ -226,7 +127,7 @@ bf = read_csv(file, col_names=c("x", "y", "z"))
 
 # get regional polygons
 reg = map_data("world2Hires")
-reg = subset(reg, region %in% c('USA'))
+#reg = subset(reg, region %in% c('USA'))
 
 # convert lat longs
 reg$long = (360 - reg$long)*-1
@@ -237,62 +138,286 @@ lons = c(-122.7, -121.85)
 lats = c(36.55, 37.1)
 
 
-#create for scale bar
-df <- filter(reg,long < -121.85 )
-df <- filter(df,long > -122.7 )
-df <- filter(df,lat < 37.1 )
-df <- filter(df,lat > 36.55 )
+# #create for scale bar
+# df <- filter(reg,long < -121.85 )
+# df <- filter(df,long > -122.7 )
+# df <- filter(df,lat < 37.1 )
+# df <- filter(df,lat > 36.55 )
+```
+# Plot Filled Contour Map - by sampling type, zoom MARS
+```{r}
+# DEPTH CONTOURS
+# set map limits
+#lons = c(-122.5, -121.80)
+#lats = c(36.55, 37.0)
 
+# zoomed in
+lons = c(-122.3, -122.1)
+lats = c(36.6, 36.8)
+
+#lons = c(-122.25, -122.10)
+#lats = c(36.7, 36.74)
+
+plot1 <- ggplot()+
+  # geom_contour_filled(data = bf,
+  #              aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-500,-750,-1000,-1500, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m", "0-500m",
+                               "500-750m",
+                               "750-1000m",
+                               "1000-1500m",
+                               "1500-2000m",
+                               "2000-3500m")) +
+  geom_point(data = meta %>% filter(ESP %in% c('ESP')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "yellow",fill='yellow',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(ESP %in% c('CTD')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "orange",fill='orange',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('WESTERN FLYER')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "green",fill='green',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('ROV')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "purple",fill='purple',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+  geom_text(data = mars, aes(x = lon, y = lat, label=label),
+            size=3, vjust=2.5, fontface = "bold", color='black') +
+  geom_point(data = mars, aes(x = lon, y = lat),
+            colour = "black",fill='black',
+            stroke = .5, size = 1.5,
+            alpha = 1, shape = 21)+
+  # geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+  #           colour = "black",fill='grey',
+  #           stroke = 0.5, size = 2,
+  #           alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+plot1
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_zoomMARS.png', sep='')
+ggsave(filename)
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_zoomMARS.svg', sep='')
+ggsave(filename)
+
+```
+# Plot Filled Contour Map - by sampling type
+```{r}
+# DEPTH CONTOURS
+# set map limits
+lons = c(-122.5, -121.80)
+lats = c(36.55, 37.0)
+
+# zoomed in
+# lons = c(-122.3, -121.8)
+# lats = c(36.6, 36.8)
+
+# lons = c(-122.25, -122.10)
+# lats = c(36.7, 36.74)
+
+plot1 <- ggplot()+
+  # geom_contour_filled(data = bf,
+  #              aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-500,-750,-1000,-1500, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m", "0-500m",
+                               "500-750m",
+                               "750-1000m",
+                               "1000-1500m",
+                               "1500-2000m",
+                               "2000-3500m")) +
+  geom_point(data = meta %>% filter(ESP %in% c('ESP')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "yellow",fill='yellow',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(ESP %in% c('CTD')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "orange",fill='orange',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('WESTERN FLYER')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "green",fill='green',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('ROV')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "purple",fill='purple',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+  geom_text(data = mars, aes(x = lon, y = lat, label=label),
+            size=3, vjust=2.5, fontface = "bold", color='black') +
+  geom_point(data = mars, aes(x = lon, y = lat),
+            colour = "black",fill='black',
+            stroke = .5, size = 1.5,
+            alpha = 1, shape = 21)+
+  # geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+  #           colour = "black",fill='grey',
+  #           stroke = 0.5, size = 2,
+  #           alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+plot1
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_MB.png', sep='')
+ggsave(filename)
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_MB.svg', sep='')
+ggsave(filename)
+
+```
+
+# Plot Filled Contour Map - by sampling type
+```{r}
+# DEPTH CONTOURS
+# set map limits
+#lons = c(-122.5, -121.80)
+#lats = c(36.55, 37.0)
+
+# zoomed in
+lons = c(-122.3, -121.8)
+lats = c(36.6, 36.8)
+
+#lons = c(-122.25, -122.10)
+#lats = c(36.7, 36.74)
+
+plot1 <- ggplot()+
+  # geom_contour_filled(data = bf,
+  #              aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-500,-750,-1000,-1500, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m", "0-500m",
+                               "500-750m",
+                               "750-1000m",
+                               "1000-1500m",
+                               "1500-2000m",
+                               "2000-3500m")) +
+  geom_point(data = meta %>% filter(ESP %in% c('ESP')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "yellow",fill='yellow',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(ESP %in% c('CTD')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "orange",fill='orange',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('WESTERN FLYER')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "green",fill='green',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('ROV')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "purple",fill='purple',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+  geom_text(data = pts, aes(x = lon, y = lat, label=label),
+            size=3, vjust=2.5, fontface = "bold", color='black') +
+  geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black",fill='black',
+            stroke = .5, size = 1.5,
+            alpha = 1, shape = 21)+
+  # geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+  #           colour = "black",fill='grey',
+  #           stroke = 0.5, size = 2,
+  #           alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+plot1
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_zoom.png', sep='')
+ggsave(filename)
+filename <- paste(plot_directory, 'DVM_contour_map_ESP_zoom.svg', sep='')
+ggsave(filename)
+
+```
+
+# Plot Filled Contour Map - by plate
+```{r}
+# DEPTH CONTOURS
+# set map limits
+lons = c(-122.5, -121.80)
+lats = c(36.55, 37.0)
+
+#lons = c(-122.25, -122.10)
+#lats = c(36.7, 36.74)
+
+test <- meta %>%
+  filter(PlateID %in% c('CE', 'BT'))
+plot1 <- ggplot()+
+  # geom_contour_filled(data = bf,
+  #              aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-100,-200,-300,-400,-500,-1000, -2000, -3500)) +
+  geom_contour_filled(data = bf,
+               aes(x=x, y=y, z=z),alpha=0.8, breaks= c(5000,0,-500,-750,-1000,-1500, -2000, -3500)) +
+  scale_fill_brewer(palette = "Blues",name="Depth", 
+                      labels=c("0m", "0-500m",
+                               "500-750m",
+                               "750-1000m",
+                               "1000-1500m",
+                               "1500-2000m",
+                               "2000-3500m")) +
+  geom_point(data = meta %>% filter(PlateID %in% c('CE', 'BT')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "yellow",fill='yellow',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    geom_point(data = meta %>% filter(PlateID %in% c('JJ', 'RR')), aes(x = decimalLongitude, y = decimalLatitude, fill=PlateID),
+            colour = "orange",fill='orange',
+            stroke = .2, size = 1,
+            alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('WESTERN FLYER')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "green",fill='green',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+    # geom_point(data = meta %>% filter(SAMPLING_platform %in% c('ROV')), aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
+    #         colour = "purple",fill='purple',
+    #         stroke = .2, size = 1,
+    #         alpha = 0.5, shape = 21)+
+  geom_text(data = pts, aes(x = lon, y = lat, label=label),
+            size=3, vjust=2.5, fontface = "bold", color='black') +
+  geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black",fill='black',
+            stroke = .5, size = 1.5,
+            alpha = 1, shape = 21)+
+  # geom_point(data = pts, aes(x = SAMPLING_dec_long, y = SAMPLING_dec_lat),
+  #           colour = "black",fill='grey',
+  #           stroke = 0.5, size = 2,
+  #           alpha = 1, shape = 21) +
+  coord_map(xlim = lons, ylim = lats) +
+  labs(x="", y="")
+
+plot1
+filename <- paste(plot_directory, 'DVM_contour_map_plate.png', sep='')
+ggsave(filename)
+filename <- paste(plot_directory, 'DVM_contour_map_plate.svg', sep='')
+ggsave(filename)
+
+```
+
+
+# Plot contour plot
+
+```{r}
 # make plot
+# set map limits
+
+lons = c(-122.225, -122.15)
+lats = c(36.67, 36.75)
+
+# #create for scale bar
+# df <- filter(reg,long < -122.15 )
+# df <- filter(df,long > -122.225 )
+# df <- filter(df,lat < 36.8 )
+# df <- filter(df,lat > 36.6 )
+
 p <- ggplot()+
   
-  # add 50m contour
+    # add 800m contour
   geom_contour(data = bf, 
                aes(x=x, y=y, z=z),
-               breaks=c(-50),
-               size=c(0.3),
-               colour="grey")+
-  
-  
-  # add 100m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-100),
-               size=c(0.3),
-               colour="grey")+
-  
-  # add 150m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-150),
-               size=c(0.3),
-               colour="grey")+
-  
-  # add 200m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-200),
-               size=c(0.3),
-               colour="grey")+
-  # add 300m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-300),
-               size=c(0.3),
-               colour="grey")+
-  # add 400m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-400),
-               size=c(0.3),
-               colour="grey")+
-  
-  # add 500m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-500),
+               breaks=c(-800),
                size=c(0.5),
                colour="grey")+
+  
   
   # add 1000m contour
   geom_contour(data = bf, 
@@ -301,32 +426,145 @@ p <- ggplot()+
                size=c(0.5),
                colour="grey")+
   
-  # add 2000m contour
-  geom_contour(data = bf, 
-               aes(x=x, y=y, z=z),
-               breaks=c(-2000),
-               size=c(0.5),
-               colour="grey")+
-  
-  # add 0m contour
-  geom_contour(data = bf,
-               aes(x=x, y=y, z=z),
-               breaks=c(0.5),
-               size=c(0.5),
-               colour="black")+
   # add points
   geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black", fill= "black",
+            stroke = .2, size = 3,
+            alpha = 1, shape = 21)+
+  
+  
+  geom_point(data = meta, aes(x = decimalLongitude, y = decimalLatitude,
+                              fill=SAMPLING_platform),
             colour = "black",
             stroke = .2, size = 2,
+            shape = 21, 
+            alpha = 0.8)+
+  
+  geom_text(data = pts, aes(x = lon, y = lat, label=label),
+            size=4, vjust=3.5, fontface = "bold") +
+  
+  
+  # #add labels
+  # geom_text(data = pts, aes(x = lon, y = lat),
+  #           label=c('C1', 'M1','M2'), size=3, vjust=2.5, fontface = "bold")+
+  
+  # # add coastline
+  # geom_polygon(data = reg, aes(x = long, y = lat, group = group),
+  #              fill = "darkgrey", color = NA)  +
+
+  # configure projection and plot domain
+  coord_map(xlim = lons, ylim = lats)+
+  
+  #scale bar
+  #scalebar(meta %>% select(decimalLongitude, decimalLatitude), dist = 2, dist_unit = "km",
+  #           transform = FALSE, model = "WGS84") +
+  
+  scalebar(data = meta %>% select(decimalLongitude, decimalLatitude), dist = 2, dist_unit = "km", st.size=3, height=0.02,
+             transform = TRUE, model = "WGS84", location= "topright") +
+  # formatting
+  ylab("")+xlab("")+
+  theme_bw()
+  
+filename <- paste(plot_directory, 'DVM_sample_map.png', sep='')
+ggsave(filename)
+p
+filename
+
+```
+
+# SCRAP BELOW
+
+```{r}
+# make plot
+# set map limits
+
+lons = c(-122.225, -122.15)
+lats = c(36.67, 36.75)
+
+p <- ggplot()+
+  
+  # # add 50m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-50),
+  #              size=c(0.3),
+  #              colour="grey")+
+  # 
+  # 
+  # # add 100m contour
+  # geom_contour(data = bf,
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-100),
+  #              size=c(0.3),
+  #              colour="grey")+
+  # # 
+  # # add 150m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-150),
+  #              size=c(0.3),
+  #              colour="grey")+
+  
+  # # add 200m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-200),
+  #              size=c(0.3),
+  #              colour="grey")+
+  # # add 300m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-300),
+  #              size=c(0.3),
+  #              colour="grey")+
+  # # add 400m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-400),
+  #              size=c(0.3),
+  #              colour="grey")+
+  # 
+  # # add 500m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-500),
+  #              size=c(0.5),
+  #              colour="grey")+
+  
+  # add 1000m contour
+  geom_contour(data = bf, 
+               aes(x=x, y=y, z=z),
+               breaks=c(-1000),
+               size=c(0.5),
+               colour="grey")+
+  # 
+  # # add 2000m contour
+  # geom_contour(data = bf, 
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(-2000),
+  #              size=c(0.5),
+  #              colour="grey")+
+  # 
+  # # add 0m contour
+  # geom_contour(data = bf,
+  #              aes(x=x, y=y, z=z),
+  #              breaks=c(0.5),
+  #              size=c(0.5),
+  #              colour="black")+
+  # add points
+  geom_point(data = pts, aes(x = lon, y = lat),
+            colour = "black", fill= "black",
+            stroke = .2, size = 3,
             alpha = 1, shape = 21)+
   
   
   geom_point(data = meta, aes(x = decimalLongitude, y = decimalLatitude, fill=SAMPLING_platform),
             colour = "black",
             stroke = .2, size = 2,
-            alpha = 1, shape = 21)+
+            alpha = 0.8, shape = 21)+
+  
   geom_text(data = pts, aes(x = lon, y = lat, label=label),
-            size=1, vjust=2.5, fontface = "bold") +
+            size=4, vjust=2.5, fontface = "bold") +
   
   
   # #add labels
@@ -347,7 +585,7 @@ p <- ggplot()+
   ylab("")+xlab("")+
   theme_bw()
   
-filename <- paste(directory, 'CN19S_sample_map.png', sep='')
+filename <- paste(plot_directory, 'DVM_sample_map.png', sep='')
 ggsave(filename)
 p
 filename

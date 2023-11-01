@@ -24,7 +24,7 @@ library(tibble)
 marker = sym("12S")
 
 # Set directory to save plots
-plot_directory <- 'figures/Fig2/'
+plot_directory <- 'figures/Fig2stats/'
 # Set directory to retrieve data
 data_directory = "Data/filtered_seq_data/"
 
@@ -66,20 +66,20 @@ potu.c <- otu.c %>%
 head(potu.c)
 
 
-#get lowest taxonomic annotation level for ASVs
-species_label <- tax.c %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Class),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Phylum),
-                             TRUE ~ as.character(Species))) %>%
-  mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
-                             TRUE ~ as.character(Species)))
+# #get lowest taxonomic annotation level for ASVs
+# species_label <- tax.c %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
+#                              TRUE ~ as.character(Species))) %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
+#                              TRUE ~ as.character(Species))) %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
+#                              TRUE ~ as.character(Species))) %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Class),
+#                              TRUE ~ as.character(Species))) %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Phylum),
+#                              TRUE ~ as.character(Species))) %>%
+#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
+#                              TRUE ~ as.character(Species)))
 
 
 # Import species ecological categories that have been manually determined
@@ -150,6 +150,7 @@ df <- tax.c %>% left_join(sp_desig) %>%
 
 ## Epipelagic and Mesopelagic Groups -------------------------
 for (ecol_group in c('epipelagic', 'mesopelagic')){
+  print(ecol_group)
   #merge with metadata, limit to one ecological group
   stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
     #filter(Ecological_Category == 'mesopelagic') %>%
@@ -158,15 +159,19 @@ for (ecol_group in c('epipelagic', 'mesopelagic')){
     select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
   
   ### Shallow samples 0-99m ------------------
+  print('Depth 0-<100m')
   test_day <- stats %>% filter(depth>=0, depth<100) %>% filter(diel == 'day')
   test_night <- stats %>% filter(depth>=0, depth<100) %>% filter(diel == 'night')
-  
+  print('Number of Day Observations:')
+  print(nrow(test_day))
+  print('Number of Night Observations:')
+  print(nrow(test_night))
   ks_stat <- ks.test(test_day$sum_per_tot, test_night$sum_per_tot)
-  ks_stat
+  print(ks_stat)
 
   #Mann-Whitney test
   wilcox <- wilcox.test(test_day$sum_per_tot, test_night$sum_per_tot, alternative = "two.sided")
-  
+  print(wilcox)
   night_density_curve <- as_tibble(density(test_night$sum_per_tot, from=0, to=100)[c("x", "y")])
   day_density_curve <- as_tibble(density(test_day$sum_per_tot, from=0, to=100)[c("x", "y")])
   
@@ -195,14 +200,19 @@ for (ecol_group in c('epipelagic', 'mesopelagic')){
   ggsave(filename, width=8, height=6, units = 'in')
   
   ### Deep samples 100-500m ------------------
+  print('Depth 100m-500m')
   test_day <- stats %>% filter(depth>=100, depth<=500) %>% filter(diel == 'day')
   test_night <- stats %>% filter(depth>=100, depth<=500) %>% filter(diel == 'night')
+  print('Number of Day Observations:')
+  print(nrow(test_day))
+  print('Number of Night Observations:')
+  print(nrow(test_night))
   ks_stat <- ks.test(test_day$sum_per_tot, test_night$sum_per_tot)
-  ks_stat
+  print(ks_stat)
 
   #Mann-Whitney test
   wilcox <- wilcox.test(test_day$sum_per_tot, test_night$sum_per_tot, alternative = "two.sided")
-  
+  print(wilcox)
   night_density_curve <- as_tibble(density(test_night$sum_per_tot, from=0, to=100)[c("x", "y")])
   day_density_curve <- as_tibble(density(test_day$sum_per_tot, from=0, to=100)[c("x", "y")])
   
@@ -234,139 +244,132 @@ for (ecol_group in c('epipelagic', 'mesopelagic')){
 }
 
 
-# Pipe-friendly version of Wilcox test ---------------------------------------------------
-# https://www.datanovia.com/en/lessons/wilcoxon-test-in-r/
+# KS and Wilcox By Depth Bins ----------
 
-library(rstatix)
-library(ggpubr)
-
-# ecol_group in c('epipelagic', 'mesopelagic')
-ecol_group = 'mesopelagic'
-stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
-  #filter(Ecological_Category == 'mesopelagic') %>%
-  filter(Ecological_Category == ecol_group) %>%
-  filter(diel %in% c('day', 'night')) %>%
-  select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
-
-# Wilcox test across depth bins by day and night
-for (bin_depth in c('0-100m','100-200m', '300-400m', '400-500m', '500-600m')){
-  stat.test <- stats %>%
-    #filter(depth>=100, depth<=500) %>%
-    filter(depth_bin2==bin_depth) %>%
-    wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-  print(bin_depth)
-  print(stat.test)
-}
-
-# Wilcox test across "shallow" and "deep" samples by day and night
-#shallow
-stat.test <- stats %>%
-  filter(depth>0, depth<100) %>%
-  #filter(depth_bin2==bin_depth) %>%
-  wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-print(stat.test)
-#deep
-stat.test <- stats %>%
-  filter(depth>=100, depth<=500) %>%
-  #filter(depth_bin2==bin_depth) %>%
-  wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-print(stat.test)
-
-# epipelagic
-ecol_group = 'epipelagic'
-stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
-  #filter(Ecological_Category == 'mesopelagic') %>%
-  filter(Ecological_Category == ecol_group) %>%
-  filter(diel %in% c('day', 'night')) %>%
-  select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
-
-# Wilcox test across depth bins by day and night
-for (bin_depth in c('0-100m','100-200m', '300-400m', '400-500m', '500-600m')){
-  stat.test <- stats %>%
-    #filter(depth>=100, depth<=500) %>%
-    filter(depth_bin2==bin_depth) %>%
-    wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-  print(bin_depth)
-  print(stat.test)
-}
-
-# Wilcox test across "shallow" and "deep" samples by day and night
-#shallow
-stat.test <- stats %>%
-  filter(depth>0, depth<100) %>%
-  #filter(depth_bin2==bin_depth) %>%
-  wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-print(stat.test)
-#deep
-stat.test <- stats %>%
-  filter(depth>=100, depth<=500) %>%
-  #filter(depth_bin2==bin_depth) %>%
-  wilcox_test(sum_per_tot ~ diel, paired=FALSE)
-print(stat.test)
-
-
-
-##### SCRAP #######
-
-
-stats %>% group_by(diel, depth_bin2) %>% get_summary_stats(sum_per_tot, type = "median_iqr")
-
-stat.test <- stats  %>%
-  sign_test(sum_per_tot ~ diel) %>%
-  add_significance()
-stat.test
-
-
-bxp <- ggboxplot(
-  stats$sum_per_tot, width = 0.5, add = c("mean", "jitter"), 
-  ylab = "sum_per_tot", xlab = FALSE
-)
-bxp
-
-# https://www.datanovia.com/en/lessons/sign-test-in-r/
-gghistogram(stats, x = "sum_per_tot", y = "..density..", 
-            fill = "steelblue",bins = 4, add_density = TRUE)
-
-historgram_test <- stats %>%
-  filter(depth>=100, depth<=500) %>%
-  gghistogram( x = "sum_per_tot", y = "..density..", 
-              #fill = "steelblue",
-              fill = 'diel',
-              bins = 4, add_density = TRUE)
-historgram_test  
+for (ecol_group in c('epipelagic', 'mesopelagic')){
+  print(ecol_group)
+  #merge with metadata, limit to one ecological group
+  stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+    #filter(Ecological_Category == 'epipelagic') %>%
+    filter(Ecological_Category == ecol_group) %>%
+    filter(diel %in% c('day', 'night')) %>%
+    select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
   
-  
-# Wilcox test across depth bins by day and night
-for (bin_depth in c('0-100m','100-200m', '300-400m', '400-500m', '500-600m')){
-  stat.test <- stats %>%
-    #filter(depth>=100, depth<=500) %>%
-    filter(depth_bin2==bin_depth) %>%
-    wilcox_test(sum_per_tot ~ diel)
-  print(bin_depth)
-  print(stat.test)
+  for (depthbin in c("0-100m","100-200m", "200-300m","300-400m","400-500m","500-600m","600-700m" )){
+    print(depthbin)
+    test_day <- stats %>% filter(depth_bin2==depthbin) %>% filter(diel == 'day')
+    test_night <- stats %>% filter(depth_bin2==depthbin) %>% filter(diel == 'night')
+    print('Number of Day Observations:')
+    print(nrow(test_day))
+    print('Number of Night Observations:')
+    print(nrow(test_night))
+    ks_stat <- ks.test(test_day$sum_per_tot, test_night$sum_per_tot)
+    print(ks_stat)
+    
+    #Mann-Whitney test
+    wilcox <- wilcox.test(test_day$sum_per_tot, test_night$sum_per_tot, alternative = "two.sided")
+    print(wilcox)
+    night_density_curve <- as_tibble(density(test_night$sum_per_tot, from=0, to=100)[c("x", "y")])
+    day_density_curve <- as_tibble(density(test_day$sum_per_tot, from=0, to=100)[c("x", "y")])
+    
+    p <- full_join(night_density_curve %>% mutate(diel = 'night'), day_density_curve%>% mutate(diel = 'day')) %>%
+      ggplot(aes(x=x, y=y, color=diel)) +
+      geom_line(size=2) +
+      ggtitle(paste(ecol_group,' ',depthbin, '\n',
+                    'KS pvalue: ', ks_stat[2],
+                    '; statistic: ', ks_stat[1],
+                    '\nWilcox pvalue: ', wilcox[3],
+                    '; statistic: ', wilcox[1],
+                    '\n#day observations:', nrow(test_day),
+                    ' #night observations:', nrow(test_night),
+                    sep=''))+
+      labs(x='Percent Total Reads', y='Kernel Density Estimate') +
+      scale_color_manual(values=paletteDayNight )+
+      scale_fill_manual(values=paletteDayNight)+
+      theme_minimal() +
+      theme(plot.title = element_text(size = 10, face = "bold"))
+    p
+    filename = paste(plot_directory, 'KS_test_',ecol_group,'_',depthbin,'.png', sep='')
+    filename
+    ggsave(filename, width=8, height=6, units = 'in')
+    filename = paste(plot_directory, 'KS_test_',ecol_group,'_',depthbin,'.svg', sep='')
+    filename
+    ggsave(filename, width=8, height=6, units = 'in')
+    
+    
+    
+  }
 }
 
-# Wilcox test across "shallow" and "deep" samples by day and night
-#shallow
-stat.test <- stats %>%
-  filter(depth>0, depth<100) %>%
-  #filter(depth_bin2==bin_depth) %>%
-  wilcox_test(sum_per_tot ~ diel)
-print(stat.test)
-#deep
-stat.test <- stats %>%
-    filter(depth>=100, depth<=500) %>%
-    #filter(depth_bin2==bin_depth) %>%
-    wilcox_test(sum_per_tot ~ diel)
-print(stat.test)
+# # Pipe-friendly version of Wilcox test ---------------------------------------------------
+# # https://www.datanovia.com/en/lessons/wilcoxon-test-in-r/
+# 
+# library(rstatix)
+# library(ggpubr)
+# 
+# # ecol_group in c('epipelagic', 'mesopelagic')
+# ecol_group = 'mesopelagic'
+# stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   #filter(Ecological_Category == 'mesopelagic') %>%
+#   filter(Ecological_Category == ecol_group) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
+# 
+# # Wilcox test across depth bins by day and night
+# for (bin_depth in c('0-100m','100-200m', '300-400m', '400-500m', '500-600m')){
+#   stat.test <- stats %>%
+#     #filter(depth>=100, depth<=500) %>%
+#     filter(depth_bin2==bin_depth) %>%
+#     wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+#   print(bin_depth)
+#   print(stat.test)
+# }
+# 
+# # Wilcox test across "shallow" and "deep" samples by day and night
+# #shallow
+# stat.test <- stats %>%
+#   filter(depth>0, depth<100) %>%
+#   #filter(depth_bin2==bin_depth) %>%
+#   wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+# print(stat.test)
+# #deep
+# stat.test <- stats %>%
+#   filter(depth>=100, depth<=500) %>%
+#   #filter(depth_bin2==bin_depth) %>%
+#   wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+# print(stat.test)
+# 
+# # epipelagic
+# ecol_group = 'epipelagic'
+# stats <- left_join(df, meta,  by = c("SampleID")) %>% #join with metadata
+#   #filter(Ecological_Category == 'mesopelagic') %>%
+#   filter(Ecological_Category == ecol_group) %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   select(depth, sum_per_tot, Ecological_Category, depth_bin2, diel)
+# 
+# # Wilcox test across depth bins by day and night
+# for (bin_depth in c('0-100m','100-200m', '300-400m', '400-500m', '500-600m')){
+#   stat.test <- stats %>%
+#     #filter(depth>=100, depth<=500) %>%
+#     filter(depth_bin2==bin_depth) %>%
+#     wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+#   print(bin_depth)
+#   print(stat.test)
+# }
+# 
+# # Wilcox test across "shallow" and "deep" samples by day and night
+# #shallow
+# stat.test <- stats %>%
+#   filter(depth>0, depth<100) %>%
+#   #filter(depth_bin2==bin_depth) %>%
+#   wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+# print(stat.test)
+# #deep
+# stat.test <- stats %>%
+#   filter(depth>=100, depth<=500) %>%
+#   #filter(depth_bin2==bin_depth) %>%
+#   wilcox_test(sum_per_tot ~ diel, paired=FALSE)
+# print(stat.test)
+# 
 
-
-
-
-
-
-
-
-test_day <- stats %>% filter(depth>=0, depth<100) %>% filter(diel == 'day')
-test_night <- stats %>% filter(depth>=0, depth<100) %>% filter(diel == 'night')
 
