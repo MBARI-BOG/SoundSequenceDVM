@@ -158,7 +158,7 @@ potu.merged <- left_join(potu.c, species_label) %>%
   ungroup() %>%
   distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, Ecological_Category, SampleID, .keep_all = TRUE)
 
-# Plot positive controls -------------------------------------
+## Plot positive controls -------------------------------------
 
 controls_merged <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type)) %>%
@@ -219,7 +219,7 @@ for (val in taxas) {
 }
 
 
-# Plot negative controls -------------------------------------
+## Plot negative controls -------------------------------------
 
 controls_merged <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type)) %>%
@@ -279,7 +279,7 @@ for (val in taxas) {
   ggsave(filename,height = 6, width =6, units = 'in')
 }
 
-# Barplot by plate --------------
+## Barplot by plate --------------
 
 plate_merged <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type)) %>%
@@ -403,7 +403,7 @@ for (val in taxas) {
 }
 
 
-# Number Unique Taxa --------------
+## Number Unique Taxa --------------
 
 p1 <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type)) %>%
@@ -449,7 +449,7 @@ filename = paste(plot_directory, marker,'_num_unique_taxa_byplate_Chordata.png',
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
-# Number of Reads --------------
+## Number of Reads --------------
 
 p1 <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type)) %>%
@@ -495,7 +495,7 @@ filename = paste(plot_directory, marker,'_num_reads_byplate_Chordata.png', sep='
 print(filename)
 ggsave(filename,height = 5, width =5, units = 'in')
 
-# Taxonomic Overlap by plate --------------
+## Taxonomic Overlap by plate --------------
 
 # Which species found across all plates?
 # count by taxonomic ID? - by Family?
@@ -544,7 +544,7 @@ filename = paste(plot_directory, marker,'_num_unique_by_Class_Chordata.png', sep
 print(filename)
 ggsave(filename,height = 10, width =20, units = 'in')
 
-# UpSet Plot --------------------
+## UpSet Plot --------------------
 library(UpSetR)
 
 #plot by plate
@@ -664,49 +664,58 @@ upset(p1,
 dev.off()
 
 # Proportion Mesopelagic across plates -------
-p1 <- potu.merged %>%
-  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
-  filter(sample_type == 'environmental') %>%
-  filter(depth <=300) %>%  # try to remove depth effects
-  filter(depth >=100) %>%
-  filter(reads >0) %>%
-  filter(Phylum == 'Chordata') %>%
-  # get percent Mesopelagic in each sample
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(per_tot = sum(per_tot)) %>%
-  mutate(reads = sum(reads)) %>%
-  ungroup() %>%
-  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
-  filter(Ecological_Category=='mesopelagic') %>%
-  #filter(diel=='night') %>%
-  ggplot(aes(y=per_tot, x=PlateID, color=PlateID, group=PlateID, shape=ESP)) +
-  geom_boxplot() +
-  geom_jitter()+
-  facet_grid(~diel)+
-  ggtitle('Proportion Mesopelagic Species 100-300m') +
-  theme_minimal() +
-  guides(fill=guide_legend(ncol=2)) +
-  theme(
-    #legend
-    legend.position="bottom",legend.direction="vertical",
-    legend.text=element_text(colour=textcol,size=10,face="bold"),
-    legend.key.height=grid::unit(0.3,"cm"),
-    legend.key.width=grid::unit(0.3,"cm"),
-    legend.title=element_text(colour=textcol,size=10,face="bold"),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=10,colour=textcol),
-    #axis.text.x=element_text(size=7,colour=textcol),
-    axis.text.y=element_text(size=10,colour=textcol),
-    axis.title.y = element_text(size=10),
-    plot.background=element_blank(),
-    panel.border=element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(size = .25),
-    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
 
-filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m.png', sep='')
-#print('Plot of top 20 Genus average by month:')
-print(filename)
-ggsave(filename,height = 6, width =6, units = 'in')
+# Focus on depth_bin "200-300m" = depth >200 & depth <=300
+# Also show difference in 100-300m samples.
+
+### 100-300m ----------
+
+# assign text colour for plots
+textcol <- "grey40"
+
+# p1 <- potu.merged %>%
+#   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+#   filter(sample_type == 'environmental') %>%
+#   filter(depth <=300) %>%  # try to remove depth effects
+#   filter(depth >=100) %>%
+#   filter(reads >0) %>%
+#   filter(Phylum == 'Chordata') %>%
+#   # get percent Mesopelagic in each sample
+#   group_by(Ecological_Category, SampleID) %>%
+#   mutate(per_tot = sum(per_tot)) %>%
+#   mutate(reads = sum(reads)) %>%
+#   ungroup() %>%
+#   distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+#   filter(Ecological_Category=='mesopelagic') %>%
+#   #filter(diel=='night') %>%
+#   ggplot(aes(y=per_tot, x=PlateID, color=PlateID, group=PlateID, shape=ESP)) +
+#   geom_boxplot() +
+#   geom_jitter()+
+#   facet_grid(~diel)+
+#   ggtitle('Proportion Mesopelagic Species 100-300m') +
+#   theme_minimal() +
+#   guides(fill=guide_legend(ncol=2)) +
+#   theme(
+#     #legend
+#     legend.position="bottom",legend.direction="vertical",
+#     legend.text=element_text(colour=textcol,size=10,face="bold"),
+#     legend.key.height=grid::unit(0.3,"cm"),
+#     legend.key.width=grid::unit(0.3,"cm"),
+#     legend.title=element_text(colour=textcol,size=10,face="bold"),
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=10,colour=textcol),
+#     #axis.text.x=element_text(size=7,colour=textcol),
+#     axis.text.y=element_text(size=10,colour=textcol),
+#     axis.title.y = element_text(size=10),
+#     plot.background=element_blank(),
+#     panel.border=element_blank(),
+#     panel.grid.minor = element_blank(),
+#     panel.grid.major = element_line(size = .25),
+#     plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+# 
+# filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 6, width =6, units = 'in')
 
 # look just at transition samples (6 or 18 hour)
 p1 <- potu.merged %>%
@@ -732,6 +741,7 @@ p1 <- potu.merged %>%
   geom_jitter()+
   #facet_grid(~diel)+
   ggtitle('Proportion Mesopelagic Species 100-300m') +
+  labs(y='Percent Mesopelagic Species')+
   theme_minimal() +
   #guides(fill=guide_legend(ncol=2)) +
   theme(
@@ -785,7 +795,8 @@ p1 <- ggboxplot(trans_df, x = "migration", y = "per_tot",
                #shape = "ESP",
                palette = "jco",
                add = "jitter") +
-  stat_compare_means()
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Species')
 
 filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_transition_wilcox.png', sep='')
 #print('Plot of top 20 Genus average by month:')
@@ -796,49 +807,50 @@ p1
 #p + stat_compare_means(method = "t.test")
 
 
-trans_df <- potu.merged %>%
-  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
-  filter(sample_type == 'environmental') %>%
-  filter(depth <=300) %>%  # try to remove depth effects
-  filter(depth >=100) %>%
-  filter(reads >0) %>%
-  filter(Phylum == 'Chordata') %>%
-  # get percent Mesopelagic in each sample
-  group_by(Ecological_Category, SampleID) %>%
-  mutate(per_tot = sum(per_tot)) %>%
-  mutate(reads = sum(reads)) %>%
-  ungroup() %>%
-  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
-  filter(Ecological_Category=='mesopelagic') %>%
-  #filter(diel=='night') %>%
-  filter(diel %in% c('day', 'night')) %>%
-  #filter(PlateID %in% c('CE', 'BT')) %>%
-  filter(PlateID %in% c('JJ', 'RR')) %>%
-  # bin morning and evening migrations
-  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
-                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
-
-p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
-                color = "diel",
-                #shape = "ESP",
-                palette = "jco",
-                add = "jitter") +
-  stat_compare_means()
-
-# p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
-#                 color = "PlateID",
+# trans_df <- potu.merged %>%
+#   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+#   filter(sample_type == 'environmental') %>%
+#   filter(depth <=300) %>%  # try to remove depth effects
+#   filter(depth >=100) %>%
+#   filter(reads >0) %>%
+#   filter(Phylum == 'Chordata') %>%
+#   # get percent Mesopelagic in each sample
+#   group_by(Ecological_Category, SampleID) %>%
+#   mutate(per_tot = sum(per_tot)) %>%
+#   mutate(reads = sum(reads)) %>%
+#   ungroup() %>%
+#   distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+#   filter(Ecological_Category=='mesopelagic') %>%
+#   #filter(diel=='night') %>%
+#   filter(diel %in% c('day', 'night')) %>%
+#   #filter(PlateID %in% c('CE', 'BT')) %>%
+#   filter(PlateID %in% c('JJ', 'RR')) %>%
+#   # bin morning and evening migrations
+#   mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+#                                hour %in% c(18,19,20) ~ 'evening_upwards')) 
+# 
+# p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
+#                 color = "diel",
 #                 #shape = "ESP",
 #                 palette = "jco",
 #                 add = "jitter") +
 #   stat_compare_means()
-
-filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_TD_wilcox.png', sep='')
-#print('Plot of top 20 Genus average by month:')
-print(filename)
-ggsave(filename,height = 4, width =4, units = 'in')
-p1
+# 
+# # p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
+# #                 color = "PlateID",
+# #                 #shape = "ESP",
+# #                 palette = "jco",
+# #                 add = "jitter") +
+# #   stat_compare_means()
+# 
+# filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_TD_wilcox.png', sep='')
+# #print('Plot of top 20 Genus average by month:')
+# print(filename)
+# ggsave(filename,height = 4, width =4, units = 'in')
+# p1
 
 # seperate by diel group
+# Day
 trans_df <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
   filter(sample_type == 'environmental') %>%
@@ -866,9 +878,49 @@ p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
                 #shape = "ESP",
                 palette = "jco",
                 add = "jitter") +
-  stat_compare_means()
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Reads') +
+  ggtitle('Day Samples')
 
 filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_day_KW.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+p1
+
+#Night
+trans_df <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >=100) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel=='night') %>%
+  #filter(diel %in% c('day', 'night')) %>%
+  #filter(PlateID %in% c('CE', 'BT')) %>%
+  #filter(PlateID %in% c('JJ', 'RR')) %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+
+p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
+                color = "PlateID",
+                #shape = "ESP",
+                palette = "jco",
+                add = "jitter") +
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Reads') +
+  ggtitle('Night Samples')
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_night_KW.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 4, width =4, units = 'in')
@@ -889,13 +941,10 @@ trans_df <- potu.merged %>%
   ungroup() %>%
   distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
   filter(Ecological_Category=='mesopelagic') %>%
-  #filter(diel=='night') %>%
   filter(diel %in% c('day', 'night')) %>%
-  #filter(PlateID %in% c('CE', 'BT')) %>%
-  #filter(PlateID %in% c('JJ', 'RR')) %>%
   # bin PCR methods:
-  mutate(PCR = case_when(PlateID %in% c('JJ', 'RR') ~ 'touchdown',
-                         PlateID %in% c('CE', 'BT') ~ 'pippin')) %>%
+  mutate(PCR = case_when(PlateID %in% c('JJ', 'RR') ~ 'Method1: Plates JJ, RR',
+                         PlateID %in% c('CE', 'BT') ~ 'Method2: Plates CE, BT')) %>%
   # bin morning and evening migrations
   mutate(migration = case_when(hour==6 ~ 'morning_downwards',
                                hour %in% c(18,19,20) ~ 'evening_upwards')) 
@@ -904,20 +953,223 @@ trans_df <- potu.merged %>%
 p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
                 color = "PCR",
                 #shape = "ESP",
-                palette = "jco",
+                palette = "Dark2",
                 add = "jitter") +
   stat_compare_means(aes(group = PCR)) +
   stat_compare_means(label.y = 120) +
-  ggtitle('100-300m Mesopelagic Percent Reads')
-
-# p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
-#                 color = "PlateID",
-#                 #shape = "ESP",
-#                 palette = "jco",
-#                 add = "jitter") +
-#   stat_compare_means()
+  ggtitle('100-300m Mesopelagic Percent Reads')+
+  labs(y='Percent Mesopelagic Reads')
 
 filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_PCR_stat.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 6, width =6, units = 'in')
+p1
+
+## 200-300m ------------------
+# Focus on depth_bin "200-300m" = depth >200 & depth <=300
+# assign text colour for plots
+textcol <- "grey40"
+
+# look just at transition samples (6 or 18 hour)
+p1 <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >200) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel=='transition') %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) %>%
+  ggplot(aes(y=per_tot, x=migration, color=PlateID, group=migration, shape=ESP)) +
+  geom_boxplot() +
+  geom_jitter()+
+  #facet_grid(~diel)+
+  ggtitle('Proportion Mesopelagic Species 200-300m') +
+  labs(y='Percent Mesopelagic Species')+
+  theme_minimal() +
+  #guides(fill=guide_legend(ncol=2)) +
+  theme(
+    #legend
+    legend.position="right",legend.direction="vertical",
+    legend.text=element_text(colour=textcol,size=10,face="bold"),
+    legend.key.height=grid::unit(0.3,"cm"),
+    legend.key.width=grid::unit(0.3,"cm"),
+    legend.title=element_text(colour=textcol,size=10,face="bold"),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=10,colour=textcol),
+    #axis.text.x=element_text(size=7,colour=textcol),
+    axis.text.y=element_text(size=10,colour=textcol),
+    axis.title.y = element_text(size=10),
+    plot.background=element_blank(),
+    panel.border=element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(size = .25),
+    plot.margin=margin(0.1,0.1,0.1,0.1,"cm"))
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_200_300m_transition.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+p1
+
+
+# with STATS now 
+library(ggpubr)
+
+trans_df <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >200) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel=='transition') %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+
+p1 <- ggboxplot(trans_df, x = "migration", y = "per_tot",
+                #color = "PlateID",
+                #shape = "ESP",
+                palette = "jco",
+                add = "jitter") +
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Species')
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_200_300m_transition_wilcox.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+p1
+
+# seperate by diel group
+# Day
+trans_df <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >200) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel=='day') %>%
+  #filter(diel %in% c('day', 'night')) %>%
+  #filter(PlateID %in% c('CE', 'BT')) %>%
+  #filter(PlateID %in% c('JJ', 'RR')) %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+
+p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
+                color = "PlateID",
+                #shape = "ESP",
+                palette = "jco",
+                add = "jitter") +
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Reads') +
+  ggtitle('Day Samples')
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_200_300m_day_KW.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+p1
+
+#Night
+trans_df <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >200) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel=='night') %>%
+  #filter(diel %in% c('day', 'night')) %>%
+  #filter(PlateID %in% c('CE', 'BT')) %>%
+  #filter(PlateID %in% c('JJ', 'RR')) %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+
+p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
+                color = "PlateID",
+                #shape = "ESP",
+                palette = "jco",
+                add = "jitter") +
+  stat_compare_means() +
+  labs(y='Percent Mesopelagic Reads') +
+  ggtitle('Night Samples')
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_200_300m_night_KW.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+p1
+
+# together
+trans_df <- potu.merged %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  filter(sample_type == 'environmental') %>%
+  filter(depth <=300) %>%  # try to remove depth effects
+  filter(depth >200) %>%
+  filter(reads >0) %>%
+  filter(Phylum == 'Chordata') %>%
+  # get percent Mesopelagic in each sample
+  group_by(Ecological_Category, SampleID) %>%
+  mutate(per_tot = sum(per_tot)) %>%
+  mutate(reads = sum(reads)) %>%
+  ungroup() %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  filter(Ecological_Category=='mesopelagic') %>%
+  filter(diel %in% c('day', 'night')) %>%
+  # bin PCR methods:
+  mutate(PCR = case_when(PlateID %in% c('JJ', 'RR') ~ 'Method1: Plates JJ, RR',
+                         PlateID %in% c('CE', 'BT') ~ 'Method2: Plates CE, BT')) %>%
+  # bin morning and evening migrations
+  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
+                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+
+
+p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
+                color = "PCR",
+                #shape = "ESP",
+                palette = "Dark2",
+                add = "jitter") +
+  stat_compare_means(aes(group = PCR)) +
+  stat_compare_means(label.y = 120) +
+  ggtitle('200-300m Mesopelagic Percent Reads')+
+  labs(y='Percent Mesopelagic Reads')
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_200_300m_diel_PCR_stat.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 6, width =6, units = 'in')
