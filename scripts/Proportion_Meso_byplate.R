@@ -267,6 +267,7 @@ p1
 # with STATS now 
 library(ggpubr)
 
+
 trans_df <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
   filter(sample_type == 'environmental') %>%
