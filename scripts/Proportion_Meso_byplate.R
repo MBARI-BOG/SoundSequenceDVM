@@ -14,6 +14,7 @@ library(forcats)
 library(stringr)
 library(viridis) #color maps
 library(wesanderson) #colors
+library(ggpubr) # stats
 
 # Set Constants -----------------------------------------------------------------
 
@@ -159,6 +160,8 @@ potu.merged <- left_join(potu.c, species_label) %>%
   distinct(Kingdom, Phylum, Class, Order, Family, Genus, Species, Ecological_Category, SampleID, .keep_all = TRUE)
 
 
+
+
 # Proportion Mesopelagic across plates -------
 
 # Focus on depth_bin "200-300m" = depth >200 & depth <=300
@@ -265,7 +268,7 @@ p1
 
 
 # with STATS now 
-library(ggpubr)
+#library(ggpubr)
 
 
 trans_df <- potu.merged %>%
@@ -346,7 +349,7 @@ p1
 # ggsave(filename,height = 4, width =4, units = 'in')
 # p1
 
-# seperate by diel group
+# Separate by Diel group -------------------
 # Day
 trans_df <- potu.merged %>%
   left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
@@ -371,7 +374,7 @@ trans_df <- potu.merged %>%
                                hour %in% c(18,19,20) ~ 'evening_upwards')) 
 
 p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
-                color = "PlateID",
+                #color = "PlateID",
                 #shape = "ESP",
                 palette = "jco",
                 add = "jitter") +
@@ -380,6 +383,10 @@ p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
   ggtitle('Day Samples')
 
 filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_day_KW.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_day_KW.svg', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 4, width =4, units = 'in')
@@ -400,16 +407,10 @@ trans_df <- potu.merged %>%
   ungroup() %>%
   distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
   filter(Ecological_Category=='mesopelagic') %>%
-  filter(diel=='night') %>%
-  #filter(diel %in% c('day', 'night')) %>%
-  #filter(PlateID %in% c('CE', 'BT')) %>%
-  #filter(PlateID %in% c('JJ', 'RR')) %>%
-  # bin morning and evening migrations
-  mutate(migration = case_when(hour==6 ~ 'morning_downwards',
-                               hour %in% c(18,19,20) ~ 'evening_upwards')) 
+  filter(diel=='night')
 
 p1 <- ggboxplot(trans_df, x = "PlateID", y = "per_tot",
-                color = "PlateID",
+                #color = "PlateID",
                 #shape = "ESP",
                 palette = "jco",
                 add = "jitter") +
@@ -421,11 +422,15 @@ filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_night_KW.png
 #print('Plot of top 20 Genus average by month:')
 print(filename)
 ggsave(filename,height = 4, width =4, units = 'in')
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_night_KW.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 4, width =4, units = 'in')
 p1
 
 # together
 trans_df <- potu.merged %>%
-  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour)) %>%
+  left_join(meta %>% select(SampleID, PlateID, depth, ESP, diel, sample_type, hour, SAMPLING_platform)) %>%
   filter(sample_type == 'environmental') %>%
   filter(depth <=300) %>%  # try to remove depth effects
   filter(depth >=100) %>%
@@ -436,7 +441,7 @@ trans_df <- potu.merged %>%
   mutate(per_tot = sum(per_tot)) %>%
   mutate(reads = sum(reads)) %>%
   ungroup() %>%
-  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour) %>%
+  distinct(Ecological_Category, SampleID, per_tot, reads, depth, ESP, diel, PlateID, hour, SAMPLING_platform) %>%
   filter(Ecological_Category=='mesopelagic') %>%
   filter(diel %in% c('day', 'night')) %>%
   # bin PCR methods:
@@ -449,18 +454,47 @@ trans_df <- potu.merged %>%
 
 p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
                 color = "PCR",
-                #shape = "ESP",
-                palette = "Dark2",
+                #shape = "SAMPLING_platform",
+                #palette = "Dark2",
                 add = "jitter") +
+  scale_color_manual(values=c('darkorange', 'darkblue'))+
   stat_compare_means(aes(group = PCR)) +
   stat_compare_means(label.y = 120) +
   ggtitle('100-300m Mesopelagic Percent Reads')+
   labs(y='Percent Mesopelagic Reads')
 
+  
 filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_PCR_stat.png', sep='')
 #print('Plot of top 20 Genus average by month:')
 print(filename)
-ggsave(filename,height = 6, width =6, units = 'in')
+ggsave(filename,height = 5, width =5, units = 'in')
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_PCR_stat.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =5, units = 'in')
+p1
+
+# By vehicle too
+p1 <- ggboxplot(trans_df, x = "diel", y = "per_tot",
+                color = "PCR",
+                shape = "ESP",
+                #palette = "Dark2",
+                add = "jitter") +
+  scale_color_manual(values=c('darkorange', 'darkblue'))+
+  stat_compare_means(aes(group = PCR)) +
+  stat_compare_means(label.y = 120) +
+  ggtitle('100-300m Mesopelagic Percent Reads')+
+  labs(y='Percent Mesopelagic Reads')
+
+
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_PCR_stat_ESP.png', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =7, units = 'in')
+filename = paste(plot_directory, marker,'_propMeso_byplate_100_300m_diel_PCR_stat_ESP.svg', sep='')
+#print('Plot of top 20 Genus average by month:')
+print(filename)
+ggsave(filename,height = 5, width =7, units = 'in')
 p1
 
 ## 200-300m ------------------

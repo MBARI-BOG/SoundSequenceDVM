@@ -24,7 +24,7 @@ library(tibble)
 marker = sym("12S")
 
 # Set directory to save plots
-plot_directory <- 'figures/Plate_stats/'
+plot_directory <- 'figures/Plate_stats/Fig2stats/'
 # Set directory to retrieve data
 data_directory = "Data/filtered_seq_data/"
 
@@ -64,23 +64,6 @@ potu.c <- otu.c %>%
   ungroup() %>%
   arrange(-reads)
 head(potu.c)
-
-
-#get lowest taxonomic annotation level for ASVs
-# species_label <- tax.c %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='s_'| Species =='no_hit' ~as.character(Genus),
-#                              TRUE ~ as.character(Species))) %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown' | Species =='g_'| Species =='no_hit'~as.character(Family),
-#                              TRUE ~ as.character(Species))) %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Order),
-#                              TRUE ~ as.character(Species))) %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Class),
-#                              TRUE ~ as.character(Species))) %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character(Phylum),
-#                              TRUE ~ as.character(Species))) %>%
-#   mutate(Species = case_when(Species=='unassigned' | Species =='unknown'| Species =='no_hit' ~as.character('Unknown'),
-#                              TRUE ~ as.character(Species)))
-
 
 # Import species ecological categories that have been manually determined
 
@@ -286,7 +269,7 @@ for (ecol_group in c('epipelagic', 'mesopelagic')){
   p <- full_join(night_density_curve %>% mutate(diel = 'night'), day_density_curve%>% mutate(diel = 'day')) %>%
     ggplot(aes(x=x, y=y, color=diel)) +
     geom_line(size=2) +
-    ggtitle(paste(ecol_group,' 0-99m\n',
+    ggtitle(paste(ecol_group,' 100-299m\n',
                   'KS pvalue: ', ks_stat[2],
                   '; statistic: ', ks_stat[1],
                   '\nWilcox pvalue: ', wilcox[3],
