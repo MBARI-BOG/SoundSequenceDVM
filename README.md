@@ -16,3 +16,6 @@ Main analysis scripts:
 - Fig2_Boxplots_epi_mesopelagic_calculation.R
 - Fig3_Hourly_diel_cycle.R
 - Fig4.R
+
+
+[![DOI](https://zenodo.org/badge/873307269.svg)](https://doi.org/10.5281/zenodo.13941941)
